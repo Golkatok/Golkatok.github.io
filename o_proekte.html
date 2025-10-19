@@ -9,52 +9,45 @@
 
     * {
       box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
 
     html, body {
-      margin: 0;
-      padding: 0;
+      width: 100%;
       height: 100%;
+      overflow-x: hidden;
       background: radial-gradient(circle at top, #0d1a1f, #000);
       color: #e0e0e0;
       font-family: 'Segoe UI', sans-serif;
-      overflow-x: hidden;
       display: flex;
       flex-direction: column;
       min-height: 100vh;
     }
 
     .glow-effect {
-      position: absolute;
-      top: 90%;
+      position: fixed;
+      bottom: -20%;
       left: 50%;
-      width: 1200px;
+      width: 1000px;
       height: 800px;
-      background: radial-gradient(circle at center, rgba(0, 255, 255, 0.2), transparent 70%);
-      transform: translate(-50%, -50%);
+      background: radial-gradient(circle at center, rgba(0, 255, 255, 0.25), transparent 70%);
+      transform: translateX(-50%);
       animation: glow 3s infinite ease-in-out;
       pointer-events: none;
       z-index: 0;
       border-radius: 50%;
-      filter: blur(40px);
+      filter: blur(60px);
     }
 
     @keyframes glow {
       0%, 100% { opacity: 0.3; }
-      50% { opacity: 1; }
-    }
-
-    @keyframes fadeInUp {
-      0% { opacity: 0; transform: translateY(30px); }
-      100% { opacity: 1; transform: translateY(0); }
+      50% { opacity: 0.9; }
     }
 
     header {
       font-family: 'Dancing Script', cursive;
-      animation: fadeInUp 2s ease forwards;
-      opacity: 0;
-      animation-delay: 0.3s;
-      padding: 40px 20px 10px;
+      animation: fadeInUp 1.5s ease forwards;
       text-align: center;
       color: #00e1ff;
       font-weight: 900;
@@ -64,22 +57,27 @@
       text-shadow: 0 0 12px #00e1ff;
       z-index: 10;
       user-select: none;
+      padding: 40px 10px 20px;
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(40px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     .subtitle-block {
-      animation: fadeInUp 2s ease forwards;
+      animation: fadeInUp 1.8s ease forwards;
       opacity: 0;
-      animation-delay: 0.4s;
-      user-select: none;
-      margin: 10px auto 40px;
+      animation-delay: 0.3s;
+      text-align: center;
+      margin: 0 auto 40px;
       max-width: 900px;
       font-size: clamp(14px, 2.5vw, 20px);
       color: #aadfeeff;
-      text-align: center;
       line-height: 1.7em;
       text-shadow: 0 0 4px #00c0ff44;
       font-family: 'Dancing Script', cursive;
-      padding: 0 20px;
+      padding: 0 16px;
     }
 
     .content {
@@ -89,65 +87,62 @@
       z-index: 10;
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 50px;
+      gap: 40px;
       justify-items: center;
+      align-items: start;
+      width: 100%;
     }
 
     .section {
       background-color: rgba(255, 255, 255, 0.06);
-      padding: 28px 34px;
+      padding: 26px 30px;
       border-radius: 16px;
-      box-shadow: 0 0 28px rgba(0,255,255,0.25);
+      box-shadow: 0 0 24px rgba(0,255,255,0.25);
       animation: fadeInUp 1.3s ease forwards;
       opacity: 0;
       display: flex;
       flex-direction: column;
-      gap: 16px;
-      user-select: none;
+      gap: 14px;
       width: 100%;
-      max-width: 550px;
-      min-height: 380px;
-      overflow-y: auto;
+      max-width: 480px;
+      min-height: 360px;
       transition: transform 0.4s ease, box-shadow 0.3s ease;
     }
 
     .section:hover {
-      box-shadow: 0 0 40px #00f0ff;
+      box-shadow: 0 0 38px #00f0ff;
       transform: scale(1.05);
-      cursor: default;
     }
 
-    /* Наклоны карточек (только для больших экранов) */
-    @media (min-width: 900px) {
-      .section:nth-child(1) { transform: rotate(-6deg); }
+    /* Наклоны только для больших экранов */
+    @media (min-width: 992px) {
+      .section:nth-child(1) { transform: rotate(-5deg); }
       .section:nth-child(2) { transform: rotate(5deg); }
-      .section:nth-child(3) { transform: rotate(-8deg); }
-      .section:nth-child(4) { transform: rotate(4deg); }
-      .section:nth-child(5) { transform: rotate(-5deg); }
+      .section:nth-child(3) { transform: rotate(-4deg); }
+      .section:nth-child(4) { transform: rotate(3deg); }
+      .section:nth-child(5) { transform: rotate(-3deg); }
     }
 
     .section h2 {
       font-family: 'Dancing Script', cursive;
       color: #00e1ff;
-      margin: 0;
       font-size: clamp(22px, 4vw, 30px);
       text-align: center;
+      margin-bottom: 8px;
     }
 
     .section p {
       font-family: 'Dancing Script', cursive;
       font-size: clamp(16px, 2.5vw, 20px);
-      line-height: 1.7em;
-      margin: 0;
       color: #aadfeeff;
+      line-height: 1.6em;
     }
 
     .section-links {
-      margin-top: 14px;
+      margin-top: auto;
       display: flex;
       flex-wrap: wrap;
       gap: 10px;
-      font-size: clamp(12px, 2vw, 15px);
       justify-content: center;
     }
 
@@ -191,7 +186,6 @@
       margin: 0 auto;
       line-height: 1.6;
       color: #a0f0ffcc;
-      font-style: normal;
     }
 
     footer .libs b {
@@ -207,41 +201,46 @@
       display: inline-block;
     }
 
-    /* Мобильная версия */
+    /* Мобильная адаптация */
     @media (max-width: 768px) {
       .content {
         gap: 30px;
+        padding: 0 20px 40px;
       }
 
       .section {
         transform: none !important;
         min-height: auto;
-        padding: 24px 20px;
+        padding: 22px 18px;
+        box-shadow: 0 0 20px rgba(0,255,255,0.2);
+      }
+
+      .glow-effect {
+        width: 600px;
+        height: 400px;
+        bottom: -30%;
+        filter: blur(50px);
       }
 
       footer {
         padding: 16px 10px;
       }
+    }
+
+    /* Планшеты */
+    @media (min-width: 768px) and (max-width: 992px) {
+      .section {
+        transform: none !important;
+        max-width: 600px;
+        margin: 0 auto;
+      }
 
       .glow-effect {
-        width: 700px;
-        height: 500px;
+        width: 900px;
+        height: 600px;
+        bottom: -25%;
       }
     }
-
-    /* Очень маленькие экраны */
-    @media (max-width: 480px) {
-      .subtitle-block {
-        font-size: 15px;
-      }
-      .section p {
-        font-size: 16px;
-      }
-      .section-links a {
-        padding: 5px 10px;
-      }
-    }
-
   </style>
 </head>
 <body>
