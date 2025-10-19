@@ -4,9 +4,11 @@ html, body {
   padding: 0;
   height: 100%;
   font-family: "Playfair Display", serif;
-  background-color: #0a0a0a; /* тёмный фон */
   overflow-x: hidden;
   color: white;
+  background: linear-gradient(-45deg, #0a0a0a, #1c1c1c, #0d0d0d, #121212);
+  background-size: 400% 400%;
+  animation: gradientBG 15s ease infinite;
 }
 
 body {
@@ -36,20 +38,6 @@ main {
   backdrop-filter: blur(15px);
   box-shadow: 0 15px 50px rgba(0,0,0,0.6);
   overflow: hidden;
-}
-
-/* Мягкий блик Liquid Glass */
-.card::before {
-  content: "";
-  position: absolute;
-  top: -60%;
-  left: -60%;
-  width: 180%;
-  height: 180%;
-  background: linear-gradient(120deg, rgba(255,255,255,0.03), rgba(255,255,255,0));
-  transform: rotate(45deg);
-  animation: shine 6s infinite linear;
-  pointer-events: none;
 }
 
 /* Логотип */
@@ -105,10 +93,11 @@ footer {
   margin: 20px auto;
 }
 
-/* Анимации */
-@keyframes shine {
-  0% { transform: rotate(45deg) translate(-100%, -100%); }
-  100% { transform: rotate(45deg) translate(100%, 100%); }
+/* Анимация градиента фона */
+@keyframes gradientBG {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
 
 /* Адаптация для мобильных */
@@ -136,4 +125,4 @@ footer {
     width: 95%;
     padding: 15px;
   }
-}
+  }
