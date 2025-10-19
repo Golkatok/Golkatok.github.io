@@ -24,6 +24,7 @@ main {
   justify-content: center;
   align-items: center;
   padding: 20px;
+  perspective: 1000px; /* для параллакса 3D */
 }
 
 /* Liquid Glass Карточка */
@@ -36,9 +37,9 @@ main {
   max-width: 400px;
   text-align: center;
   backdrop-filter: blur(15px);
-  box-shadow: 0 8px 30px rgba(0,0,0,0.6);
+  box-shadow: 0 15px 50px rgba(0,0,0,0.6);
   overflow: hidden;
-  animation: float 5s ease-in-out infinite;
+  transition: transform 0.2s ease-out;
 }
 
 .card::before {
@@ -53,16 +54,20 @@ main {
   animation: shine 3s infinite linear;
 }
 
+/* Логотип */
 .logo {
   width: 120px;
   border-radius: 50%;
   margin-bottom: 15px;
-  box-shadow: 0 0 15px rgba(255,255,255,0.2);
+  box-shadow: 0 0 25px rgba(255,255,255,0.3);
+  transition: transform 0.2s ease-out;
 }
 
+/* Текст */
 .intro-text {
   margin-top: 15px;
   line-height: 1.6;
+  transition: transform 0.2s ease-out;
 }
 .intro-text a {
   color: #77c0ff;
@@ -78,6 +83,7 @@ main {
   justify-content: center;
   gap: 15px;
   margin-top: 20px;
+  transition: transform 0.2s ease-out;
 }
 .yt-btn, .twitch-btn {
   padding: 10px 20px;
@@ -87,7 +93,7 @@ main {
   text-decoration: none;
   font-weight: bold;
   backdrop-filter: blur(5px);
-  transition: all 0.3s ease;
+  transition: all 0.3s ease, transform 0.2s ease-out;
 }
 .yt-btn:hover { background: rgba(255,0,0,0.5); transform: scale(1.05); }
 .twitch-btn:hover { background: rgba(145,70,255,0.5); transform: scale(1.05); }
@@ -119,4 +125,4 @@ footer {
   0% { background-position: 0% 50%; }
   50% { background-position: 100% 50%; }
   100% { background-position: 0% 50%; }
-}
+  }
