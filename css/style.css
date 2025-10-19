@@ -4,93 +4,55 @@ html, body {
   padding: 0;
   height: 100%;
   font-family: "Playfair Display", serif;
-  background-color: #0a0a0a;
-  color: white;
+  overflow-x: hidden;
 }
 
 body {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-}
-
-/* Header */
-header {
-  height: 60px;
-  width: 100%;
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 10;
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  padding: 0 15px;
-}
-
-/* Меню с кругом */
-.menu-icon {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  background: rgba(255,255,255,0.05);
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start; /* сдвигаем полоски вниз */
-  align-items: center;
-  padding-top: 10px; /* ~1 см вниз */
-  cursor: pointer;
-  transition: background 0.3s ease;
-}
-.menu-icon:hover {
-  background: rgba(255,255,255,0.1);
-}
-
-.menu-icon span {
-  display: block;
-  height: 3px;
-  width: 25px;
-  background: white;
-  border-radius: 3px;
-  margin: 4px 0;
-  transition: all 0.4s ease;
-}
-
-/* Toggle animation */
-.menu-icon.active span:nth-child(1) {
-  transform: rotate(45deg) translate(5px, 5px);
-}
-.menu-icon.active span:nth-child(2) {
-  opacity: 0;
-}
-.menu-icon.active span:nth-child(3) {
-  transform: rotate(-45deg) translate(5px, -5px);
+  background: linear-gradient(-45deg, #0a0a0a, #1c1c1c, #0d0d0d, #121212);
+  background-size: 400% 400%;
+  animation: gradientBG 15s ease infinite;
+  color: white;
 }
 
 /* Main */
 main {
   flex: 1;
   display: flex;
-  flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding-top: 70px; /* отступ под header */
+  padding: 20px;
 }
 
-/* Карточка */
+/* Liquid Glass Карточка */
 .card {
-  background: rgba(30,30,30,0.85);
-  backdrop-filter: blur(15px);
+  position: relative;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 25px;
   padding: 35px 25px 40px 25px;
-  border-radius: 30px;
-  box-shadow: 0 10px 40px rgba(0,0,0,0.7);
   width: 80%;
   max-width: 400px;
   text-align: center;
+  backdrop-filter: blur(15px);
+  box-shadow: 0 8px 30px rgba(0,0,0,0.6);
+  overflow: hidden;
   animation: float 5s ease-in-out infinite;
 }
 
-/* Логотип */
+.card::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(120deg, rgba(255,255,255,0.2), rgba(255,255,255,0));
+  transform: rotate(45deg);
+  animation: shine 3s infinite linear;
+}
+
 .logo {
   width: 120px;
   border-radius: 50%;
@@ -98,13 +60,17 @@ main {
   box-shadow: 0 0 15px rgba(255,255,255,0.2);
 }
 
-/* Текст */
 .intro-text {
   margin-top: 15px;
   line-height: 1.6;
 }
-.intro-text a { color: #77c0ff; text-decoration: none; }
-.intro-text a:hover { text-decoration: underline; }
+.intro-text a {
+  color: #77c0ff;
+  text-decoration: none;
+}
+.intro-text a:hover {
+  text-decoration: underline;
+}
 
 /* Кнопки */
 .card .buttons {
@@ -116,29 +82,41 @@ main {
 .yt-btn, .twitch-btn {
   padding: 10px 20px;
   border-radius: 25px;
-  background-color: #2a2a2a;
+  background: rgba(255,255,255,0.1);
   color: white;
   text-decoration: none;
   font-weight: bold;
+  backdrop-filter: blur(5px);
   transition: all 0.3s ease;
 }
-.yt-btn:hover { background: #ff0000; transform: scale(1.05); }
-.twitch-btn:hover { background: #9146ff; transform: scale(1.05); }
+.yt-btn:hover { background: rgba(255,0,0,0.5); transform: scale(1.05); }
+.twitch-btn:hover { background: rgba(145,70,255,0.5); transform: scale(1.05); }
 
 /* Footer */
 footer {
-  background-color: #141414;
+  background-color: rgba(20,20,20,0.9);
   border-radius: 20px;
   padding: 20px;
   width: 85%;
   text-align: center;
   font-size: 14px;
   opacity: 0.85;
-  margin: 0 auto;
+  margin: 20px auto 20px auto;
 }
 
-/* Анимация карточки */
+/* Анимации */
 @keyframes float {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-10px); }
-  }
+}
+
+@keyframes shine {
+  0% { transform: rotate(45deg) translate(-100%, -100%); }
+  100% { transform: rotate(45deg) translate(100%, 100%); }
+}
+
+@keyframes gradientBG {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
