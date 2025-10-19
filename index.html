@@ -10,12 +10,11 @@
 <body>
   <!-- Header -->
   <header>
-    <div class="menu-icon">
+    <div class="menu-icon" id="menu-icon">
       <span></span>
       <span></span>
       <span></span>
     </div>
-    <div class="settings-icon">⚙️</div>
   </header>
 
   <!-- Main -->
@@ -46,5 +45,12 @@
       v0.9.4 beta
     </p>
   </footer>
+
+  <script>
+    const menu = document.getElementById('menu-icon');
+    menu.addEventListener('click', () => {
+      menu.classList.toggle('active'); // просто переключает
+    });
+  </script>
 </body>
 </html>
