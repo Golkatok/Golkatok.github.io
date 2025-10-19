@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>О ПРОЕКТЕ</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Dancing+Script&display=swap');
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0; padding: 0;
+      height: 100%;
+      background: radial-gradient(circle at top, #0d1a1f, #000);
+      color: #e0e0e0;
+      font-family: 'Segoe UI', sans-serif;
+      overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    .glow-effect {
+      position: absolute;
+      top: 90%;
+      left: 50%;
+      width: 1500px;
+      height: 900px;
+      background: radial-gradient(circle at center, rgba(0, 255, 255, 0.2), transparent 70%);
+      transform: translate(-50%, -50%);
+      animation: glow 3s infinite ease-in-out;
+      pointer-events: none;
+      z-index: 0;
+      border-radius: 50%;
+      filter: blur(40px);
+    }
+
+    @keyframes glow {
+      0%, 100% { opacity: 0.3; }
+      50% { opacity: 1; }
+    }
+
+    @keyframes fadeInUp {
+      0% { opacity: 0; transform: translateY(30px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
+    header {
+      font-family: 'Dancing Script', cursive;
+      animation: fadeInUp 2s ease forwards;
+      opacity: 0;
+      animation-delay: 0.3s;
+      padding: 40px 20px 10px;
+      text-align: center;
+      color: #00e1ff;
+      font-weight: 900;
+      letter-spacing: 3px;
+      font-size: 70px;
+      text-transform: uppercase;
+      text-shadow: 0 0 12px #00e1ff;
+      z-index: 10;
+      user-select: none;
+    }
+
+    .subtitle-block {
+      animation: fadeInUp 2s ease forwards;
+      opacity: 0;
+      animation-delay: 0.4s;
+      user-select: none;
+      margin: 10px auto 40px;
+      max-width: 900px;
+      font-size: 18px;
+      color: #aadfeeff;
+      text-align: center;
+      line-height: 1.7em;
+      text-shadow: 0 0 4px #00c0ff44;
+      font-family: 'Dancing Script', cursive;
+    }
+
+    .content {
+      flex: 1;
+      position: relative;
+      padding: 0 60px 60px;
+      z-index: 10;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 50px;
+      justify-items: center;
+    }
+
+    .section {
+      background-color: rgba(255, 255, 255, 0.06);
+      padding: 28px 34px;
+      border-radius: 16px;
+      box-shadow: 0 0 28px rgba(0,255,255,0.25);
+      animation: fadeInUp 1.3s ease forwards;
+      opacity: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      user-select: none;
+      width: 100%;
+      max-width: 550px;
+      min-height: 420px;
+      overflow-y: auto;
+      transition: transform 0.4s ease, box-shadow 0.3s ease;
+    }
+
+    .section:hover {
+      box-shadow: 0 0 40px #00f0ff;
+      transform: scale(1.05) rotate(0deg);
+      cursor: default;
+    }
+
+    /* 🔹 Разные наклоны карточек */
+    .section:nth-child(1) { transform: rotate(-6deg); }
+    .section:nth-child(2) { transform: rotate(5deg); }
+    .section:nth-child(3) { transform: rotate(-8deg); }
+    .section:nth-child(4) { transform: rotate(4deg); }
+    .section:nth-child(5) { transform: rotate(-5deg); }
+
+    .section h2 {
+      font-family: 'Dancing Script', cursive;
+      color: #00e1ff;
+      margin: 0;
+      font-size: 30px;
+      text-align: center;
+    }
+
+    .section p {
+      font-family: 'Dancing Script', cursive;
+      font-size: 20px;
+      line-height: 1.7em;
+      margin: 0;
+      color: #aadfeeff;
+    }
+
+    .section-links {
+      margin-top: 14px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      font-size: 14px;
+      justify-content: center;
+    }
+
+    .section-links a {
+      color: #00e1ff;
+      font-weight: 700;
+      text-decoration: none;
+      padding: 6px 14px;
+      border-radius: 8px;
+      background-color: rgba(0, 255, 255, 0.15);
+      transition: background-color 0.3s ease;
+    }
+
+    .section-links a:hover {
+      background-color: rgba(0, 255, 255, 0.35);
+      text-decoration: underline;
+    }
+
+    footer {
+      padding: 20px;
+      background: rgba(0,0,0,0.3);
+      font-size: 15px;
+      color: #00e1ff;
+      text-align: center;
+      user-select: none;
+      z-index: 10;
+      font-family: 'Segoe UI', sans-serif;
+      letter-spacing: 0.06em;
+      box-shadow: inset 0 1px 3px #00e1ff33;
+    }
+
+    footer .year {
+      font-weight: 700;
+      margin-bottom: 6px;
+      display: block;
+      font-size: 17px;
+    }
+
+    footer .libs {
+      max-width: 850px;
+      margin: 0 auto;
+      line-height: 1.6;
+      color: #a0f0ffcc;
+      font-style: normal;
+    }
+
+    footer .libs b {
+      color: #00ffff;
+    }
+
+    footer a {
+      color: #00e1ff;
+      font-weight: 700;
+      text-decoration: underline;
+      cursor: pointer;
+      margin-top: 8px;
+      display: inline-block;
+    }
+
+    /* 🔹 Мобильная адаптация */
+    @media (max-width: 768px) {
+      header {
+        font-size: 38px;
+        padding: 25px 10px 5px;
+      }
+
+      .subtitle-block {
+        font-size: 16px;
+        padding: 0 15px;
+      }
+
+      .content {
+        grid-template-columns: 1fr;
+        padding: 0 20px 40px;
+        gap: 30px;
+      }
+
+      .section {
+        transform: rotate(0deg) !important; /* На телефонах карточки выравниваются */
+        min-height: auto;
+        padding: 24px 20px;
+      }
+
+      .section h2 {
+        font-size: 26px;
+      }
+
+      .section p {
+        font-size: 18px;
+      }
+
+      footer {
+        font-size: 14px;
+        padding: 16px 10px;
+      }
+    }
+
+  </style>
+</head>
+<body>
+  <div class="glow-effect"></div>
+
+  <header>О ПРОЕКТЕ</header>
+
+  <div class="subtitle-block">
+    Вдохновлённый ИИ Тони Старка — его помощником 
+    <a href="https://marvel.fandom.com/ru/wiki/ДЖАРВИС" target="_blank" 
+       style="font-family:'Segoe UI',sans-serif;font-weight:900;font-size:16px;color:#00e1ff;text-decoration:none;">
+       J.A.R.V.I.S.
+    </a><br>
+    Проект вырос из эксперимента в (почти) полноценного голосового ассистента.<br>
+    Основная цель — удобство, автономность и немного души создателя.<br>
+    Всё работает офлайн, без рекламы и слежки.
+  </div>
+
+  <div class="content">
+    <div class="section">
+      <h2>⚙️ Технология</h2>
+      <p>
+        Аксель основан на современных <b>нейросетевых алгоритмах</b> и <b>синтезе речи</b>.<br>
+        Его голосовой движок работает <b>офлайн</b> и использует <b>локальные модули Python</b>  
+        для распознавания речи и выполнения команд.<br>
+        Благодаря этому Аксель остаётся <b>приватным и быстрым</b>.
+      </p>
+      <div class="section-links">
+        <a href="https://elevenlabs.io/" target="_blank">Голосовой движок</a>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>👨‍💻 Дава</h2>
+      <p>
+        Всем привет, я <b>Дава (Jahvir)</b> — создатель и разработчик ассистента.<br>
+        Ютубер, программист, энтузиаст и просто позитивный человек 😏.<br>
+        Веду Telegram-канал, YouTube, Discord и Twitch.
+      </p>
+      <div class="section-links">
+        <a href="https://t.me/davajahvir">Telegram</a>
+        <a href="https://www.youtube.com/@Jahvir">YouTube</a>
+        <a href="https://discord.gg/hmhjNhfrMh">Discord</a>
+        <a href="https://www.twitch.tv/davasik">Twitch</a>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>🤖 Аксель</h2>
+      <p>
+        Я — голосовой помощник Аксель!<br>
+        Слушаю, анализирую, отвечаю... иногда и шучу.<br>
+        Я становлюсь лучше с каждым обновлением и всегда готов помочь вам, сэр 👀.
+      </p>
+      <div class="section-links">
+        <a href="https://gptonline.ai/" target="_blank">Подробнее</a>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <span class="year">© 2025</span>
+    <div class="libs">
+      <b>Язык программирования:</b> Python<br>
+      <b>Ассистент умеет:</b> распознавать команды, открывать приложения, искать информацию,<br>
+      реагировать на фразы, проигрывать звуки и вести диалоги.<br>
+      Работает локально и без интернета.<br>
+      В разработке активно использовался <a href="https://chat.openai.com" target="_blank">ChatGPT</a>.<br>
+      <b>Основной голос:</b> <a href="https://elevenlabs.io/app/speech-synthesis/text-to-speech" target="_blank">Liam</a> (ElevenLabs).
+    </div>
+    <a href="hacker.html">Скачать проект</a>
+  </footer>
+</body>
+</html>
