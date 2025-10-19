@@ -10,13 +10,13 @@
 <body>
   <main>
     <div class="card" id="card">
-      <img src="images/image1.png" alt="Logo" class="logo">
-      <p class="intro-text">
+      <img src="images/image1.png" alt="Logo" class="logo" id="logo">
+      <p class="intro-text" id="text">
         Привет!<br>
         И даа это <b>МиниПриложение <a href="https://youtube.com" target="_blank">Канала Jahvir</a></b><br>
         Здесь ты можешь найти все соц. сети канала, новости и более!
       </p>
-      <div class="buttons">
+      <div class="buttons" id="buttons">
         <a href="#" class="yt-btn">YouTube</a>
         <a href="#" class="twitch-btn">Twitch</a>
       </div>
@@ -37,24 +37,35 @@
 
   <script>
     const card = document.getElementById('card');
+    const logo = document.getElementById('logo');
+    const text = document.getElementById('text');
+    const buttons = document.getElementById('buttons');
 
-    // Desktop: параллакс по мыши
-    document.addEventListener('mousemove', (e) => {
+    function applyParallax(e) {
       const x = (window.innerWidth/2 - e.clientX)/25;
       const y = (window.innerHeight/2 - e.clientY)/25;
-      card.style.transform = `rotateY(${x}deg) rotateX(${y}deg)`;
-    });
 
-    // Mobile: параллакс по акселерометру
+      card.style.transform = `rotateY(${x}deg) rotateX(${y}deg)`;
+      logo.style.transform = `translateZ(20px)`;
+      text.style.transform = `translateZ(15px)`;
+      buttons.style.transform = `translateZ(10px)`;
+    }
+
+    document.addEventListener('mousemove', applyParallax);
+
+    // Mobile device orientation
     window.addEventListener('deviceorientation', (event) => {
       const x = event.gamma/5; // left-right
       const y = event.beta/5;  // front-back
       card.style.transform = `rotateY(${x}deg) rotateX(${y}deg)`;
     });
 
-    // Возврат в центр при уходе мыши
+    // Reset on mouse leave
     document.addEventListener('mouseleave', () => {
       card.style.transform = `rotateY(0deg) rotateX(0deg)`;
+      logo.style.transform = `translateZ(0px)`;
+      text.style.transform = `translateZ(0px)`;
+      buttons.style.transform = `translateZ(0px)`;
     });
   </script>
 </body>
