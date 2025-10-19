@@ -6,11 +6,20 @@ html, body {
   font-family: "Playfair Display", serif;
   overflow-x: hidden;
   color: white;
+
+  /* Живой фон страницы */
   background: linear-gradient(-45deg, #0a0a0a, #1c1c1c, #0d0d0d, #121212);
   background-size: 400% 400%;
   animation: gradientBG 15s ease infinite;
 }
 
+@keyframes gradientBG {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Body flex */
 body {
   display: flex;
   flex-direction: column;
@@ -26,16 +35,16 @@ main {
   padding: 20px;
 }
 
-/* Liquid Glass Карточка */
+/* Карточка Liquid Glass */
 .card {
   position: relative;
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.08); /* прозрачная карточка */
   border-radius: 25px;
   padding: 35px 25px 40px 25px;
   width: 80%;
   max-width: 400px;
   text-align: center;
-  backdrop-filter: blur(15px);
+  backdrop-filter: blur(20px); /* размытие фона */
   box-shadow: 0 15px 50px rgba(0,0,0,0.6);
   overflow: hidden;
 }
@@ -91,13 +100,6 @@ footer {
   font-size: 14px;
   opacity: 0.85;
   margin: 20px auto;
-}
-
-/* Анимация градиента фона */
-@keyframes gradientBG {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
 }
 
 /* Адаптация для мобильных */
