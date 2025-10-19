@@ -9,7 +9,7 @@
 </head>
 <body>
   <main>
-    <div class="card">
+    <div class="card" id="card">
       <img src="images/image1.png" alt="Logo" class="logo">
       <p class="intro-text">
         Привет!<br>
@@ -34,5 +34,28 @@
       v0.9.4 beta
     </p>
   </footer>
+
+  <script>
+    const card = document.getElementById('card');
+
+    // Desktop: параллакс по мыши
+    document.addEventListener('mousemove', (e) => {
+      const x = (window.innerWidth/2 - e.clientX)/25;
+      const y = (window.innerHeight/2 - e.clientY)/25;
+      card.style.transform = `rotateY(${x}deg) rotateX(${y}deg)`;
+    });
+
+    // Mobile: параллакс по акселерометру
+    window.addEventListener('deviceorientation', (event) => {
+      const x = event.gamma/5; // left-right
+      const y = event.beta/5;  // front-back
+      card.style.transform = `rotateY(${x}deg) rotateX(${y}deg)`;
+    });
+
+    // Возврат в центр при уходе мыши
+    document.addEventListener('mouseleave', () => {
+      card.style.transform = `rotateY(0deg) rotateX(0deg)`;
+    });
+  </script>
 </body>
 </html>
