@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <title>О ПРОЕКТЕ</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Dancing+Script&display=swap');
 
@@ -12,7 +12,8 @@
     }
 
     html, body {
-      margin: 0; padding: 0;
+      margin: 0;
+      padding: 0;
       height: 100%;
       background: radial-gradient(circle at top, #0d1a1f, #000);
       color: #e0e0e0;
@@ -27,8 +28,8 @@
       position: absolute;
       top: 90%;
       left: 50%;
-      width: 1500px;
-      height: 900px;
+      width: 1200px;
+      height: 800px;
       background: radial-gradient(circle at center, rgba(0, 255, 255, 0.2), transparent 70%);
       transform: translate(-50%, -50%);
       animation: glow 3s infinite ease-in-out;
@@ -58,7 +59,7 @@
       color: #00e1ff;
       font-weight: 900;
       letter-spacing: 3px;
-      font-size: 70px;
+      font-size: clamp(34px, 6vw, 70px);
       text-transform: uppercase;
       text-shadow: 0 0 12px #00e1ff;
       z-index: 10;
@@ -72,21 +73,22 @@
       user-select: none;
       margin: 10px auto 40px;
       max-width: 900px;
-      font-size: 18px;
+      font-size: clamp(14px, 2.5vw, 20px);
       color: #aadfeeff;
       text-align: center;
       line-height: 1.7em;
       text-shadow: 0 0 4px #00c0ff44;
       font-family: 'Dancing Script', cursive;
+      padding: 0 20px;
     }
 
     .content {
       flex: 1;
       position: relative;
-      padding: 0 60px 60px;
+      padding: 0 5vw 60px;
       z-index: 10;
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
       gap: 50px;
       justify-items: center;
     }
@@ -104,35 +106,37 @@
       user-select: none;
       width: 100%;
       max-width: 550px;
-      min-height: 420px;
+      min-height: 380px;
       overflow-y: auto;
       transition: transform 0.4s ease, box-shadow 0.3s ease;
     }
 
     .section:hover {
       box-shadow: 0 0 40px #00f0ff;
-      transform: scale(1.05) rotate(0deg);
+      transform: scale(1.05);
       cursor: default;
     }
 
-    /* 🔹 Разные наклоны карточек */
-    .section:nth-child(1) { transform: rotate(-6deg); }
-    .section:nth-child(2) { transform: rotate(5deg); }
-    .section:nth-child(3) { transform: rotate(-8deg); }
-    .section:nth-child(4) { transform: rotate(4deg); }
-    .section:nth-child(5) { transform: rotate(-5deg); }
+    /* Наклоны карточек (только для больших экранов) */
+    @media (min-width: 900px) {
+      .section:nth-child(1) { transform: rotate(-6deg); }
+      .section:nth-child(2) { transform: rotate(5deg); }
+      .section:nth-child(3) { transform: rotate(-8deg); }
+      .section:nth-child(4) { transform: rotate(4deg); }
+      .section:nth-child(5) { transform: rotate(-5deg); }
+    }
 
     .section h2 {
       font-family: 'Dancing Script', cursive;
       color: #00e1ff;
       margin: 0;
-      font-size: 30px;
+      font-size: clamp(22px, 4vw, 30px);
       text-align: center;
     }
 
     .section p {
       font-family: 'Dancing Script', cursive;
-      font-size: 20px;
+      font-size: clamp(16px, 2.5vw, 20px);
       line-height: 1.7em;
       margin: 0;
       color: #aadfeeff;
@@ -143,7 +147,7 @@
       display: flex;
       flex-wrap: wrap;
       gap: 10px;
-      font-size: 14px;
+      font-size: clamp(12px, 2vw, 15px);
       justify-content: center;
     }
 
@@ -165,7 +169,7 @@
     footer {
       padding: 20px;
       background: rgba(0,0,0,0.3);
-      font-size: 15px;
+      font-size: clamp(12px, 1.8vw, 15px);
       color: #00e1ff;
       text-align: center;
       user-select: none;
@@ -179,7 +183,7 @@
       font-weight: 700;
       margin-bottom: 6px;
       display: block;
-      font-size: 17px;
+      font-size: clamp(14px, 2vw, 17px);
     }
 
     footer .libs {
@@ -203,41 +207,38 @@
       display: inline-block;
     }
 
-    /* 🔹 Мобильная адаптация */
+    /* Мобильная версия */
     @media (max-width: 768px) {
-      header {
-        font-size: 38px;
-        padding: 25px 10px 5px;
-      }
-
-      .subtitle-block {
-        font-size: 16px;
-        padding: 0 15px;
-      }
-
       .content {
-        grid-template-columns: 1fr;
-        padding: 0 20px 40px;
         gap: 30px;
       }
 
       .section {
-        transform: rotate(0deg) !important; /* На телефонах карточки выравниваются */
+        transform: none !important;
         min-height: auto;
         padding: 24px 20px;
       }
 
-      .section h2 {
-        font-size: 26px;
-      }
-
-      .section p {
-        font-size: 18px;
-      }
-
       footer {
-        font-size: 14px;
         padding: 16px 10px;
+      }
+
+      .glow-effect {
+        width: 700px;
+        height: 500px;
+      }
+    }
+
+    /* Очень маленькие экраны */
+    @media (max-width: 480px) {
+      .subtitle-block {
+        font-size: 15px;
+      }
+      .section p {
+        font-size: 16px;
+      }
+      .section-links a {
+        padding: 5px 10px;
       }
     }
 
