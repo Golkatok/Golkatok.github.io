@@ -1,10 +1,10 @@
-/* ===== Общие стили ===== */
+/* Общие стили */
 html, body {
   margin: 0;
   padding: 0;
   height: 100%;
   font-family: "Playfair Display", serif;
-  background: #0a0a0a;
+  background-color: #0a0a0a;
   color: white;
 }
 
@@ -14,7 +14,7 @@ body {
   min-height: 100vh;
 }
 
-/* ===== Верхняя панель ===== */
+/* Header */
 header {
   width: 100%;
   display: flex;
@@ -35,7 +35,6 @@ header {
   justify-content: space-between;
   cursor: pointer;
 }
-
 .menu-icon span {
   display: block;
   height: 3px;
@@ -44,7 +43,6 @@ header {
   border-radius: 3px;
   transition: all 0.3s ease;
 }
-
 .menu-icon:hover span:nth-child(1) { transform: translateY(9px) rotate(45deg); }
 .menu-icon:hover span:nth-child(2) { opacity: 0; }
 .menu-icon:hover span:nth-child(3) { transform: translateY(-9px) rotate(-45deg); }
@@ -60,28 +58,26 @@ header {
 }
 .settings-icon:hover { transform: rotate(90deg); background: rgba(255,255,255,0.1); }
 
-/* ===== Основной блок ===== */
+/* Main */
 main {
-  flex: 1; /* занимает всё доступное пространство между header и footer */
+  flex: 1;
   display: flex;
   flex-direction: column;
-  justify-content: center; /* карточка по центру вертикально */
+  justify-content: center;
   align-items: center;
-  padding-top: 100px; /* чтобы не перекрывало header */
+  padding-top: 120px;
 }
 
 /* Карточка */
 .card {
-  background: rgba(30,30,30,0.85);
-  backdrop-filter: blur(15px);
+  background-color: #1e1e1e;
   padding: 35px 25px 40px 25px;
   border-radius: 30px;
   box-shadow: 0 10px 40px rgba(0,0,0,0.7);
   width: 80%;
   max-width: 400px;
-  margin: 0 auto;
-  animation: float 5s ease-in-out infinite;
   text-align: center;
+  animation: float 5s ease-in-out infinite;
 }
 
 .logo {
@@ -105,26 +101,22 @@ main {
   gap: 15px;
   margin-top: 20px;
 }
-
 .yt-btn, .twitch-btn {
   padding: 10px 20px;
   border-radius: 25px;
-  background: rgba(255,255,255,0.1);
-  backdrop-filter: blur(5px);
+  background-color: #2a2a2a;
   color: white;
   text-decoration: none;
-  transition: all 0.3s ease;
   font-weight: bold;
+  transition: all 0.3s ease;
 }
-
 .yt-btn:hover { background: #ff0000; transform: scale(1.05); }
 .twitch-btn:hover { background: #9146ff; transform: scale(1.05); }
 
-/* ===== Нижняя часть ===== */
+/* Footer */
 footer {
-  background: rgba(20,20,20,0.8);
+  background-color: #141414;
   border-radius: 20px;
-  backdrop-filter: blur(10px);
   padding: 20px;
   width: 85%;
   text-align: center;
@@ -133,7 +125,7 @@ footer {
   margin: 0 auto;
 }
 
-/* ===== Анимация ===== */
+/* Анимация */
 @keyframes float {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-10px); }
