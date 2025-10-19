@@ -25,7 +25,7 @@ header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 25px;
+  padding: 0 15px; /* меньше отступы, чтобы шестерёнка была в пределах экрана */
   background: rgba(0,0,0,0.2);
   backdrop-filter: blur(10px);
 }
@@ -51,11 +51,11 @@ header {
 .menu-icon:hover span:nth-child(3) { transform: translateY(-9px) rotate(-45deg); }
 
 .settings-icon {
-  font-size: 24px;
+  font-size: 22px; /* уменьшен размер */
   line-height: 1;
   border-radius: 50%;
   background: rgba(255,255,255,0.05);
-  padding: 8px;
+  padding: 6px; /* уменьшен padding */
   cursor: pointer;
   transition: transform 0.3s ease, background 0.3s ease;
 }
@@ -135,4 +135,4 @@ footer {
 @keyframes float {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-10px); }
-}
+  }
