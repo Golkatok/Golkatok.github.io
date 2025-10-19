@@ -79,7 +79,7 @@ body {
 
 /* Стеклянная карточка */
 .glass-card {
-  margin-top: 70px; /* поднял карточку выше */
+  margin-top: 100px;
   width: 90%;
   max-width: 480px;
   background: rgba(255, 255, 255, 0.08);
@@ -173,8 +173,8 @@ body {
 /* Подвал */
 footer {
   text-align: center;
-  margin-top: 40px; /* ближе к карточке */
-  padding: 25px 20px;
+  margin-top: 60px; /* отдалён от карточки */
+  padding: 30px 20px;
   font-size: 12px;
   color: rgba(255,255,255,0.7);
   line-height: 1.6;
