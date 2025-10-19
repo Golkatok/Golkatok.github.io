@@ -23,43 +23,47 @@ header {
   left: 0;
   z-index: 10;
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
   align-items: center;
-  padding: 0 15px; /* меньше отступы, чтобы шестерёнка была в пределах экрана */
-  background: rgba(0,0,0,0.2);
-  backdrop-filter: blur(10px);
+  padding: 0 15px;
 }
 
+/* Меню с кругом */
 .menu-icon {
-  width: 28px;
-  height: 22px;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.05);
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: center;
+  align-items: center;
   cursor: pointer;
+  transition: background 0.3s ease;
+}
+.menu-icon:hover {
+  background: rgba(255,255,255,0.1);
 }
 .menu-icon span {
   display: block;
   height: 3px;
-  width: 100%;
+  width: 25px;
   background: white;
   border-radius: 3px;
-  transition: all 0.3s ease;
+  margin: 4px 0;
+  transition: all 0.4s ease;
 }
-.menu-icon:hover span:nth-child(1) { transform: translateY(9px) rotate(45deg); }
-.menu-icon:hover span:nth-child(2) { opacity: 0; }
-.menu-icon:hover span:nth-child(3) { transform: translateY(-9px) rotate(-45deg); }
 
-.settings-icon {
-  font-size: 22px; /* уменьшен размер */
-  line-height: 1;
-  border-radius: 50%;
-  background: rgba(255,255,255,0.05);
-  padding: 6px; /* уменьшен padding */
-  cursor: pointer;
-  transition: transform 0.3s ease, background 0.3s ease;
+/* Toggle animation */
+.menu-icon.active span:nth-child(1) {
+  transform: rotate(45deg) translate(5px, 5px);
 }
-.settings-icon:hover { transform: rotate(90deg); background: rgba(255,255,255,0.1); }
+.menu-icon.active span:nth-child(2) {
+  opacity: 0;
+}
+.menu-icon.active span:nth-child(3) {
+  transform: rotate(-45deg) translate(5px, -5px);
+}
 
 /* Main */
 main {
@@ -68,7 +72,7 @@ main {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding-top: 60px; /* чтобы header не перекрывал */
+  padding-top: 70px;
 }
 
 /* Карточка */
@@ -92,7 +96,7 @@ main {
   box-shadow: 0 0 15px rgba(255,255,255,0.2);
 }
 
-/* Приветственный текст */
+/* Текст */
 .intro-text {
   margin-top: 15px;
   line-height: 1.6;
@@ -100,7 +104,7 @@ main {
 .intro-text a { color: #77c0ff; text-decoration: none; }
 .intro-text a:hover { text-decoration: underline; }
 
-/* Кнопки внутри карточки */
+/* Кнопки */
 .card .buttons {
   display: flex;
   justify-content: center;
@@ -131,8 +135,8 @@ footer {
   margin: 0 auto;
 }
 
-/* Анимация плавания карточки */
+/* Анимация карточки */
 @keyframes float {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-10px); }
-  }
+}
