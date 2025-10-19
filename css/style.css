@@ -2,7 +2,7 @@
 body {
   margin: 0;
   font-family: "Playfair Display", serif;
-  background: radial-gradient(circle at top left, rgba(255,255,255,0.1), rgba(0,0,0,0.9));
+  background: radial-gradient(circle at top, #0a0a0a, #000000 90%);
   color: white;
   display: flex;
   flex-direction: column;
@@ -58,15 +58,15 @@ header {
   font-size: 24px;
   line-height: 1;
   border-radius: 50%;
-  background: rgba(255,255,255,0.1);
-  backdrop-filter: blur(10px);
+  background: rgba(255,255,255,0.05);
+  backdrop-filter: blur(8px);
   padding: 8px;
   cursor: pointer;
   transition: transform 0.3s ease, background 0.3s ease;
 }
 .settings-icon:hover {
   transform: rotate(90deg);
-  background: rgba(255,255,255,0.2);
+  background: rgba(255,255,255,0.15);
 }
 
 /* ===== Основной блок ===== */
@@ -76,22 +76,23 @@ main {
   width: 100%;
 }
 
-/* Карточка (эффект “liquid glass”) */
+/* ===== Карточка ===== */
 .card {
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.06);
   backdrop-filter: blur(25px);
+  border: 1px solid rgba(255,255,255,0.1);
   padding: 35px;
   border-radius: 40px;
-  box-shadow: 0 10px 40px rgba(255, 255, 255, 0.15);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
   width: 80%;
   max-width: 400px;
-  margin: 0 auto 80px;
+  margin: 0 auto 60px;
   animation: float 5s ease-in-out infinite;
   position: relative;
   overflow: hidden;
 }
 
-/* Жидкий бликовый эффект */
+/* Блик “жидкого стекла” */
 .card::before {
   content: "";
   position: absolute;
@@ -99,7 +100,7 @@ main {
   left: -50%;
   width: 200%;
   height: 200%;
-  background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.3), transparent 60%);
+  background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.12), transparent 60%);
   animation: shimmer 8s infinite linear;
 }
 
@@ -111,11 +112,14 @@ main {
 .logo {
   width: 100%;
   border-radius: 30px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.5);
 }
 
 .intro-text {
   margin-top: 20px;
   line-height: 1.6;
+  z-index: 2;
+  position: relative;
 }
 .intro-text a {
   color: #77c0ff;
@@ -125,30 +129,26 @@ main {
   text-decoration: underline;
 }
 
-/* ===== Соцсети ===== */
-.socials {
-  text-align: center;
-  margin-bottom: 70px;
-}
-.socials p {
-  margin-bottom: 12px;
-}
-
+/* ===== Кнопки внутри карточки ===== */
 .buttons {
   display: flex;
   justify-content: center;
-  gap: 25px;
+  gap: 20px;
+  margin-top: 25px;
+  z-index: 2;
+  position: relative;
 }
 
 .yt-btn, .twitch-btn {
   padding: 10px 25px;
   border-radius: 25px;
   background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(8px);
   color: white;
   text-decoration: none;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(255,255,255,0.1);
+  box-shadow: 0 4px 15px rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
 }
 
 .yt-btn:hover {
