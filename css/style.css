@@ -15,6 +15,7 @@ body {
 
 .top-spacer { height:1.2cm; width:100%; }
 
+/* Верхнее меню (невидимое, но место есть) */
 .top-bar {
   position:absolute;
   top:15px;
@@ -26,21 +27,14 @@ body {
 }
 
 .menu-btn, .settings-btn {
-  font-size:22px;
-  background:none;
+  width:50px;      /* увеличено на 5мм */
+  height:50px;     /* увеличено на 5мм */
+  background:transparent;
   border:none;
   cursor:pointer;
-  transition:0.3s;
-  display:flex;
-  flex-direction:column;
-  justify-content:space-between;
-  height:18px;
-  width:30px;
 }
 
-.menu-btn:hover .bar { background:white; }
-.menu-btn .bar { height:3px; width:100%; border-radius:2px; background:rgba(255,255,255,0.8); transition:0.3s; }
-
+/* ====== Стеклянная карточка ====== */
 .glass-card {
   margin-top:20px;
   width:90%;
@@ -54,7 +48,6 @@ body {
   box-shadow:0 8px 32px rgba(0,0,0,0.25), inset 0 1px 1px rgba(255,255,255,0.15), inset 0 -1px 1px rgba(0,0,0,0.2);
   text-align:center;
   position:relative;
-  animation: fadeIn 1.5s ease;
 }
 
 .glass-card::before {
@@ -66,24 +59,6 @@ body {
   opacity:0.4;
   pointer-events:none;
 }
-
-@keyframes fadeIn { from{opacity:0;transform:translateY(30px);} to{opacity:1;transform:translateY(0);} }
-
-.main-image { width:120px; height:120px; border-radius:50%; object-fit:cover; box-shadow:0 0 20px rgba(255,255,255,0.2); margin-bottom:15px; animation:float 3s ease-in-out infinite; }
-@keyframes float { 0%,100%{transform:translateY(0);}50%{transform:translateY(-8px);} }
-
-.intro-text h1{font-size:28px;margin-bottom:10px;}
-.intro-text p{color:rgba(255,255,255,0.85);line-height:1.5;}
-.intro-text a{color:#87bfff;text-decoration:none;transition:0.3s;}
-.intro-text a:hover{text-shadow:0 0 8px #87bfff;}
-
-.social-section{margin-top:30px;}
-.social-section h2{font-size:18px;margin-bottom:12px;color:rgba(255,255,255,0.9);}
-.social-buttons{display:flex;justify-content:center;gap:15px;}
-.social-buttons a{padding:10px 24px;border-radius:25px;font-weight:bold;color:white;text-decoration:none;backdrop-filter:blur(15px);-webkit-backdrop-filter:blur(15px);border:1px solid rgba(255,255,255,0.25);transition:0.3s;}
-.yt-btn{background:rgba(255,0,0,0.3);box-shadow:0 0 10px rgba(255,0,0,0.4);}
-.tw-btn{background:rgba(145,70,255,0.3);box-shadow:0 0 10px rgba(145,70,255,0.4);}
-.social-buttons a:hover{transform:scale(1.08);}
 
 /* ====== Нижние кнопки ====== */
 .liquid-nav {
@@ -100,8 +75,8 @@ body {
   width:70px;
   height:70px;
   border-radius:50%;
-  background:rgba(255,255,255,0.12);
-  border:1px solid rgba(255,255,255,0.25);
+  background:rgba(255,255,255,0.08); /* более прозрачные */
+  border:1px solid rgba(255,255,255,0.15);
   backdrop-filter:blur(25px) saturate(180%);
   -webkit-backdrop-filter:blur(25px) saturate(180%);
   box-shadow:0 8px 25px rgba(0,0,0,0.35), inset 0 2px 4px rgba(255,255,255,0.1);
@@ -110,9 +85,9 @@ body {
   justify-content:center;
   cursor:pointer;
   transition: transform 0.3s, box-shadow 0.3s;
+  font-size:28px; /* иконки крупнее */
 }
 
-/* ====== Анимация волны при нажатии ====== */
 .liquid-btn:active {
   animation: wave 0.6s ease;
 }
@@ -125,13 +100,13 @@ body {
   100%{transform:scale(1);}
 }
 
-/* ====== Выдвигающееся меню справа ====== */
+/* ====== Выдвигающееся меню ====== */
 .slide-menu {
   position:fixed;
   bottom:110px;
   right:35px;
-  width:180px;
-  background:rgba(255,255,255,0.15);
+  width:200px;
+  background:rgba(255,255,255,0.12);
   backdrop-filter:blur(25px);
   -webkit-backdrop-filter:blur(25px);
   border-radius:25px;
@@ -142,9 +117,20 @@ body {
   box-shadow:0 8px 25px rgba(0,0,0,0.3), inset 0 2px 4px rgba(255,255,255,0.1);
   z-index:9999;
 }
+
 .slide-menu ul{list-style:none;}
-.slide-menu ul li a{color:white;text-decoration:none;display:block;padding:8px;border-radius:15px;transition:0.3s;}
-.slide-menu ul li a:hover{background:rgba(255,255,255,0.2);}
+.slide-menu ul li a{
+  color:white;
+  text-decoration:none;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:8px;
+  border-radius:15px;
+  transition:0.3s;
+}
+.slide-menu ul li a:hover{background:rgba(255,255,255,0.2); font-weight:bold;}
+.slide-menu ul li a i{font-size:18px;}
 
 /* ====== Подвал ====== */
 footer {
