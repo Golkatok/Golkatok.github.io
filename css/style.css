@@ -17,12 +17,13 @@ body {
   color: white;
   overflow-x: hidden;
   position: relative;
+  padding-top: 10px; /* 🟩 Добавлен сантиметр пробела сверху */
 }
 
 /* ====== Верхняя панель ====== */
 .top-bar {
   position: absolute;
-  top: 24px; /* 🔽 было 15px — опустили на 9px (~9 мм визуально) */
+  top: 10px; /* 🟩 Теперь сама панель начинается через 1 см от верха */
   width: 100%;
   display: flex;
   justify-content: space-between;
@@ -204,4 +205,4 @@ footer a:hover {
   opacity: 0.8;
   display: block;
   margin-top: 5px;
-  }
+                              }
