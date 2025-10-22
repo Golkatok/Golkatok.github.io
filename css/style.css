@@ -7,9 +7,15 @@
   font-family: 'Playfair Display', serif;
 }
 
+/* ====== Прозрачный блок для отступа сверху ====== */
+.top-spacer {
+  height: 1cm;           /* ровно 1 сантиметр */
+  width: 100%;
+  background: transparent; /* полностью прозрачный */
+}
+
 /* ====== Основное ====== */
 body {
-  margin-top: 1cm;
   background: radial-gradient(circle at top right, #1e1e28, #0a0a0f);
   min-height: 100vh;
   display: flex;
@@ -18,13 +24,12 @@ body {
   color: white;
   overflow-x: hidden;
   position: relative;
-  padding-top: 1cm; /* 🟩 Добавлен сантиметр пробела сверху */
 }
 
 /* ====== Верхняя панель ====== */
 .top-bar {
   position: absolute;
-  top: 1cm; /* 🟩 Теперь сама панель начинается через 1 см от верха */
+  top: 0; /* теперь верхняя панель сдвинута вниз благодаря .top-spacer */
   width: 100%;
   display: flex;
   justify-content: space-between;
@@ -206,4 +211,4 @@ footer a:hover {
   opacity: 0.8;
   display: block;
   margin-top: 5px;
-                              }
+}
