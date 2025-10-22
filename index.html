@@ -6,20 +6,17 @@
   <title>Главная — Jahvir MiniApp</title>
   <link rel="stylesheet" href="css/style.css">
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 </head>
 <body>
 
   <!-- Прозрачный блок для отступа -->
   <div class="top-spacer"></div>
 
-  <!-- Верхняя панель -->
+  <!-- Верхняя панель (невидимая, но занимает место) -->
   <div class="top-bar">
-    <button class="menu-btn" aria-label="Меню">
-      <span class="bar bar1"></span>
-      <span class="bar bar2"></span>
-      <span class="bar bar3"></span>
-    </button>
-    <button class="settings-btn" aria-label="Настройки">⚙️</button>
+    <button class="menu-btn" aria-label="Меню"></button>
+    <button class="settings-btn" aria-label="Настройки"></button>
   </div>
 
   <!-- Стеклянная карточка -->
@@ -38,29 +35,25 @@
     <div class="social-section">
       <h2>Главные соц сети Jahvir</h2>
       <div class="social-buttons">
-        <a href="#" class="yt-btn">YouTube</a>
-        <a href="#" class="tw-btn">Twitch</a>
+        <a href="#" class="yt-btn"><i class="fab fa-youtube fa-lg"></i> YouTube</a>
+        <a href="#" class="tw-btn"><i class="fab fa-twitch fa-lg"></i> Twitch</a>
       </div>
     </div>
   </div>
 
   <!-- Нижние Liquid Glass кнопки -->
   <div class="liquid-nav">
-    <button class="liquid-btn menu-btn">
-      <span class="bar bar1"></span>
-      <span class="bar bar2"></span>
-      <span class="bar bar3"></span>
-    </button>
-    <button class="liquid-btn settings-btn">⚙️</button>
+    <button class="liquid-btn menu-btn"><i class="fas fa-bars fa-2x"></i></button>
+    <button class="liquid-btn settings-btn"><i class="fas fa-cog fa-2x"></i></button>
   </div>
 
   <!-- Выдвигающееся меню справа от кнопки -->
   <div class="slide-menu" id="slideMenu">
     <ul>
-      <li><a href="#">Главная</a></li>
-      <li><a href="#">Новости</a></li>
-      <li><a href="#">Соц. сети</a></li>
-      <li><a href="#">Контакты</a></li>
+      <li><a href="#"><i class="fas fa-house"></i> Главная</a></li>
+      <li><a href="#"><i class="fas fa-newspaper"></i> Новости</a></li>
+      <li><a href="#"><i class="fab fa-youtube"></i> Соц. сети</a></li>
+      <li><a href="#"><i class="fas fa-address-book"></i> Контакты</a></li>
     </ul>
   </div>
 
