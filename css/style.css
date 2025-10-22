@@ -19,13 +19,67 @@ body {
   position: relative;
 }
 
-/* ====== Отступ сверху ====== */
-.top-space {
+/* ====== Верхний отступ ====== */
+.top-spacer {
   height: 1.2cm;
   width: 100%;
 }
 
-/* ====== Liquid Glass карточка ====== */
+/* ====== Верхняя панель ====== */
+.top-bar {
+  position: absolute;
+  top: 15px;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 25px;
+  z-index: 10;
+}
+
+/* ====== Кнопка меню ====== */
+.menu-btn {
+  background: none;
+  border: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 18px;
+  width: 25px;
+  cursor: pointer;
+  transition: 0.4s;
+}
+.menu-btn .bar {
+  width: 100%;
+  height: 3px;
+  background: rgba(255,255,255,0.8);
+  border-radius: 3px;
+  transition: all 0.4s ease;
+}
+.menu-btn:hover .bar1 {
+  transform: translateY(7px) rotate(45deg);
+}
+.menu-btn:hover .bar2 {
+  opacity: 0;
+}
+.menu-btn:hover .bar3 {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+/* ====== Настройки ====== */
+.settings-btn {
+  font-size: 22px;
+  background: none;
+  border: none;
+  color: rgba(255,255,255,0.8);
+  cursor: pointer;
+  transition: 0.3s;
+}
+.settings-btn:hover {
+  color: white;
+  transform: rotate(45deg);
+}
+
+/* ====== Карточка ====== */
 .glass-card {
   margin-top: 20px;
   width: 90%;
@@ -44,7 +98,6 @@ body {
   animation: fadeIn 1.5s ease;
 }
 
-/* Мягкое внутреннее сияние */
 .glass-card::before {
   content: "";
   position: absolute;
@@ -55,7 +108,6 @@ body {
   pointer-events: none;
 }
 
-/* Анимация появления */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(30px); }
   to { opacity: 1; transform: translateY(0); }
@@ -131,7 +183,7 @@ body {
   transform: scale(1.08);
 }
 
-/* ====== Нижние Liquid Glass кнопки ====== */
+/* ====== Liquid Glass кнопки снизу ====== */
 .liquid-nav {
   position: fixed;
   bottom: 25px;
@@ -170,7 +222,7 @@ body {
   100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255,255,255,0); }
 }
 
-/* ====== Гамбургер ====== */
+/* ====== Гамбургер внутри нижней кнопки ====== */
 .icon {
   display: flex;
   flex-direction: column;
@@ -210,4 +262,4 @@ footer a:hover {
   opacity: 0.8;
   display: block;
   margin-top: 5px;
-}
+  }
