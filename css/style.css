@@ -9,6 +9,7 @@
 
 /* ====== Основное ====== */
 body {
+  margin-top: 10px;
   background: radial-gradient(circle at top right, #1e1e28, #0a0a0f);
   min-height: 100vh;
   display: flex;
