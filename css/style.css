@@ -22,7 +22,7 @@ body {
 /* ====== Верхняя панель ====== */
 .top-bar {
   position: absolute;
-  top: 15px;
+  top: 24px; /* 🔽 было 15px — опустили на 9px (~9 мм визуально) */
   width: 100%;
   display: flex;
   justify-content: space-between;
