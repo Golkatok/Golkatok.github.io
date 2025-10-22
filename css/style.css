@@ -152,7 +152,7 @@ body {
 .tw-btn { background: rgba(145,70,255,0.3); box-shadow: 0 0 10px rgba(145,70,255,0.4); }
 .social-buttons a:hover { transform: scale(1.08); }
 
-/* ====== Liquid Glass кнопки снизу ====== */
+/* ====== Liquid Glass кнопки снизу (поверх подвала) ====== */
 .liquid-nav {
   position: fixed;
   bottom: 25px;
@@ -160,8 +160,7 @@ body {
   display: flex;
   justify-content: space-between;
   padding: 0 35px;
-  z-index: 1000; /* поверх всего */
-  pointer-events: all;
+  z-index: 9999; /* поверх подвала */
 }
 
 .liquid-btn {
@@ -181,9 +180,49 @@ body {
   transition: transform 0.3s, box-shadow 0.3s;
 }
 
+/* ====== Анимация волны при нажатии ====== */
 .liquid-btn:active {
-  animation: pulse 0.4s ease;
+  animation: wave 0.6s ease;
 }
 
-@keyframes pulse {
-  0% { transform:
+@keyframes wave {
+  0% { transform: scale(1); box-shadow: 0 8px 25px rgba(0,0,0,0.35), inset 0 2px 4px rgba(255,255,255,0.1); }
+  30% { transform: scale(1.12); box-shadow: 0 12px 30px rgba(0,0,0,0.4), inset 0 2px 4px rgba(255,255,255,0.15); }
+  60% { transform: scale(0.95); box-shadow: 0 5px 20px rgba(0,0,0,0.25), inset 0 1px 2px rgba(255,255,255,0.1); }
+  100% { transform: scale(1); box-shadow: 0 8px 25px rgba(0,0,0,0.35), inset 0 2px 4px rgba(255,255,255,0.1); }
+}
+
+/* ====== Гамбургер внутри нижней кнопки ====== */
+.icon {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  height: 18px;
+}
+.bar {
+  width: 26px;
+  height: 3px;
+  background: white;
+  border-radius: 3px;
+}
+
+/* ====== Подвал ====== */
+footer {
+  text-align: center;
+  margin-top: 90px;
+  padding: 30px 20px;
+  font-size: 12px;
+  color: rgba(255,255,255,0.7);
+  background: rgba(255,255,255,0.08);
+  border-top-left-radius: 30px;
+  border-top-right-radius: 30px;
+  backdrop-filter: blur(15px);
+  box-shadow: 0 -4px 20px rgba(0,0,0,0.3);
+  width: 100%;
+  position: relative;
+  z-index: 1;
+}
+footer a { color: #7ebfff; text-decoration: none; }
+footer a:hover { text-shadow: 0 0 6px #7ebfff; }
+.version { opacity: 0.8; display: block; margin-top: 5px; }
