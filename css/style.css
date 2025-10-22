@@ -9,9 +9,9 @@
 
 /* ====== Прозрачный блок для отступа сверху ====== */
 .top-spacer {
-  height: 1cm;           /* ровно 1 сантиметр */
+  height: 1.2cm;           /* 1 см + 2 мм */
   width: 100%;
-  background: transparent; /* полностью прозрачный */
+  background: transparent;  /* полностью прозрачный */
 }
 
 /* ====== Основное ====== */
@@ -29,7 +29,7 @@ body {
 /* ====== Верхняя панель ====== */
 .top-bar {
   position: absolute;
-  top: 0; /* теперь верхняя панель сдвинута вниз благодаря .top-spacer */
+  top: 0; /* панель после прозрачного блока */
   width: 100%;
   display: flex;
   justify-content: space-between;
@@ -82,7 +82,7 @@ body {
 
 /* ====== Liquid Glass карточка ====== */
 .glass-card {
-  margin-top: 120px;
+  margin-top: 90px; /* сдвинута ближе к верхней панели */
   width: 90%;
   max-width: 460px;
   padding: 35px 25px 55px 25px;
@@ -211,4 +211,4 @@ footer a:hover {
   opacity: 0.8;
   display: block;
   margin-top: 5px;
-}
+  }
