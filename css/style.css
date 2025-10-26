@@ -1,153 +1,187 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display&display=swap');
+:root{
+  --glass-bg: rgba(255,255,255,0.10);
+  --glass-border: rgba(255,255,255,0.20);
+  --glass-strong: rgba(255,255,255,0.22);
+}
 
-* { margin:0; padding:0; box-sizing:border-box; font-family:'Playfair Display', serif; }
+/* базовые */
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  font-family: "Arial", "Playfair Display", serif;
+  background: radial-gradient(circle at top right,#14121a,#07070a);
+  color:#ffffff;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+}
 
-body {
-  background: radial-gradient(circle at top right, #1e1e28, #0a0a0f);
-  min-height:100vh;
+/* верхний отступ (1.2cm) */
+.top-spacer{height:1.2cm;width:100%}
+
+/* верхняя панель — совершенно прозрачная, но занимает место */
+.top-bar{
+  position:absolute;
+  top:0;
+  width:100%;
+  height:1.2cm;
   display:flex;
-  flex-direction:column;
+  justify-content:space-between;
   align-items:center;
-  color:white;
-  overflow-x:hidden;
-  position:relative;
+  padding:0 20px;
+  pointer-events:none; /* чтобы она не мешала кликам */
 }
-
-.top-spacer { height:1.2cm; width:100%; }
-
-/* Верхнее меню (невидимое, но место есть) */
-.top-bar {
-  position:absolute;
-  top:15px;
-  width:100%;
-  display:flex;
-  justify-content:space-between;
-  padding:0 25px;
-  z-index:10;
-}
-
-.menu-btn, .settings-btn {
-  width:50px;      /* увеличено на 5мм */
-  height:50px;     /* увеличено на 5мм */
+.invisible-btn{
+  width:calc(5mm + 40px); /* место */
+  height:calc(5mm + 40px);
   background:transparent;
-  border:none;
-  cursor:pointer;
+  border:0;
 }
 
-/* ====== Стеклянная карточка ====== */
-.glass-card {
-  margin-top:20px;
-  width:90%;
+/* Контентная карточка — твой дизайн */
+.glass-card{
+  margin:18px auto 40px;
+  width:92%;
   max-width:460px;
-  padding:35px 25px 55px 25px;
-  border-radius:40px;
-  background:rgba(255,255,255,0.12);
-  backdrop-filter:blur(20px) saturate(180%);
-  -webkit-backdrop-filter:blur(20px) saturate(180%);
-  border:1px solid rgba(255,255,255,0.2);
-  box-shadow:0 8px 32px rgba(0,0,0,0.25), inset 0 1px 1px rgba(255,255,255,0.15), inset 0 -1px 1px rgba(0,0,0,0.2);
+  padding:30px 22px;
+  border-radius:32px;
+  background: rgba(255,255,255,0.08);
+  border:1px solid rgba(255,255,255,0.12);
+  backdrop-filter: blur(18px) saturate(160%);
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.5), inset 0 1px 2px rgba(255,255,255,0.03);
+  color:#fff;
   text-align:center;
-  position:relative;
 }
+.main-image{width:120px;height:120px;border-radius:50%;object-fit:cover;margin-bottom:12px;display:block;margin-left:auto;margin-right:auto}
+.intro-text h1{font-size:28px;margin-bottom:8px}
+.intro-text p{color:rgba(255,255,255,0.85);line-height:1.45}
+.social-buttons{display:flex;gap:12px;justify-content:center;margin-top:18px}
+.social-buttons a{padding:8px 14px;border-radius:18px;background:rgba(255,255,255,0.03);color:#fff;text-decoration:none;font-weight:600;border:1px solid rgba(255,255,255,0.04)}
 
-.glass-card::before {
-  content:"";
-  position:absolute;
-  inset:0;
-  border-radius:inherit;
-  background:radial-gradient(circle at 25% 20%, rgba(255,255,255,0.25), transparent 60%);
-  opacity:0.4;
-  pointer-events:none;
-}
-
-/* ====== Нижние кнопки ====== */
-.liquid-nav {
+/* ---------------------- Нижняя панель ---------------------- */
+.bottom-nav{
   position:fixed;
-  bottom:25px;
-  width:100%;
+  left:0;
+  right:0;
+  bottom:18px;
   display:flex;
   justify-content:space-between;
-  padding:0 35px;
+  align-items:center;
+  padding:0 28px;
+  pointer-events:none; /* контейнер не блокирует, сами кнопки включат клики */
   z-index:9999;
 }
 
-.liquid-btn {
+/* зоны */
+.nav-left, .nav-right{pointer-events:all;display:flex;align-items:center;gap:14px}
+
+/* круглая кнопка (капля) */
+.circle-btn{
   width:70px;
   height:70px;
   border-radius:50%;
-  background:rgba(255,255,255,0.08); /* более прозрачные */
-  border:1px solid rgba(255,255,255,0.15);
-  backdrop-filter:blur(25px) saturate(180%);
-  -webkit-backdrop-filter:blur(25px) saturate(180%);
-  box-shadow:0 8px 25px rgba(0,0,0,0.35), inset 0 2px 4px rgba(255,255,255,0.1);
-  display:flex;
+  background: rgba(255,255,255,0.06); /* ещё более прозрачная */
+  border: 1px solid rgba(255,255,255,0.14);
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  box-shadow: 0 10px 24px rgba(0,0,0,0.45), inset 0 2px 6px rgba(255,255,255,0.03);
+  display:inline-flex;
   align-items:center;
   justify-content:center;
   cursor:pointer;
-  transition: transform 0.3s, box-shadow 0.3s;
-  font-size:28px; /* иконки крупнее */
+  transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
+  font-size:20px; /* иконки будут ровны */
 }
 
-.liquid-btn:active {
-  animation: wave 0.6s ease;
+/* hover и active */
+.circle-btn:hover{ transform: translateY(-4px) scale(1.04); box-shadow: 0 14px 30px rgba(0,0,0,0.55)}
+.circle-btn:active{ animation: btnWave .58s ease; }
+
+/* волна */
+@keyframes btnWave{
+  0%{ transform: scale(1) }
+  30%{ transform: scale(1.12) }
+  60%{ transform: scale(.98) }
+  100%{ transform: scale(1) }
 }
 
-@keyframes wave {
-  0%{transform:scale(1);}
-  25%{transform:scale(1.15);}
-  50%{transform:scale(0.95);}
-  75%{transform:scale(1.05);}
-  100%{transform:scale(1);}
+/* search wrapper: панель поиска всплывает над кнопками */
+.search-wrapper{position:relative; display:flex; align-items:center}
+
+/* панель поиска (скрыта по умолчанию) */
+.search-panel{
+  position:absolute;
+  right:86px; /* чуть левее кнопки поиска */
+  bottom:86px;
+  width:260px;
+  max-width:80vw;
+  background: rgba(255,255,255,0.10);
+  border-radius:20px;
+  padding:8px;
+  display:none;
+  align-items:center;
+  gap:8px;
+  border:1px solid rgba(255,255,255,0.14);
+  backdrop-filter: blur(18px) saturate(160%);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.45), inset 0 2px 5px rgba(255,255,255,0.03);
+  z-index:10001;
 }
 
-/* ====== Выдвигающееся меню ====== */
-.slide-menu {
+/* форма внутри */
+.search-panel form{display:flex;gap:8px;width:100%}
+.search-panel input[type="search"]{
+  flex:1;
+  padding:8px 10px;
+  border-radius:12px;
+  border:0;
+  outline:none;
+  background: rgba(255,255,255,0.02);
+  color:#fff;
+  font-size:15px;
+}
+.search-panel button{padding:8px 10px;border-radius:10px;border:0;background:rgba(255,255,255,0.06);color:#fff;cursor:pointer}
+
+/* fly menu (выезжающее меню справа от левой кнопки) */
+.fly-menu{
   position:fixed;
   bottom:110px;
-  right:35px;
-  width:200px;
-  background:rgba(255,255,255,0.12);
-  backdrop-filter:blur(25px);
-  -webkit-backdrop-filter:blur(25px);
-  border-radius:25px;
-  padding:15px;
+  left:28px;
+  min-width:180px;
+  background: rgba(255,255,255,0.08);
+  border-radius:18px;
+  padding:10px;
   display:none;
-  flex-direction:column;
-  gap:10px;
-  box-shadow:0 8px 25px rgba(0,0,0,0.3), inset 0 2px 4px rgba(255,255,255,0.1);
-  z-index:9999;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.45);
+  border:1px solid rgba(255,255,255,0.12);
+  backdrop-filter: blur(18px) saturate(160%);
+  z-index:10001;
 }
+.fly-menu ul{list-style:none}
+.fly-menu a{display:block;color:#fff;text-decoration:none;padding:8px;border-radius:10px}
+.fly-menu a:hover{background:rgba(255,255,255,0.06)}
 
-.slide-menu ul{list-style:none;}
-.slide-menu ul li a{
-  color:white;
-  text-decoration:none;
-  display:flex;
-  align-items:center;
-  gap:10px;
-  padding:8px;
-  border-radius:15px;
-  transition:0.3s;
-}
-.slide-menu ul li a:hover{background:rgba(255,255,255,0.2); font-weight:bold;}
-.slide-menu ul li a i{font-size:18px;}
-
-/* ====== Подвал ====== */
-footer {
-  text-align:center;
-  margin-top:30px;
-  padding:30px 20px;
-  font-size:12px;
-  color:rgba(255,255,255,0.7);
-  background:rgba(255,255,255,0.08);
-  border-top-left-radius:30px;
-  border-top-right-radius:30px;
-  backdrop-filter:blur(15px);
-  box-shadow:0 -4px 20px rgba(0,0,0,0.3);
+/* Подвал — liquid glass */
+.site-footer{
   width:100%;
+  padding:22px 18px;
+  margin-top:34px;
+  background: rgba(255,255,255,0.06);
+  border-top-left-radius:26px;
+  border-top-right-radius:26px;
+  border:1px solid rgba(255,255,255,0.08);
+  backdrop-filter: blur(14px) saturate(140%);
+  box-shadow: 0 -8px 30px rgba(0,0,0,0.45);
+  color:rgba(255,255,255,0.85);
+  text-align:center;
   position:relative;
   z-index:1;
 }
-footer a{color:#7ebfff;text-decoration:none;}
-footer a:hover{text-shadow:0 0 6px #7ebfff;}
-.version{opacity:0.8;display:block;margin-top:5px;}
+
+/* подсветка найденного текста */
+.highlighted { background: rgba(255,255,0,0.25); color:inherit; border-radius:3px; padding:0 2px; }
+
+/* адаптив */
+@media (max-width:420px){
+  .circle-btn{ width:60px;height:60px;font-size:18px }
+  .search-panel{ right:72px; width:200px }
+    }
