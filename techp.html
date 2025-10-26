@@ -16,78 +16,106 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    background: linear-gradient(135deg, #14151f, #1c1e2b, #202233);
-    background-size: 200% 200%;
-    animation: gradient 10s ease infinite;
-    font-family: "Segoe UI", sans-serif;
+    background: radial-gradient(circle at top, #202338, #11131d 80%);
+    font-family: "Segoe UI", "Inter", sans-serif;
     color: #fff;
+    overflow: hidden;
     text-align: center;
   }
 
-  @keyframes gradient {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
+  /* Плавно движущийся свет */
+  .light {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at var(--x, 50%) var(--y, 50%), rgba(255,255,255,0.1), transparent 50%);
+    pointer-events: none;
+    animation: moveLight 8s ease-in-out infinite alternate;
+  }
+
+  @keyframes moveLight {
+    0% { --x: 30%; --y: 40%; }
+    100% { --x: 70%; --y: 60%; }
   }
 
   h1 {
-    font-size: 2.4em;
+    font-size: 2.8em;
+    font-weight: 600;
     letter-spacing: 1px;
-    text-shadow: 0 0 20px rgba(255, 255, 255, 0.15);
-    margin-bottom: 10px;
-    animation: glow 2s ease-in-out infinite alternate;
-  }
-
-  @keyframes glow {
-    from { text-shadow: 0 0 10px #ffffff30; }
-    to { text-shadow: 0 0 25px #ffffffa0; }
+    margin: 0 10px 15px 10px;
+    background: linear-gradient(90deg, #7aa8ff, #c0e0ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 0 25px rgba(122,168,255,0.2);
+    animation: fadeIn 1.5s ease;
   }
 
   p {
-    font-size: 1.1em;
-    opacity: 0.85;
-    margin-bottom: 35px;
+    font-size: 1.2em;
+    opacity: 0.9;
+    margin-bottom: 40px;
+    animation: fadeIn 2s ease;
   }
 
   .countdown {
     display: flex;
     gap: 20px;
     justify-content: center;
-    font-size: 1.3em;
-    font-weight: 500;
+    animation: fadeInUp 2s ease;
   }
 
   .time-box {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.08);
     border: 1px solid rgba(255,255,255,0.15);
-    border-radius: 16px;
-    padding: 15px 20px;
-    min-width: 80px;
-    backdrop-filter: blur(12px) saturate(150%);
-    box-shadow: 0 0 25px rgba(255,255,255,0.05);
-    transition: transform 0.3s ease;
+    border-radius: 20px;
+    padding: 20px 25px;
+    min-width: 85px;
+    backdrop-filter: blur(14px) saturate(160%);
+    box-shadow: 0 0 20px rgba(255,255,255,0.05), inset 0 0 10px rgba(255,255,255,0.05);
+    transition: transform 0.4s ease, box-shadow 0.4s ease;
   }
 
   .time-box:hover {
-    transform: translateY(-4px);
+    transform: translateY(-6px);
+    box-shadow: 0 0 25px rgba(130,170,255,0.2);
+  }
+
+  .time-box span:first-child {
+    display: block;
+    font-size: 1.6em;
+    font-weight: 600;
+    text-shadow: 0 0 10px rgba(255,255,255,0.2);
   }
 
   .label {
-    display: block;
-    font-size: 0.7em;
+    font-size: 0.8em;
     opacity: 0.6;
     margin-top: 4px;
   }
 
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(40px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
   @media (max-width: 600px) {
     h1 { font-size: 2em; }
-    .countdown { gap: 10px; font-size: 1.1em; }
-    .time-box { padding: 10px 14px; min-width: 65px; }
+    p { font-size: 1em; }
+    .countdown { gap: 10px; }
+    .time-box { padding: 12px 15px; min-width: 70px; }
+    .time-box span:first-child { font-size: 1.3em; }
   }
 </style>
 </head>
 <body>
-  <h1>Мини-приложение готовится к релизу</h1>
+  <div class="light"></div>
+
+  <h1>Мини-приложение<br>готовится к релизу</h1>
   <p>Отсчёт до беты:</p>
 
   <div class="countdown" id="countdown">
@@ -110,15 +138,16 @@
   </div>
 
   <script>
-    // Устанавливаем дату окончания: 3 ноября 2025, 14:00
-    const targetDate = new Date("2025-11-05T14:00:00");
+    const targetDate = new Date("2025-11-03T14:00:00");
 
     function updateCountdown() {
       const now = new Date();
-      let diff = targetDate - now;
+      const diff = targetDate - now;
+
+      const countdown = document.getElementById("countdown");
 
       if (diff <= 0) {
-        document.getElementById("countdown").innerHTML = "<p>🎉 Бета будет доступна в ближайшее время! <br>Из-за часового пояса, обновление может задержаться.</p>";
+        countdown.innerHTML = "<p style='font-size:1.4em;opacity:0.9;'>🎉 Бета уже доступна!</p>";
         return;
       }
 
@@ -128,9 +157,9 @@
       const seconds = Math.floor((diff / 1000) % 60);
 
       document.getElementById("days").textContent = days;
-      document.getElementById("hours").textContent = hours;
-      document.getElementById("minutes").textContent = minutes;
-      document.getElementById("seconds").textContent = seconds;
+      document.getElementById("hours").textContent = hours.toString().padStart(2, '0');
+      document.getElementById("minutes").textContent = minutes.toString().padStart(2, '0');
+      document.getElementById("seconds").textContent = seconds.toString().padStart(2, '0');
     }
 
     updateCountdown();
