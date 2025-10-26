@@ -17,7 +17,7 @@
     <button class="invisible-btn" aria-hidden="true"></button>
   </div>
 
-  <!-- Основной контент (твой оригинал) -->
+  <!-- Основной контент -->
   <div class="glass-card">
     <img src="images/image1.png" alt="Jahvir" class="main-image">
     <div class="intro-text">
@@ -40,11 +40,9 @@
 
   <!-- Нижняя liquid glass панель -->
   <div class="bottom-nav" role="navigation" aria-label="Нижняя навигация">
-    <!-- Слева: меню (гамбургер) -->
     <div class="nav-left">
       <button class="circle-btn btn-menu" id="menuBtn" aria-label="Открыть меню">
-        <!-- SVG гамбургер -->
-        <svg width="22" height="16" viewBox="0 0 22 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <svg width="22" height="16" viewBox="0 0 22 16" fill="none" xmlns="http://www.w3.org/2000/svg">
           <rect y="0" width="22" height="2" rx="1" fill="white" opacity="0.95"/>
           <rect y="7" width="22" height="2" rx="1" fill="white" opacity="0.95"/>
           <rect y="14" width="22" height="2" rx="1" fill="white" opacity="0.95"/>
@@ -52,18 +50,15 @@
       </button>
     </div>
 
-    <!-- Справа: поиск и настройки -->
     <div class="nav-right">
       <div class="search-wrapper">
         <button class="circle-btn btn-search" id="searchBtn" aria-label="Поиск">
-          <!-- SVG лупа -->
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M21 21l-4.35-4.35" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
             <circle cx="11" cy="11" r="5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
         </button>
 
-        <!-- Плавающее поле поиска (скрыто по умолчанию) -->
         <div class="search-panel" id="searchPanel" aria-hidden="true">
           <form id="searchForm" role="search">
             <input id="searchInput" type="search" placeholder="Поиск по странице…" aria-label="Поиск по странице">
@@ -74,17 +69,15 @@
       </div>
 
       <button class="circle-btn btn-settings" id="settingsBtn" aria-label="Настройки">
-        <!-- SVG шестеренка -->
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-          <path d="M12 15.5A3.5 3.5 0 1 0 12 8.5a3.5 3.5 0 0 0 0 7z" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
-          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06A2 2 0 0 1 2.28 16.4l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82L4.2 2.28A2 2 0 0 1 7  - . . ." opacity="0"/>
-          <!-- simple gear fallback, visual will be fine due to opacity stroke above; if looks odd, replace with simple circle -->
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51"/>
         </svg>
       </button>
     </div>
   </div>
 
-  <!-- Появляющееся меню справа от кнопки меню -->
+  <!-- Появляющееся меню -->
   <div class="fly-menu" id="flyMenu" aria-hidden="true">
     <ul>
       <li><a href="#">Главная</a></li>
@@ -94,7 +87,7 @@
     </ul>
   </div>
 
-  <!-- Подвал Liquid Glass -->
+  <!-- Подвал -->
   <footer class="site-footer">
     ©2025<br>
     В разработке активно использовался <a href="https://chat.openai.com" target="_blank">ChatGPT</a><br>
