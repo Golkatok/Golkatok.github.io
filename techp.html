@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Мини-приложение — скоро релиз!</title>
+<style>
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #14151f, #1c1e2b, #202233);
+    background-size: 200% 200%;
+    animation: gradient 10s ease infinite;
+    font-family: "Segoe UI", sans-serif;
+    color: #fff;
+    text-align: center;
+  }
+
+  @keyframes gradient {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  h1 {
+    font-size: 2.4em;
+    letter-spacing: 1px;
+    text-shadow: 0 0 20px rgba(255, 255, 255, 0.15);
+    margin-bottom: 10px;
+    animation: glow 2s ease-in-out infinite alternate;
+  }
+
+  @keyframes glow {
+    from { text-shadow: 0 0 10px #ffffff30; }
+    to { text-shadow: 0 0 25px #ffffffa0; }
+  }
+
+  p {
+    font-size: 1.1em;
+    opacity: 0.85;
+    margin-bottom: 35px;
+  }
+
+  .countdown {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    font-size: 1.3em;
+    font-weight: 500;
+  }
+
+  .time-box {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 16px;
+    padding: 15px 20px;
+    min-width: 80px;
+    backdrop-filter: blur(12px) saturate(150%);
+    box-shadow: 0 0 25px rgba(255,255,255,0.05);
+    transition: transform 0.3s ease;
+  }
+
+  .time-box:hover {
+    transform: translateY(-4px);
+  }
+
+  .label {
+    display: block;
+    font-size: 0.7em;
+    opacity: 0.6;
+    margin-top: 4px;
+  }
+
+  @media (max-width: 600px) {
+    h1 { font-size: 2em; }
+    .countdown { gap: 10px; font-size: 1.1em; }
+    .time-box { padding: 10px 14px; min-width: 65px; }
+  }
+</style>
+</head>
+<body>
+  <h1>Мини-приложение готовится к релизу</h1>
+  <p>Отсчёт до беты:</p>
+
+  <div class="countdown" id="countdown">
+    <div class="time-box">
+      <span id="days">0</span>
+      <span class="label">дней</span>
+    </div>
+    <div class="time-box">
+      <span id="hours">0</span>
+      <span class="label">часов</span>
+    </div>
+    <div class="time-box">
+      <span id="minutes">0</span>
+      <span class="label">минут</span>
+    </div>
+    <div class="time-box">
+      <span id="seconds">0</span>
+      <span class="label">секунд</span>
+    </div>
+  </div>
+
+  <script>
+    // Устанавливаем дату окончания: 3 ноября 2025, 14:00
+    const targetDate = new Date("2025-11-05T14:00:00");
+
+    function updateCountdown() {
+      const now = new Date();
+      let diff = targetDate - now;
+
+      if (diff <= 0) {
+        document.getElementById("countdown").innerHTML = "<p>🎉 Бета будет доступна в ближайшее время! <br>Из-за часового пояса, обновление может задержаться.</p>";
+        return;
+      }
+
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+      const minutes = Math.floor((diff / (1000 * 60)) % 60);
+      const seconds = Math.floor((diff / 1000) % 60);
+
+      document.getElementById("days").textContent = days;
+      document.getElementById("hours").textContent = hours;
+      document.getElementById("minutes").textContent = minutes;
+      document.getElementById("seconds").textContent = seconds;
+    }
+
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+  </script>
+</body>
+</html>
