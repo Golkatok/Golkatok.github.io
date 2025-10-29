@@ -9,7 +9,6 @@
 <body>
 
   <main>
-    <!-- Карточка -->
     <div class="glass-card">
       <img src="images/image1.png" alt="Jahvir" class="main-image">
       <div class="intro-text">
@@ -33,9 +32,16 @@
 
   <!-- Нижняя панель -->
   <div class="bottom-nav">
-    <button class="circle-btn" id="menuBtn">☰</button>
-    <button class="circle-btn" id="searchBtn">🔍</button>
-    <button class="circle-btn" id="settingsBtn">⚙️</button>
+    <div class="nav-left">
+      <button class="circle-btn" id="menuBtn" aria-label="Меню">
+        ☰
+      </button>
+    </div>
+
+    <div class="nav-right">
+      <button class="circle-btn" id="searchBtn" aria-label="Поиск">🔍</button>
+      <button class="circle-btn" id="settingsBtn" aria-label="Настройки">⚙️</button>
+    </div>
   </div>
 
   <!-- Меню -->
@@ -48,7 +54,7 @@
     </ul>
   </div>
 
-  <!-- Поиск -->
+  <!-- Панель поиска -->
   <div class="search-panel" id="searchPanel">
     <form id="searchForm">
       <input id="searchInput" type="search" placeholder="Поиск по странице…">
