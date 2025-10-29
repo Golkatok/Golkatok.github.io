@@ -8,16 +8,7 @@
 </head>
 <body>
 
-  <!-- Контент обёрнут в main -->
   <main>
-    <div class="top-spacer"></div>
-
-    <!-- Верхняя панель (невидимая) -->
-    <div class="top-bar" aria-hidden="true">
-      <button class="invisible-btn" aria-hidden="true"></button>
-      <button class="invisible-btn" aria-hidden="true"></button>
-    </div>
-
     <!-- Карточка -->
     <div class="glass-card">
       <img src="images/image1.png" alt="Jahvir" class="main-image">
@@ -41,53 +32,31 @@
   </main>
 
   <!-- Нижняя панель -->
-  <div class="bottom-nav" role="navigation" aria-label="Нижняя навигация">
-    <div class="nav-left">
-      <button class="circle-btn btn-menu" id="menuBtn" aria-label="Открыть меню">
-        <svg width="22" height="16" viewBox="0 0 22 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <rect y="0" width="22" height="2" rx="1" fill="white" opacity="0.95"/>
-          <rect y="7" width="22" height="2" rx="1" fill="white" opacity="0.95"/>
-          <rect y="14" width="22" height="2" rx="1" fill="white" opacity="0.95"/>
-        </svg>
-      </button>
-    </div>
-
-    <div class="nav-right">
-      <div class="search-wrapper">
-        <button class="circle-btn btn-search" id="searchBtn" aria-label="Поиск">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M21 21l-4.35-4.35" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            <circle cx="11" cy="11" r="5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </button>
-
-        <!-- Всплывающая панель поиска -->
-        <div class="search-panel" id="searchPanel" aria-hidden="true">
-          <form id="searchForm" role="search">
-            <input id="searchInput" type="search" placeholder="Поиск по странице…" aria-label="Поиск по странице">
-            <button type="submit" title="Найти">Найти</button>
-            <button type="button" id="searchClear" title="Закрыть">✕</button>
-          </form>
-        </div>
-      </div>
-
-      <button class="circle-btn btn-settings" id="settingsBtn" aria-label="Настройки">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="12" r="3"/>
-          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51"/>
-        </svg>
-      </button>
-    </div>
+  <div class="bottom-nav">
+    <button class="circle-btn" id="menuBtn">☰</button>
+    <button class="circle-btn" id="searchBtn">🔍</button>
+    <button class="circle-btn" id="settingsBtn">⚙️</button>
   </div>
 
-  <!-- Вылетающее меню -->
-  <div class="fly-menu" id="flyMenu" aria-hidden="true">
+  <!-- Меню -->
+  <div class="fly-menu" id="flyMenu">
     <ul>
       <li><a href="#">Главная</a></li>
       <li><a href="#">Новости</a></li>
       <li><a href="#">Соц. сети</a></li>
       <li><a href="#">Контакты</a></li>
     </ul>
+  </div>
+
+  <!-- Поиск -->
+  <div class="search-panel" id="searchPanel">
+    <form id="searchForm">
+      <input id="searchInput" type="search" placeholder="Поиск по странице…">
+      <div class="search-buttons">
+        <button type="submit">Найти</button>
+        <button type="button" id="searchClear">✕</button>
+      </div>
+    </form>
   </div>
 
   <!-- Подвал -->
