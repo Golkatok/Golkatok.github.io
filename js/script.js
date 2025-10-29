@@ -23,17 +23,17 @@ searchForm.addEventListener('submit', (e) => {
   e.preventDefault();
   const q = (searchInput.value || '').trim();
   clearHighlights();
-  if(!q) return;
+  if (!q) return;
   highlightText(q);
 });
 
-function highlightText(query){
+function highlightText(query) {
   const body = document.querySelector('body');
   const walker = document.createTreeWalker(body, NodeFilter.SHOW_TEXT, null, false);
   const nodes = [];
-  while(walker.nextNode()){
+  while (walker.nextNode()) {
     const n = walker.currentNode;
-    if(n.parentNode && !['SCRIPT','STYLE'].includes(n.parentNode.tagName) && n.nodeValue.trim()){
+    if (n.parentNode && !['SCRIPT','STYLE'].includes(n.parentNode.tagName) && n.nodeValue.trim()) {
       nodes.push(n);
     }
   }
@@ -44,27 +44,26 @@ function highlightText(query){
     let lastIndex = 0;
     const text = textNode.nodeValue;
     let match;
-    while((match = regex.exec(text)) !== null){
+    while ((match = regex.exec(text)) !== null) {
       const start = match.index;
       const end = regex.lastIndex;
-      if(start > lastIndex) frag.appendChild(document.createTextNode(text.slice(lastIndex, start)));
+      if (start > lastIndex) frag.appendChild(document.createTextNode(text.slice(lastIndex, start)));
       const mark = document.createElement('span');
       mark.className = 'highlighted';
       mark.textContent = text.slice(start, end);
       frag.appendChild(mark);
       lastIndex = end;
     }
-    if(lastIndex === 0) return;
-    if(lastIndex < text.length) frag.appendChild(document.createTextNode(text.slice(lastIndex)));
+    if (lastIndex === 0) return;
+    if (lastIndex < text.length) frag.appendChild(document.createTextNode(text.slice(lastIndex)));
     parent.replaceChild(frag, textNode);
   });
   const first = document.querySelector('.highlighted');
-  if(first) first.scrollIntoView({behavior:'smooth', block:'center'});
+  if (first) first.scrollIntoView({ behavior: 'smooth', block: 'center' });
 }
 
-function clearHighlights(){
-  const marks = document.querySelectorAll('.highlighted');
-  marks.forEach(m => {
+function clearHighlights() {
+  document.querySelectorAll('.highlighted').forEach(m => {
     const txt = document.createTextNode(m.textContent);
     m.parentNode.replaceChild(txt, m);
   });
@@ -79,14 +78,14 @@ settingsBtn.addEventListener('click', () => {
 });
 
 document.addEventListener('click', (e) => {
-  if(!flyMenu.contains(e.target) && !menuBtn.contains(e.target)) flyMenu.classList.remove('show');
-  if(!searchPanel.contains(e.target) && !searchBtn.contains(e.target)){
-    if(e.target !== searchInput) searchPanel.classList.remove('show');
+  if (!flyMenu.contains(e.target) && !menuBtn.contains(e.target)) flyMenu.classList.remove('show');
+  if (!searchPanel.contains(e.target) && !searchBtn.contains(e.target)) {
+    if (e.target !== searchInput) searchPanel.classList.remove('show');
   }
 });
 
 document.addEventListener('keydown', (e) => {
-  if(e.key === 'Escape'){
+  if (e.key === 'Escape') {
     flyMenu.classList.remove('show');
     searchPanel.classList.remove('show');
   }
