@@ -1,176 +1,77 @@
-/* Основные стили */
-html, body {
-  margin: 0;
-  padding: 0;
-  height: 100%;
-  background: #0e0d13;
-  font-family: "Segoe UI", Arial, sans-serif;
-  color: #fff;
-  display: flex;
-  flex-direction: column;
-}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Jahvir MiniApp — Liquid Nav</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
 
-main {
-  flex: 1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 20px;
-}
+  <main>
+    <div class="glass-card">
+      <img src="images/image1.png" alt="Jahvir" class="main-image">
+      <div class="intro-text">
+        <h1>Привет!</h1>
+        <p>
+          И даа, это МиниПриложение 
+          <a href="https://youtube.com" target="_blank">Канала Jahvir</a>.<br>
+          Здесь ты можешь найти все соц. сети канала, новости и более!
+        </p>
+      </div>
 
-/* Карточка */
-.glass-card {
-  background: rgba(255,255,255,0.08);
-  border: 1px solid rgba(255,255,255,0.1);
-  border-radius: 20px;
-  backdrop-filter: blur(14px);
-  padding: 25px;
-  max-width: 400px;
-  width: 100%;
-  text-align: center;
-}
+      <div class="social-section">
+        <h2>Главные соц сети Jahvir</h2>
+        <div class="social-buttons">
+          <a href="#" class="yt-btn">YouTube</a>
+          <a href="#" class="tw-btn">Twitch</a>
+        </div>
+      </div>
+    </div>
+  </main>
 
-.main-image {
-  width: 110px;
-  height: 110px;
-  border-radius: 50%;
-  object-fit: cover;
-  margin-bottom: 15px;
-  border: 2px solid rgba(255,255,255,0.2);
-}
+  <!-- Нижняя панель -->
+  <div class="bottom-nav">
+    <div class="nav-left">
+      <button class="circle-btn" id="menuBtn" aria-label="Меню">
+        ☰
+      </button>
+    </div>
 
-.intro-text p a {
-  color: #5fd6ff;
-  text-decoration: none;
-}
+    <div class="nav-right">
+      <button class="circle-btn" id="searchBtn" aria-label="Поиск">🔍</button>
+      <button class="circle-btn" id="settingsBtn" aria-label="Настройки">⚙️</button>
+    </div>
+  </div>
 
-/* Соцсети */
-.social-section h2 {
-  margin-top: 20px;
-  font-size: 1.1em;
-  opacity: 0.9;
-}
+  <!-- Меню -->
+  <div class="fly-menu" id="flyMenu">
+    <ul>
+      <li><a href="#">Главная</a></li>
+      <li><a href="#">Новости</a></li>
+      <li><a href="#">Соц. сети</a></li>
+      <li><a href="#">Контакты</a></li>
+    </ul>
+  </div>
 
-.social-buttons {
-  display: flex;
-  justify-content: center;
-  gap: 12px;
-  margin-top: 10px;
-}
+  <!-- Панель поиска -->
+  <div class="search-panel" id="searchPanel">
+    <form id="searchForm">
+      <input id="searchInput" type="search" placeholder="Поиск по странице…">
+      <div class="search-buttons">
+        <button type="submit">Найти</button>
+        <button type="button" id="searchClear">✕</button>
+      </div>
+    </form>
+  </div>
 
-.social-buttons a {
-  padding: 8px 16px;
-  border-radius: 12px;
-  text-decoration: none;
-  color: white;
-  background: rgba(255,255,255,0.1);
-  transition: background 0.2s;
-}
-.social-buttons a:hover {
-  background: rgba(255,255,255,0.25);
-}
+  <!-- Подвал -->
+  <footer class="site-footer">
+    ©2025<br>
+    В разработке активно использовался <a href="https://chat.openai.com" target="_blank">ChatGPT</a><br>
+    Язык: HTML, JavaScript, CSS — v0.9.5 beta
+  </footer>
 
-/* Нижняя панель */
-.bottom-nav {
-  position: fixed;
-  bottom: 80px;
-  left: 0;
-  right: 0;
-  display: flex;
-  justify-content: center;
-  gap: 40px;
-}
-
-.circle-btn {
-  width: 55px;
-  height: 55px;
-  border-radius: 50%;
-  background: rgba(255,255,255,0.08);
-  border: 1px solid rgba(255,255,255,0.12);
-  color: #fff;
-  font-size: 22px;
-  cursor: pointer;
-  transition: transform 0.2s, background 0.2s;
-}
-.circle-btn:hover {
-  transform: translateY(-3px);
-  background: rgba(255,255,255,0.2);
-}
-
-/* Меню */
-.fly-menu {
-  position: fixed;
-  bottom: 150px;
-  right: 20px;
-  background: rgba(255,255,255,0.1);
-  border-radius: 16px;
-  padding: 10px 18px;
-  display: none;
-  backdrop-filter: blur(10px);
-}
-.fly-menu.show { display: block; }
-.fly-menu ul { list-style: none; padding: 0; margin: 0; }
-.fly-menu li { margin: 8px 0; }
-.fly-menu a { color: #fff; text-decoration: none; }
-
-/* Поиск */
-.search-panel {
-  position: fixed;
-  bottom: 150px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 240px;
-  background: rgba(255,255,255,0.1);
-  border-radius: 16px;
-  padding: 12px;
-  display: none;
-  backdrop-filter: blur(10px);
-}
-.search-panel.show { display: block; }
-
-.search-panel input {
-  width: 100%;
-  padding: 8px 10px;
-  border-radius: 10px;
-  border: none;
-  outline: none;
-  background: rgba(255,255,255,0.15);
-  color: #fff;
-}
-
-.search-buttons {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 8px;
-}
-.search-buttons button {
-  flex: 1;
-  margin: 0 4px;
-  padding: 8px 0;
-  border: none;
-  border-radius: 10px;
-  background: rgba(255,255,255,0.15);
-  color: #fff;
-  cursor: pointer;
-}
-
-/* Подсветка найденного */
-.highlighted {
-  background: rgba(255,255,0,0.4);
-  border-radius: 4px;
-}
-
-/* Подвал */
-.site-footer {
-  text-align: center;
-  padding: 20px;
-  font-size: 0.9em;
-  color: rgba(255,255,255,0.8);
-  background: rgba(255,255,255,0.05);
-  backdrop-filter: blur(8px);
-  border-top: 1px solid rgba(255,255,255,0.1);
-}
-.site-footer a {
-  color: #5fd6ff;
-  text-decoration: none;
-}
+  <script src="js/script.js"></script>
+</body>
+</html>
