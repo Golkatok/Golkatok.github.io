@@ -23,7 +23,6 @@
     text-align: center;
   }
 
-  /* Плавно движущийся свет */
   .light {
     position: absolute;
     width: 100%;
@@ -93,6 +92,26 @@
     margin-top: 4px;
   }
 
+  .after-text {
+    margin-top: 40px;
+    font-size: 1em;
+    opacity: 0.75;
+    animation: fadeIn 3s ease forwards;
+  }
+
+  .after-text span {
+    display: inline-block;
+    background: linear-gradient(90deg, #8cc4ff, #e0f4ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: glow 2.5s ease-in-out infinite alternate;
+  }
+
+  @keyframes glow {
+    from { text-shadow: 0 0 10px rgba(140,200,255,0.3); }
+    to { text-shadow: 0 0 20px rgba(140,200,255,0.8); }
+  }
+
   @keyframes fadeIn {
     from { opacity: 0; transform: translateY(20px); }
     to { opacity: 1; transform: translateY(0); }
@@ -137,17 +156,22 @@
     </div>
   </div>
 
+  <div class="after-text">
+    💫 <span>После завершения отсчёта появится обновление</span>
+  </div>
+
   <script>
-    const targetDate = new Date("2025-11-05T14:00:00");
+    const targetDate = new Date("2025-11-03T14:00:00");
 
     function updateCountdown() {
       const now = new Date();
       const diff = targetDate - now;
-
       const countdown = document.getElementById("countdown");
+      const afterText = document.querySelector(".after-text");
 
       if (diff <= 0) {
-        countdown.innerHTML = "<p style='font-size:1.4em;opacity:0.9;'>🎉 Бета почти доступна! <br>(Из-за часового пояса бета может задержаться)</p>";
+        countdown.innerHTML = "<p style='font-size:1.4em;opacity:0.9;'>🎉 Бета уже доступна!</p>";
+        afterText.innerHTML = "<span>✨ Обновление уже доступно для скачивания</span>";
         return;
       }
 
