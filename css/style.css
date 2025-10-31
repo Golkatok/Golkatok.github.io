@@ -8,6 +8,7 @@ html, body {
   display: flex;
   flex-direction: column;
   overflow-x: hidden;
+  transition: background 0.4s, color 0.4s;
 }
 
 /* Основной контейнер */
@@ -19,44 +20,29 @@ main {
   padding: 25px;
 }
 
-/* Эффект жидкого стекла на карточке */
+/* Карточка с эффектом жидкого стекла */
 .glass-card {
-  width: 92%;
-  max-width: 460px;
-  padding: 30px 22px;
-  border-radius: 30px;
-  background: rgba(255,255,255,0.1);
-  border: 1px solid rgba(255,255,255,0.15);
-  backdrop-filter: blur(22px) saturate(180%);
-  -webkit-backdrop-filter: blur(22px) saturate(180%);
-  box-shadow: 0 10px 40px rgba(0,0,0,0.6), inset 0 0 25px rgba(255,255,255,0.15);
+  width: 90%;
+  max-width: 420px;
+  padding: 25px 22px;
+  border-radius: 25px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.12);
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
   text-align: center;
-  position: relative;
-  overflow: hidden;
-}
-
-/* Отражение света сверху карточки */
-.glass-card::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 35%;
-  background: linear-gradient(to bottom, rgba(255,255,255,0.3), transparent);
-  border-top-left-radius: 30px;
-  border-top-right-radius: 30px;
-  pointer-events: none;
+  transition: background 0.4s, border 0.4s, box-shadow 0.4s;
 }
 
 .main-image {
-  width: 120px;
-  height: 120px;
+  width: 110px;
+  height: 110px;
   border-radius: 50%;
   object-fit: cover;
   border: 2px solid rgba(255,255,255,0.2);
-  margin-bottom: 15px;
-  box-shadow: 0 0 25px rgba(255,255,255,0.25);
+  margin-bottom: 12px;
+  box-shadow: 0 0 20px rgba(255,255,255,0.25);
 }
 
 .intro-text a {
@@ -67,19 +53,19 @@ main {
 .social-buttons {
   display: flex;
   justify-content: center;
-  gap: 14px;
+  gap: 12px;
   margin-top: 14px;
 }
 
 .social-buttons a {
-  padding: 10px 22px;
+  padding: 9px 18px;
   background: rgba(255,255,255,0.1);
   border: 1px solid rgba(255,255,255,0.15);
-  border-radius: 14px;
+  border-radius: 12px;
   color: white;
   text-decoration: none;
-  backdrop-filter: blur(14px);
-  transition: background 0.25s, transform 0.25s;
+  backdrop-filter: blur(12px);
+  transition: 0.25s;
 }
 .social-buttons a:hover {
   background: rgba(255,255,255,0.22);
@@ -91,49 +77,28 @@ main {
   position: fixed;
   left: 0;
   right: 0;
-  bottom: 120px;
+  bottom: 100px;
   display: flex;
   justify-content: space-between;
-  align-items: center;
   padding: 0 40px;
   z-index: 999;
 }
 
-/* Кнопки — жидкое стекло */
 .circle-btn {
-  width: 70px;
-  height: 70px;
+  width: 68px;
+  height: 68px;
   border-radius: 50%;
   background: rgba(255,255,255,0.1);
   border: 1px solid rgba(255,255,255,0.18);
   color: #fff;
   font-size: 24px;
   cursor: pointer;
-  backdrop-filter: blur(20px) saturate(160%);
-  -webkit-backdrop-filter: blur(20px) saturate(160%);
-  box-shadow: 0 0 25px rgba(255,255,255,0.15), 0 10px 30px rgba(0,0,0,0.4);
-  position: relative;
-  overflow: hidden;
-  transition: transform 0.25s ease, background 0.25s ease, box-shadow 0.3s ease;
+  backdrop-filter: blur(20px);
+  transition: 0.25s;
 }
-
-/* Блик на кнопке */
-.circle-btn::before {
-  content: "";
-  position: absolute;
-  top: -40%;
-  left: -40%;
-  width: 180%;
-  height: 180%;
-  background: radial-gradient(circle at top left, rgba(255,255,255,0.3), transparent 60%);
-  transform: rotate(45deg);
-  pointer-events: none;
-}
-
 .circle-btn:hover {
-  transform: translateY(-4px) scale(1.05);
-  background: rgba(255,255,255,0.18);
-  box-shadow: 0 0 35px rgba(255,255,255,0.25), 0 12px 35px rgba(0,0,0,0.5);
+  background: rgba(255,255,255,0.2);
+  transform: translateY(-3px);
 }
 
 /* Меню */
@@ -194,23 +159,109 @@ main {
   cursor: pointer;
 }
 
-/* Подсветка поиска */
-.highlighted {
-  background: rgba(255,255,0,0.4);
-  border-radius: 4px;
+/* Настройки */
+.settings-panel {
+  position: fixed;
+  bottom: 50%;
+  left: 50%;
+  transform: translate(-50%, 50%);
+  width: 80%;
+  max-width: 380px;
+  background: rgba(255,255,255,0.2);
+  border: 1px solid rgba(255,255,255,0.25);
+  border-radius: 20px;
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+  padding: 25px;
+  text-align: center;
+  color: #fff;
+  display: none;
+  box-shadow: 0 0 35px rgba(0,0,0,0.6);
+  animation: fadeIn 0.3s ease;
+}
+.settings-panel.show {
+  display: block;
+}
+
+.theme-toggle {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.theme-toggle input {
+  width: 45px;
+  height: 22px;
+  -webkit-appearance: none;
+  background: rgba(255,255,255,0.2);
+  border-radius: 20px;
+  position: relative;
+  outline: none;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+.theme-toggle input::before {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 18px;
+  height: 18px;
+  background: white;
+  border-radius: 50%;
+  transition: 0.3s;
+}
+.theme-toggle input:checked {
+  background: #58caff;
+}
+.theme-toggle input:checked::before {
+  transform: translateX(23px);
 }
 
 /* Подвал */
 .site-footer {
   text-align: center;
-  padding: 18px;
+  padding: 16px;
   background: rgba(255,255,255,0.06);
   border-top: 1px solid rgba(255,255,255,0.1);
-  backdrop-filter: blur(12px);
+  backdrop-filter: blur(10px);
   color: rgba(255,255,255,0.85);
   font-size: 0.9em;
 }
 .site-footer a {
   color: #58caff;
   text-decoration: none;
+}
+
+/* Анимация */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translate(-50%, 60%); }
+  to { opacity: 1; transform: translate(-50%, 50%); }
+}
+
+/* Светлая тема */
+.light {
+  background: radial-gradient(circle at top right, #eaeaea, #cfd1d7);
+  color: #111;
+}
+.light .glass-card,
+.light .search-panel,
+.light .fly-menu,
+.light .settings-panel {
+  background: rgba(255,255,255,0.5);
+  border: 1px solid rgba(0,0,0,0.15);
+  color: #111;
+}
+.light .circle-btn {
+  background: rgba(0,0,0,0.1);
+  color: #111;
+}
+.light .circle-btn:hover {
+  background: rgba(0,0,0,0.2);
+}
+.light .site-footer {
+  background: rgba(0,0,0,0.05);
+  color: #222;
   }
