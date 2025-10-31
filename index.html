@@ -33,9 +33,7 @@
   <!-- Нижняя панель -->
   <div class="bottom-nav">
     <div class="nav-left">
-      <button class="circle-btn" id="menuBtn" aria-label="Меню">
-        ☰
-      </button>
+      <button class="circle-btn" id="menuBtn" aria-label="Меню">☰</button>
     </div>
 
     <div class="nav-right">
@@ -65,11 +63,20 @@
     </form>
   </div>
 
+  <!-- Настройки -->
+  <div class="settings-panel" id="settingsPanel">
+    <h2>Настройки</h2>
+    <div class="theme-toggle">
+      <label for="themeSwitch">Тёмная тема</label>
+      <input type="checkbox" id="themeSwitch" checked>
+    </div>
+  </div>
+
   <!-- Подвал -->
   <footer class="site-footer">
     ©2025<br>
     В разработке активно использовался <a href="https://chat.openai.com" target="_blank">ChatGPT</a><br>
-    Язык: HTML, JavaScript, CSS — v0.9.5 beta
+    Язык: HTML, JavaScript, CSS — v1.0.0
   </footer>
 
   <script src="js/script.js"></script>
