@@ -6,15 +6,19 @@ const searchForm = document.getElementById('searchForm');
 const searchInput = document.getElementById('searchInput');
 const searchClear = document.getElementById('searchClear');
 const settingsBtn = document.getElementById('settingsBtn');
+const settingsPanel = document.getElementById('settingsPanel');
+const themeSwitch = document.getElementById('themeSwitch');
 
 menuBtn.addEventListener('click', () => {
   flyMenu.classList.toggle('show');
   searchPanel.classList.remove('show');
+  settingsPanel.classList.remove('show');
 });
 
 searchBtn.addEventListener('click', () => {
   searchPanel.classList.toggle('show');
   flyMenu.classList.remove('show');
+  settingsPanel.classList.remove('show');
 });
 
 searchClear.addEventListener('click', () => searchPanel.classList.remove('show'));
@@ -73,14 +77,23 @@ function escapeRegExp(string) {
   return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
+// Панель настроек
 settingsBtn.addEventListener('click', () => {
-  alert('Открыть настройки (сюда можно добавить действия).');
+  settingsPanel.classList.toggle('show');
+  flyMenu.classList.remove('show');
+  searchPanel.classList.remove('show');
 });
 
+// Клик вне карточки — закрыть
 document.addEventListener('click', (e) => {
   if (!flyMenu.contains(e.target) && !menuBtn.contains(e.target)) flyMenu.classList.remove('show');
   if (!searchPanel.contains(e.target) && !searchBtn.contains(e.target)) {
     if (e.target !== searchInput) searchPanel.classList.remove('show');
+  }
+  if (settingsPanel.classList.contains('show') && 
+      !settingsPanel.contains(e.target) &&
+      !settingsBtn.contains(e.target)) {
+    settingsPanel.classList.remove('show');
   }
 });
 
@@ -88,5 +101,11 @@ document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') {
     flyMenu.classList.remove('show');
     searchPanel.classList.remove('show');
+    settingsPanel.classList.remove('show');
   }
+});
+
+// Переключатель темы
+themeSwitch.addEventListener('change', () => {
+  document.body.classList.toggle('light', !themeSwitch.checked);
 });
