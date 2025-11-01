@@ -8,7 +8,6 @@ html, body {
   display: flex;
   flex-direction: column;
   overflow-x: hidden;
-  transition: background 0.4s, color 0.4s;
 }
 
 /* Основной контейнер */
@@ -20,19 +19,34 @@ main {
   padding: 25px;
 }
 
-/* Карточка с эффектом жидкого стекла */
+/* Эффект жидкого стекла на карточке */
 .glass-card {
-  width: 90%;
-  max-width: 420px;
-  padding: 25px 22px;
-  border-radius: 25px;
+  width: 92%;
+  max-width: 520px;
+  padding: 28px 22px;
+  border-radius: 28px;
   background: rgba(255,255,255,0.08);
   border: 1px solid rgba(255,255,255,0.12);
-  backdrop-filter: blur(20px) saturate(160%);
-  -webkit-backdrop-filter: blur(20px) saturate(160%);
-  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  backdrop-filter: blur(22px) saturate(160%);
+  -webkit-backdrop-filter: blur(22px) saturate(160%);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.6), inset 0 0 25px rgba(255,255,255,0.05);
   text-align: center;
-  transition: background 0.4s, border 0.4s, box-shadow 0.4s;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Отражение света сверху карточки */
+.glass-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 28%;
+  background: linear-gradient(to bottom, rgba(255,255,255,0.18), transparent);
+  border-top-left-radius: 28px;
+  border-top-right-radius: 28px;
+  pointer-events: none;
 }
 
 .main-image {
@@ -41,8 +55,8 @@ main {
   border-radius: 50%;
   object-fit: cover;
   border: 2px solid rgba(255,255,255,0.2);
-  margin-bottom: 12px;
-  box-shadow: 0 0 20px rgba(255,255,255,0.25);
+  margin-bottom: 14px;
+  box-shadow: 0 0 25px rgba(255,255,255,0.25);
 }
 
 .intro-text a {
@@ -53,23 +67,40 @@ main {
 .social-buttons {
   display: flex;
   justify-content: center;
-  gap: 12px;
+  gap: 14px;
   margin-top: 14px;
 }
 
 .social-buttons a {
-  padding: 9px 18px;
-  background: rgba(255,255,255,0.1);
-  border: 1px solid rgba(255,255,255,0.15);
+  padding: 10px 20px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.12);
   border-radius: 12px;
   color: white;
   text-decoration: none;
   backdrop-filter: blur(12px);
-  transition: 0.25s;
+  transition: background 0.25s, transform 0.25s;
 }
 .social-buttons a:hover {
-  background: rgba(255,255,255,0.22);
+  background: rgba(255,255,255,0.18);
   transform: translateY(-2px);
+}
+
+/* Телеграм блок и профиль */
+.telegram-login-container { margin: 14px 0; display:flex; justify-content:center; }
+.user-info { margin-top: 12px; display:flex; flex-direction:column; align-items:center; gap:8px; }
+.user-photo { width:84px; height:84px; border-radius:50%; object-fit:cover; border:2px solid rgba(255,255,255,0.15); box-shadow:0 0 18px rgba(255,255,255,0.12); }
+.user-name { font-weight:700; }
+.user-username { color: rgba(255,255,255,0.75); font-size:0.9rem; }
+
+/* кнопка выход */
+.btn-ghost {
+  background: transparent;
+  color: #fff;
+  border: 1px solid rgba(255,255,255,0.12);
+  padding: 8px 14px;
+  border-radius: 10px;
+  cursor: pointer;
 }
 
 /* Нижняя панель */
@@ -80,6 +111,7 @@ main {
   bottom: 100px;
   display: flex;
   justify-content: space-between;
+  align-items: center;
   padding: 0 40px;
   z-index: 999;
 }
@@ -93,13 +125,10 @@ main {
   color: #fff;
   font-size: 24px;
   cursor: pointer;
-  backdrop-filter: blur(20px);
-  transition: 0.25s;
+  backdrop-filter: blur(20px) saturate(160%);
+  transition: transform 0.25s ease, background 0.25s ease, box-shadow 0.3s ease;
 }
-.circle-btn:hover {
-  background: rgba(255,255,255,0.2);
-  transform: translateY(-3px);
-}
+.circle-btn:hover { transform: translateY(-3px); background: rgba(255,255,255,0.18); }
 
 /* Меню */
 .fly-menu {
@@ -123,7 +152,7 @@ main {
   position: fixed;
   bottom: 200px;
   right: 25px;
-  width: 240px;
+  width: 260px;
   background: rgba(255,255,255,0.08);
   border-radius: 18px;
   padding: 14px;
@@ -143,21 +172,8 @@ main {
   color: #fff;
 }
 
-.search-buttons {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 8px;
-}
-.search-buttons button {
-  flex: 1;
-  margin: 0 4px;
-  padding: 7px 0;
-  border: none;
-  border-radius: 10px;
-  background: rgba(255,255,255,0.12);
-  color: #fff;
-  cursor: pointer;
-}
+.search-buttons { display:flex; justify-content:space-between; margin-top:8px; }
+.search-buttons button { flex:1; margin:0 4px; padding:7px 0; border:none; border-radius:10px; background:rgba(255,255,255,0.12); color:#fff; cursor:pointer; }
 
 /* Настройки */
 .settings-panel {
@@ -165,103 +181,40 @@ main {
   bottom: 50%;
   left: 50%;
   transform: translate(-50%, 50%);
-  width: 80%;
+  width: 84%;
   max-width: 380px;
   background: rgba(255,255,255,0.2);
   border: 1px solid rgba(255,255,255,0.25);
   border-radius: 20px;
   backdrop-filter: blur(25px);
-  -webkit-backdrop-filter: blur(25px);
-  padding: 25px;
+  padding: 22px;
   text-align: center;
   color: #fff;
   display: none;
   box-shadow: 0 0 35px rgba(0,0,0,0.6);
-  animation: fadeIn 0.3s ease;
+  animation: fadeIn 0.28s ease;
 }
-.settings-panel.show {
-  display: block;
-}
-
-.theme-toggle {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 10px;
-  margin-top: 10px;
-}
-
-.theme-toggle input {
-  width: 45px;
-  height: 22px;
-  -webkit-appearance: none;
-  background: rgba(255,255,255,0.2);
-  border-radius: 20px;
-  position: relative;
-  outline: none;
-  cursor: pointer;
-  transition: background 0.3s;
-}
-.theme-toggle input::before {
-  content: "";
-  position: absolute;
-  top: 2px;
-  left: 2px;
-  width: 18px;
-  height: 18px;
-  background: white;
-  border-radius: 50%;
-  transition: 0.3s;
-}
-.theme-toggle input:checked {
-  background: #58caff;
-}
-.theme-toggle input:checked::before {
-  transform: translateX(23px);
-}
+.settings-panel.show { display:block; }
+.theme-toggle { display:flex; justify-content:center; align-items:center; gap:10px; margin-top:10px; }
+.theme-toggle input { width:45px; height:22px; -webkit-appearance:none; background:rgba(255,255,255,0.2); border-radius:20px; position:relative; }
+.theme-toggle input::before { content:""; position:absolute; top:2px; left:2px; width:18px; height:18px; background:white; border-radius:50%; transition:0.3s; }
+.theme-toggle input:checked { background:#58caff; }
+.theme-toggle input:checked::before { transform:translateX(23px); }
 
 /* Подвал */
 .site-footer {
   text-align: center;
-  padding: 16px;
-  background: rgba(255,255,255,0.06);
-  border-top: 1px solid rgba(255,255,255,0.1);
-  backdrop-filter: blur(10px);
-  color: rgba(255,255,255,0.85);
+  padding: 18px;
+  background: rgba(255,255,255,0.03);
+  color: rgba(255,255,255,0.75);
   font-size: 0.9em;
 }
-.site-footer a {
-  color: #58caff;
-  text-decoration: none;
-}
 
-/* Анимация */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translate(-50%, 60%); }
-  to { opacity: 1; transform: translate(-50%, 50%); }
-}
+/* Утилиты */
+.hidden { display:none; }
+@keyframes fadeIn { from { opacity: 0; transform: translate(-50%, 60%); } to { opacity: 1; transform: translate(-50%, 50%); } }
 
-/* Светлая тема */
-.light {
-  background: radial-gradient(circle at top right, #eaeaea, #cfd1d7);
-  color: #111;
+@media (max-width:480px){
+  .bottom-nav { padding:0 20px; }
+  .circle-btn { width:56px; height:56px; }
 }
-.light .glass-card,
-.light .search-panel,
-.light .fly-menu,
-.light .settings-panel {
-  background: rgba(255,255,255,0.5);
-  border: 1px solid rgba(0,0,0,0.15);
-  color: #111;
-}
-.light .circle-btn {
-  background: rgba(0,0,0,0.1);
-  color: #111;
-}
-.light .circle-btn:hover {
-  background: rgba(0,0,0,0.2);
-}
-.light .site-footer {
-  background: rgba(0,0,0,0.05);
-  color: #222;
-  }
