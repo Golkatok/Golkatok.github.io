@@ -12,13 +12,18 @@
 
   <header class="header">
     <div class="left">
-      <button id="menuBtn" class="btn">☰ Меню</button>
+      <button id="menuBtn" class="btn" data-i18n="menuBtn">☰ Меню</button>
     </div>
     <div class="center">
       <h1 class="site-title">         </h1>
     </div>
     <div class="right">
-      <button id="settingsBtn" class="btn">⚙ Настройки</button>
+      <!-- Language switcher -->
+      <div id="langSwitcher" class="lang-switcher" aria-label="Language selector">
+        <button class="btn lang-btn" data-lang="ru">RU</button>
+        <button class="btn lang-btn" data-lang="uk">UA</button>
+        <button class="btn lang-btn" data-lang="en">EN</button>
+      </div>
     </div>
   </header>
 
@@ -28,70 +33,39 @@
         <img src="images/image1.png" alt="Аватар" id="avatarImg" class="avatar">
         <div class="avatar-glow" aria-hidden="true"></div>
       </div>
-      <h2 id="greeting">Привет Гость!</h2>
-      <p class="subtext">Последний ролик:</p>
+      <h2 id="greeting" data-i18n="greeting">Привет Гость!</h2>
+      <p class="subtext" id="lastLabel" data-i18n="lastLabel">Последний ролик:</p>
 
       <div class="video-wrap">
         <!-- встроенный ютуб (пока что статичная ссылка) -->
-        <iframe id="ytframe" src="https://www.youtube.com/embed/7upmUi_AnbE" title="YouTube video" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        <iframe id="ytframe" src="https://www.youtube.com/embed/7upmUi_AnbE" title="YouTube video" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
       </div>
 
       <div class="card-actions">
-        <button id="loginBtn" class="btn primary">Войти через Telegram</button>
+        <button id="loginBtn" class="btn primary" data-i18n="loginBtn">Войти через Telegram</button>
       </div>
     </section>
   </main>
 
   <!-- Меню modal -->
-  <div class="modal" id="menuModal" aria-hidden="true">
+  <div class="modal" id="menuModal" aria-hidden="true" role="dialog" aria-labelledby="menuHeading">
     <div class="modal-card">
       <button class="modal-close" data-close="menuModal">✕</button>
-      <h3>Выберите страницу</h3>
+      <h3 id="menuHeading" data-i18n="menuHeading">Выберите страницу</h3>
       <ul class="menu-list">
-        <li><a href="https://golkatok.github.io" target="_self">Главная</a></li>
-        <li><a href="https://golkatok.github.io/social.html" target="_self">Соц. Сети</a></li>
-        <li><a href="https://golkatok.github.io/news.html" target="_self">Новости</a></li>
-        <li><a href="https://Golkatok.github.io/mini-games.html" target="_self">Мини-игры</a></li>
+        <li><a href="https://golkatok.github.io" target="_self" data-i18n="menuHome">Главная</a></li>
+        <li><a href="https://golkatok.github.io/social.html" target="_self" data-i18n="menuSocial">Соц. Сети</a></li>
+        <li><a href="https://golkatok.github.io/news.html" target="_self" data-i18n="menuNews">Новости</a></li>
+        <li><a href="https://Golkatok.github.io/mini-games.html" target="_self" data-i18n="menuGames">Мини-игры</a></li>
       </ul>
     </div>
   </div>
 
-  <!-- Настройки modal (~70% высоты) -->
-  <div class="modal" id="settingsModal" aria-hidden="true">
-    <div class="modal-card large">
-      <button class="modal-close" data-close="settingsModal">✕</button>
-      <h3>Настройки</h3>
-
-      <div class="setting-row">
-        <label for="themeSelect">Тема</label>
-        <select id="themeSelect">
-          <option value="dark">Тёмная</option>
-          <option value="light">Светлая</option>
-        </select>
-      </div>
-
-      <div class="setting-row">
-        <label for="langSelect">Язык</label>
-        <select id="langSelect">
-          <option value="ru">Русский</option>
-          <option value="uk">Українська</option>
-          <option value="be">Беларуская</option>
-          <option value="en">English</option>
-        </select>
-      </div>
-
-      <div class="setting-row">
-        <button id="saveSettings" class="btn primary">Сохранить</button>
-        <button id="resetSettings" class="btn">Сбросить</button>
-      </div>
-    </div>
-  </div>
-
   <!-- Telegram login modal (появляется при первом заходе если нет сохранённого юзера) -->
-  <div class="modal" id="tgModal" aria-hidden="true">
+  <div class="modal" id="tgModal" aria-hidden="true" role="dialog" aria-labelledby="tgHeading">
     <div class="modal-card">
       <button class="modal-close" data-close="tgModal">✕</button>
-      <h3>Вход через Telegram</h3>
+      <h3 id="tgHeading" data-i18n="tgHeading">Вход через Telegram</h3>
 
       <!-- Telegram widget скрипт (данный вами виджет) -->
       <div id="telegramWidgetWrap">
@@ -103,21 +77,21 @@
         </script>
       </div>
 
-      <p class="hint">После успешной авторизации имя пользователя будет подставлено в приветствии.</p>
+      <p class="hint" id="tgHint" data-i18n="tgHint">После успешной авторизации имя пользователя будет подставлено в приветствии.</p>
     </div>
   </div>
 
   <!-- Cookie consent -->
   <div id="cookieBanner" class="cookie-banner" role="dialog" aria-live="polite" aria-hidden="true">
     <div class="cookie-inner">
-      <p>Этот сайт использует cookies для запоминания входа через Telegram и настроек. Принять?</p>
+      <p id="cookieText" data-i18n="cookieText">Этот сайт использует cookies для запоминания входа через Telegram и настроек. Принять?</p>
       <div class="cookie-actions">
-        <button id="acceptCookies" class="btn primary">Принять</button>
-        <button id="declineCookies" class="btn">Отклонить</button>
+        <button id="acceptCookies" class="btn primary" data-i18n="accept">Принять</button>
+        <button id="declineCookies" class="btn" data-i18n="decline">Отклонить</button>
       </div>
     </div>
   </div>
 
   <script src="js/script.js" defer></script>
 </body>
-  </html>
+</html>
