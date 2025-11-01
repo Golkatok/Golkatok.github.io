@@ -1,129 +1,83 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Главная — Golkatok</title>
-  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-  <!-- невидимый куб 1.3 см -->
-  <div class="invisible-cube" aria-hidden="true"></div>
+  <!-- Невидимый отступ -->
+  <div class="top-spacer"></div>
 
-  <header class="header">
-    <div class="left">
-      <button id="menuBtn" class="btn">☰ Меню</button>
+  <!-- Верхние кнопки -->
+  <div class="top-buttons">
+    <button id="menuBtn">☰ Меню</button>
+    <button id="settingsBtn">⚙ Настройки</button>
+  </div>
+
+  <!-- Меню -->
+  <div id="menu" class="popup">
+    <h2>Меню</h2>
+    <a href="https://golkatok.github.io">Главная</a>
+    <a href="https://golkatok.github.io/social.html">Соц. Сети</a>
+    <a href="https://golkatok.github.io/news.html">Новости</a>
+    <a href="https://golkatok.github.io/mini-games.html">Мини-игры</a>
+  </div>
+
+  <!-- Настройки -->
+  <div id="settings" class="popup">
+    <h2>Настройки</h2>
+
+    <div class="setting-item">
+      <span>Тема:</span>
+      <label class="theme-switch">
+        <input type="checkbox" id="themeToggle">
+        <span class="slider"></span>
+      </label>
     </div>
-    <div class="right">
-      <button id="settingsBtn" class="btn">⚙ Настройки</button>
-    </div>
-  </header>
 
-  <main class="main">
-    <section class="card profile-card" id="profileCard" aria-live="polite">
-      <div class="avatar-wrap">
-        <img src="images/image1.png" alt="Аватар" id="avatarImg" class="avatar">
-        <div class="avatar-glow" aria-hidden="true"></div>
-      </div>
-
-      <h2 id="greeting">Привет Гость!</h2>
-      <p class="subtext">последний ролик</p>
-
-      <div class="video-wrap" id="videoWrap">
-        <!-- Статичное видео (по согласованию) -->
-        <iframe id="ytframe"
-                src="https://www.youtube.com/embed/7upmUi_AnbE"
-                title="YouTube video"
-                frameborder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowfullscreen></iframe>
-      </div>
-
-      <!-- кнопка находится на 2 мм ниже видео через CSS -->
-      <div class="card-actions">
-        <button id="loginBtn" class="btn primary">Войти через Telegram</button>
-      </div>
-    </section>
-  </main>
-
-  <!-- Меню modal -->
-  <div class="modal" id="menuModal" aria-hidden="true">
-    <div class="modal-card">
-      <button class="modal-close" data-close="menuModal">✕</button>
-      <h3>Выберите страницу</h3>
-      <ul class="menu-list">
-        <li><a href="index.html">Главная</a></li>
-        <li><a href="social.html">Соц. Сети</a></li>
-        <li><a href="news.html">Новости</a></li>
-        <li><a href="mini-games.html">Мини-игры</a></li>
-      </ul>
+    <div class="setting-item">
+      <label for="langSelect">Язык:</label>
+      <select id="langSelect">
+        <option value="ru">Русский</option>
+        <option value="uk">Українська</option>
+        <option value="be">Беларуская</option>
+        <option value="en">English</option>
+      </select>
     </div>
   </div>
 
-  <!-- Настройки modal (~70% высоты) -->
-  <div class="modal" id="settingsModal" aria-hidden="true">
-    <div class="modal-card large">
-      <button class="modal-close" data-close="settingsModal">✕</button>
-      <h3>Настройки</h3>
-
-      <div class="setting-row">
-        <label for="themeSelect">Тема</label>
-        <select id="themeSelect">
-          <option value="dark">Тёмная</option>
-          <option value="light">Светлая</option>
-        </select>
-      </div>
-
-      <div class="setting-row">
-        <label for="langSelect">Язык</label>
-        <select id="langSelect">
-          <option value="ru">Русский</option>
-          <option value="uk">Українська</option>
-          <option value="be">Беларуская</option>
-          <option value="en">English</option>
-        </select>
-      </div>
-
-      <div class="setting-row">
-        <button id="saveSettings" class="btn primary">Сохранить</button>
-        <button id="resetSettings" class="btn">Сбросить</button>
-      </div>
+  <!-- Карточка -->
+  <div class="card">
+    <img src="images/image1.png" alt="Avatar" class="avatar">
+    <h2 id="greeting">Привет, Гость!</h2>
+    <p id="lastVideoLabel">последний ролик</p>
+    <div class="video-container">
+      <iframe width="300" height="170"
+        src="https://www.youtube.com/embed/7upmUi_AnbE?si=PBrsn3RIf_pPH2-S"
+        frameborder="0" allowfullscreen>
+      </iframe>
     </div>
+    <button id="logoutBtn">Выйти с аккаунта</button>
   </div>
 
-  <!-- Telegram login modal (появляется при первом заходе если нет сохранённого юзера) -->
-  <div class="modal" id="tgModal" aria-hidden="true">
-    <div class="modal-card">
-      <button class="modal-close" data-close="tgModal">✕</button>
-      <h3>Вход через Telegram</h3>
-
-      <div id="telegramWidgetWrap">
-        <script async src="https://telegram.org/js/telegram-widget.js?22"
-                data-telegram-login="Jahvirapelacionsbot"
-                data-size="large"
-                data-userpic="false"
-                data-radius="8"
-                data-lang="ru"
-                data-request-access="write"
-                data-onauth="onTelegramAuth(user)">
-        </script>
-      </div>
-
-      <p class="hint">После авторизации имя пользователя подставится в приветствии.</p>
-    </div>
+  <!-- Telegram Login -->
+  <div id="telegramLogin" class="popup auth">
+    <script async src="https://telegram.org/js/telegram-widget.js?22"
+      data-telegram-login="Jahvirapelacionsbot"
+      data-size="large"
+      data-onauth="onTelegramAuth(user)"
+      data-request-access="write"></script>
   </div>
 
-  <!-- Cookie consent -->
-  <div id="cookieBanner" class="cookie-banner" role="dialog" aria-live="polite" aria-hidden="true">
-    <div class="cookie-inner">
-      <p>Этот сайт использует cookies для запоминания входа через Telegram и настроек. Принять?</p>
-      <div class="cookie-actions">
-        <button id="acceptCookies" class="btn primary">Принять</button>
-        <button id="declineCookies" class="btn">Отклонить</button>
-      </div>
-    </div>
+  <!-- Cookies -->
+  <div id="cookieConsent" class="cookie-popup">
+    <p>Этот сайт использует cookies для запоминания входа через Telegram и настроек. Принять?</p>
+    <button id="acceptCookies">Принять</button>
+    <button id="declineCookies">Отклонить</button>
   </div>
 
-  <script src="js/script.js" defer></script>
+  <script src="js/script.js"></script>
 </body>
-  </html>
+</html>
