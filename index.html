@@ -1,99 +1,123 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Jahvir MiniApp — Liquid Nav + Telegram</title>
-  <link rel="stylesheet" href="css/style.css">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Golkatok — Главная</title>
+  <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
+  <!-- невидимый отступ 1.3cm -->
+  <div class="top-spacer" aria-hidden="true"></div>
 
-  <main>
-    <div class="glass-card" id="mainCard">
-      <img src="images/image1.png" alt="Jahvir" class="main-image" id="brandImage">
-      <div class="intro-text">
-        <h1>Привет!</h1>
-        <p>
-          И даа, это МиниПриложение 
-          <a href="https://youtube.com" target="_blank">Канала Jahvir</a>.<br>
-          Здесь ты можешь найти все соц. сети канала, новости и более!
-        </p>
-      </div>
-
-      <!-- Блок виджета Telegram (заполняется твоим js/telegramlogin.js) -->
-      <div id="telegram-login" class="telegram-login-container"></div>
-
-      <!-- Блок профиля пользователя -->
-      <div id="user-info" class="user-info hidden">
-        <img id="user-photo" class="user-photo" alt="Аватар">
-        <div>
-          <div id="user-name" class="user-name"></div>
-          <div id="user-username" class="user-username"></div>
-        </div>
-        <div style="height:8px"></div>
-        <button id="logoutBtn" class="btn-ghost">Выйти</button>
-      </div>
-
-      <div class="social-section">
-        <h2>Главные соц сети Jahvir</h2>
-        <div class="social-buttons">
-          <a href="#" class="yt-btn">YouTube</a>
-          <a href="#" class="tw-btn">Twitch</a>
-        </div>
-      </div>
+  <header class="header">
+    <div class="left">
+      <button id="menuBtn" class="btn">☰ Меню</button>
     </div>
+    <div class="center">
+      <h1 class="site-title">Golkatok</h1>
+    </div>
+    <div class="right">
+      <button id="settingsBtn" class="btn">⚙ Настройки</button>
+    </div>
+  </header>
+
+  <main class="main">
+    <section class="card profile-card" id="profileCard">
+      <div class="avatar-wrap">
+        <img src="images/image1.png" alt="Аватар" id="avatarImg" class="avatar">
+        <div class="avatar-glow" aria-hidden="true"></div>
+      </div>
+      <h2 id="greeting">Привет Гость!</h2>
+      <p class="subtext">последний ролик</p>
+
+      <div class="video-wrap">
+        <!-- встроенный ютуб (пока что статичная ссылка) -->
+        <iframe id="ytframe" src="https://www.youtube.com/embed/7upmUi_AnbE" title="YouTube video" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+      </div>
+
+      <div class="card-actions">
+        <button id="loginBtn" class="btn primary">Войти через Telegram</button>
+      </div>
+    </section>
   </main>
 
-  <!-- Нижняя панель -->
-  <div class="bottom-nav">
-    <div class="nav-left">
-      <button class="circle-btn" id="menuBtn" aria-label="Меню">☰</button>
-    </div>
-
-    <div class="nav-right">
-      <button class="circle-btn" id="searchBtn" aria-label="Поиск">🔍</button>
-      <button class="circle-btn" id="settingsBtn" aria-label="Настройки">⚙️</button>
+  <!-- Меню modal -->
+  <div class="modal" id="menuModal" aria-hidden="true">
+    <div class="modal-card">
+      <button class="modal-close" data-close="menuModal">✕</button>
+      <h3>Выберите страницу</h3>
+      <ul class="menu-list">
+        <li><a href="https://golkatok.github.io" target="_self">Главная</a></li>
+        <li><a href="https://golkatok.github.io/social.html" target="_self">Соц. Сети</a></li>
+        <li><a href="https://golkatok.github.io/news.html" target="_self">Новости</a></li>
+        <li><a href="https://Golkatok.github.io/mini-games.html" target="_self">Мини-игры</a></li>
+      </ul>
     </div>
   </div>
 
-  <!-- Меню -->
-  <div class="fly-menu" id="flyMenu">
-    <ul>
-      <li><a href="#">Главная</a></li>
-      <li><a href="#">Новости</a></li>
-      <li><a href="#">Соц. сети</a></li>
-      <li><a href="#">Контакты</a></li>
-    </ul>
-  </div>
+  <!-- Настройки modal (~70% высоты) -->
+  <div class="modal" id="settingsModal" aria-hidden="true">
+    <div class="modal-card large">
+      <button class="modal-close" data-close="settingsModal">✕</button>
+      <h3>Настройки</h3>
 
-  <!-- Панель поиска -->
-  <div class="search-panel" id="searchPanel">
-    <form id="searchForm">
-      <input id="searchInput" type="search" placeholder="Поиск по странице…">
-      <div class="search-buttons">
-        <button type="submit">Найти</button>
-        <button type="button" id="searchClear">✕</button>
+      <div class="setting-row">
+        <label for="themeSelect">Тема</label>
+        <select id="themeSelect">
+          <option value="dark">Тёмная</option>
+          <option value="light">Светлая</option>
+        </select>
       </div>
-    </form>
-  </div>
 
-  <!-- Настройки -->
-  <div class="settings-panel" id="settingsPanel">
-    <h2>Настройки</h2>
-    <div class="theme-toggle">
-      <label for="themeSwitch">Тёмная тема</label>
-      <input type="checkbox" id="themeSwitch" checked>
+      <div class="setting-row">
+        <label for="langSelect">Язык</label>
+        <select id="langSelect">
+          <option value="ru">Русский</option>
+          <option value="uk">Українська</option>
+          <option value="be">Беларуская</option>
+          <option value="en">English</option>
+        </select>
+      </div>
+
+      <div class="setting-row">
+        <button id="saveSettings" class="btn primary">Сохранить</button>
+        <button id="resetSettings" class="btn">Сбросить</button>
+      </div>
     </div>
   </div>
 
-  <!-- Подвал -->
-  <footer class="site-footer">
-    ©2025 Jahvir MiniApp — Telegram Login интеграция
-  </footer>
+  <!-- Telegram login modal (появляется при первом заходе если нет сохранённого юзера) -->
+  <div class="modal" id="tgModal" aria-hidden="true">
+    <div class="modal-card">
+      <button class="modal-close" data-close="tgModal">✕</button>
+      <h3>Вход через Telegram</h3>
 
-  <!-- Твой файл: js/telegramlogin.js (оставляю без изменений) -->
-  <script src="js/telegramlogin.js"></script>
-  <!-- Главный скрипт: обёртка onTelegramAuth + UI -->
-  <script src="js/script.js"></script>
+      <!-- Telegram widget скрипт (данный вами виджет) -->
+      <div id="telegramWidgetWrap">
+        <script async src="https://telegram.org/js/telegram-widget.js?22"
+                data-telegram-login="Jahvirapelacionsbot"
+                data-size="large"
+                data-onauth="onTelegramAuth(user)"
+                data-request-access="write">
+        </script>
+      </div>
+
+      <p class="hint">После успешной авторизации имя пользователя будет подставлено в приветствии.</p>
+    </div>
+  </div>
+
+  <!-- Cookie consent -->
+  <div id="cookieBanner" class="cookie-banner" role="dialog" aria-live="polite" aria-hidden="true">
+    <div class="cookie-inner">
+      <p>Этот сайт использует cookies для запоминания входа через Telegram и настроек. Принять?</p>
+      <div class="cookie-actions">
+        <button id="acceptCookies" class="btn primary">Принять</button>
+        <button id="declineCookies" class="btn">Отклонить</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/script.js" defer></script>
 </body>
 </html>
