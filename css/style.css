@@ -24,7 +24,7 @@
 html,body { height:100%; margin:0; font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; background: linear-gradient(180deg, rgba(10,12,16,1) 0%, rgba(15,18,24,1) 100%); color:var(--text); -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; }
 
 /* top spacer exactly 1.3cm */
-.top-spacer { height:1.3cm; width:100%; }
+.top-spacer { height:1.7cm; width:100%; }
 
 /* header */
 .header { display:flex; align-items:center; justify-content:space-between; padding:10px 16px; gap:12px; position:sticky; top:0; z-index:40; }
