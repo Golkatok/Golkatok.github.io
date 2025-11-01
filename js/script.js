@@ -1,193 +1,205 @@
-/* ---------------------------
-   UI: меню / поиск / настройки
-   --------------------------- */
+// script.js
+// Поведение модалок, темы, языка, Telegram auth, cookie consent, подстановка имени.
 
-const menuBtn = document.getElementById('menuBtn');
-const flyMenu = document.getElementById('flyMenu');
-const searchBtn = document.getElementById('searchBtn');
-const searchPanel = document.getElementById('searchPanel');
-const searchForm = document.getElementById('searchForm');
-const searchInput = document.getElementById('searchInput');
-const searchClear = document.getElementById('searchClear');
-const settingsBtn = document.getElementById('settingsBtn');
-const settingsPanel = document.getElementById('settingsPanel');
-const themeSwitch = document.getElementById('themeSwitch');
+(function(){
+  // DOM
+  const menuBtn = document.getElementById('menuBtn');
+  const settingsBtn = document.getElementById('settingsBtn');
+  const menuModal = document.getElementById('menuModal');
+  const settingsModal = document.getElementById('settingsModal');
+  const tgModal = document.getElementById('tgModal');
+  const loginBtn = document.getElementById('loginBtn');
+  const cookieBanner = document.getElementById('cookieBanner');
+  const acceptCookies = document.getElementById('acceptCookies');
+  const declineCookies = document.getElementById('declineCookies');
+  const greeting = document.getElementById('greeting');
+  const avatarImg = document.getElementById('avatarImg');
+  const themeSelect = document.getElementById('themeSelect');
+  const langSelect = document.getElementById('langSelect');
+  const saveSettings = document.getElementById('saveSettings');
+  const resetSettings = document.getElementById('resetSettings');
 
-if (menuBtn) menuBtn.addEventListener('click', () => {
-  flyMenu.classList.toggle('show');
-  searchPanel.classList.remove('show');
-  settingsPanel.classList.remove('show');
-});
+  // util
+  function openModal(el){
+    el.setAttribute('aria-hidden','false');
+  }
+  function closeModalById(id){
+    const el = document.getElementById(id);
+    if(el) el.setAttribute('aria-hidden','true');
+  }
+  function toggleTheme(theme){
+    if(theme === 'light') document.documentElement.classList.add('light');
+    else document.documentElement.classList.remove('light');
+    localStorage.setItem('siteTheme', theme);
+  }
+  function setLang(lang){
+    // minimal — сохраняем выбор. Расширение: подгрузка переводов.
+    localStorage.setItem('siteLang', lang);
+    // Выводим простой пример — можно расширить словарём.
+    // Пока что менять только placeholder текста:
+    // (в этом макете ничего динамического кроме сохранения)
+  }
 
-if (searchBtn) searchBtn.addEventListener('click', () => {
-  searchPanel.classList.toggle('show');
-  flyMenu.classList.remove('show');
-  settingsPanel.classList.remove('show');
-});
-
-if (searchClear) searchClear.addEventListener('click', () => searchPanel.classList.remove('show'));
-
-if (searchForm) searchForm.addEventListener('submit', (e) => {
-  e.preventDefault();
-  const q = (searchInput.value || '').trim();
-  clearHighlights();
-  if (!q) return;
-  highlightText(q);
-});
-
-function highlightText(query) {
-  const body = document.querySelector('body');
-  const walker = document.createTreeWalker(body, NodeFilter.SHOW_TEXT, null, false);
-  const nodes = [];
-  while (walker.nextNode()) {
-    const n = walker.currentNode;
-    if (n.parentNode && !['SCRIPT','STYLE'].includes(n.parentNode.tagName) && n.nodeValue.trim()) {
-      nodes.push(n);
+  // close buttons (делегирование)
+  document.addEventListener('click', (e) => {
+    const close = e.target.closest('[data-close]');
+    if(close){
+      const id = close.getAttribute('data-close');
+      closeModalById(id);
     }
+  });
+
+  // btns open
+  menuBtn.addEventListener('click', () => openModal(menuModal));
+  settingsBtn.addEventListener('click', () => openModal(settingsModal));
+  loginBtn.addEventListener('click', () => openModal(tgModal));
+
+  // cookie logic
+  function showCookieBanner(){
+    cookieBanner.classList.add('show');
+    cookieBanner.setAttribute('aria-hidden','false');
   }
-  const regex = new RegExp(escapeRegExp(query), 'gi');
-  nodes.forEach(textNode => {
-    const parent = textNode.parentNode;
-    const frag = document.createDocumentFragment();
-    let lastIndex = 0;
-    const text = textNode.nodeValue;
-    let match;
-    while ((match = regex.exec(text)) !== null) {
-      const start = match.index;
-      const end = regex.lastIndex;
-      if (start > lastIndex) frag.appendChild(document.createTextNode(text.slice(lastIndex, start)));
-      const mark = document.createElement('span');
-      mark.className = 'highlighted';
-      mark.textContent = text.slice(start, end);
-      frag.appendChild(mark);
-      lastIndex = end;
+  function hideCookieBanner(){
+    cookieBanner.classList.remove('show');
+    cookieBanner.setAttribute('aria-hidden','true');
+  }
+
+  acceptCookies.addEventListener('click', () => {
+    localStorage.setItem('cookieAccepted','yes');
+    hideCookieBanner();
+    // если пользователь ещё не авторизован — показать Telegram modal
+    const saved = localStorage.getItem('telegramUser');
+    if(!saved){
+      openModal(tgModal);
     }
-    if (lastIndex === 0) return;
-    if (lastIndex < text.length) frag.appendChild(document.createTextNode(text.slice(lastIndex)));
-    parent.replaceChild(frag, textNode);
   });
-  const first = document.querySelector('.highlighted');
-  if (first) first.scrollIntoView({ behavior: 'smooth', block: 'center' });
-}
 
-function clearHighlights() {
-  document.querySelectorAll('.highlighted').forEach(m => {
-    const txt = document.createTextNode(m.textContent);
-    m.parentNode.replaceChild(txt, m);
+  declineCookies.addEventListener('click', () => {
+    localStorage.setItem('cookieAccepted','no');
+    hideCookieBanner();
+    // если отказался — удаляем сохранённого юзера
+    localStorage.removeItem('telegramUser');
   });
-}
 
-function escapeRegExp(string) {
-  return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-}
+  // settings
+  saveSettings.addEventListener('click', () => {
+    toggleTheme(themeSelect.value);
+    setLang(langSelect.value);
+    closeModalById('settingsModal');
+  });
+  resetSettings.addEventListener('click', () => {
+    toggleTheme('dark');
+    setLang('ru');
+    themeSelect.value = 'dark';
+    langSelect.value = 'ru';
+  });
 
-if (settingsBtn) settingsBtn.addEventListener('click', () => {
-  settingsPanel.classList.toggle('show');
-  flyMenu.classList.remove('show');
-  searchPanel.classList.remove('show');
-});
+  // load saved settings
+  (function loadSettings(){
+    const t = localStorage.getItem('siteTheme') || 'dark';
+    const l = localStorage.getItem('siteLang') || 'ru';
+    themeSelect.value = t;
+    langSelect.value = l;
+    toggleTheme(t);
+  })();
 
-// клик вне блоков закрывает их
-document.addEventListener('click', (e) => {
-  if (flyMenu && !flyMenu.contains(e.target) && !menuBtn.contains(e.target)) flyMenu.classList.remove('show');
-  if (searchPanel && !searchPanel.contains(e.target) && !searchBtn.contains(e.target)) {
-    if (e.target !== searchInput) searchPanel.classList.remove('show');
-  }
-  if (settingsPanel && settingsPanel.classList.contains('show') && !settingsPanel.contains(e.target) && !settingsBtn.contains(e.target)) {
-    settingsPanel.classList.remove('show');
-  }
-});
-
-document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape') {
-    if (flyMenu) flyMenu.classList.remove('show');
-    if (searchPanel) searchPanel.classList.remove('show');
-    if (settingsPanel) settingsPanel.classList.remove('show');
-  }
-});
-
-/* ---------------------------
-   Theme switch
-   --------------------------- */
-if (themeSwitch) {
-  // apply default from checkbox
-  applyTheme(themeSwitch.checked);
-  themeSwitch.addEventListener('change', () => applyTheme(themeSwitch.checked));
-}
-
-function applyTheme(darkChecked) {
-  if (darkChecked) {
-    document.body.classList.remove('light');
-  } else {
-    document.body.classList.add('light');
-  }
-}
-
-/* ---------------------------
-   Telegram auth integration
-   --------------------------- */
-
-// UI elements for profile
-const telegramLoginContainer = document.getElementById('telegram-login');
-const userInfoBlock = document.getElementById('user-info');
-const userPhoto = document.getElementById('user-photo');
-const userName = document.getElementById('user-name');
-const userUsername = document.getElementById('user-username');
-const logoutBtn = document.getElementById('logoutBtn');
-const loginSection = document.getElementById('mainCard');
-
-function showUserInfo(user) {
-  // Hide login widget area
-  if (telegramLoginContainer) telegramLoginContainer.classList.add('hidden');
-  if (loginSection) loginSection.classList.add('has-user'); // optional
-  // Fill UI
-  if (userPhoto) userPhoto.src = user.photo_url || `https://placekitten.com/200/200`;
-  if (userName) userName.textContent = `${user.first_name || ''}${user.last_name ? ' ' + user.last_name : ''}`.trim();
-  if (userUsername) userUsername.textContent = user.username ? '@' + user.username : '';
-  if (userInfoBlock) userInfoBlock.classList.remove('hidden');
-}
-
-function hideUserInfo() {
-  if (telegramLoginContainer) telegramLoginContainer.classList.remove('hidden');
-  if (loginSection) loginSection.classList.remove('has-user');
-  if (userInfoBlock) userInfoBlock.classList.add('hidden');
-  if (userPhoto) userPhoto.src = '';
-  if (userName) userName.textContent = '';
-  if (userUsername) userUsername.textContent = '';
-}
-
-// logout
-if (logoutBtn) logoutBtn.addEventListener('click', () => {
-  localStorage.removeItem('telegramUser');
-  hideUserInfo();
-});
-
-// on load, restore
-document.addEventListener('DOMContentLoaded', () => {
-  const saved = localStorage.getItem('telegramUser');
-  if (saved) {
+  // Telegram auth handler (вызывается виджетом)
+  window.onTelegramAuth = function(user){
     try {
-      const u = JSON.parse(saved);
-      showUserInfo(u);
-    } catch (e) { localStorage.removeItem('telegramUser'); }
-  }
-
-  // If telegramlogin.js already defined global onTelegramAuth (your file),
-  // we keep it and wrap so both your alert and our UI run.
-  // Save existing global (if any)
-  const existing = window.onTelegramAuth;
-  // Define wrapper that calls existing then our handler
-  window.onTelegramAuth = function(user) {
-    try {
-      if (typeof existing === 'function') {
-        try { existing(user); } catch (e) { console.warn('existing onTelegramAuth error', e); }
-      }
-    } finally {
-      try {
-        // Save and show
+      const cookieAccepted = localStorage.getItem('cookieAccepted') === 'yes';
+      // Сохраняем юзера в localStorage только если пользователь дал согласие на cookies.
+      if(cookieAccepted){
         localStorage.setItem('telegramUser', JSON.stringify(user));
-        showUserInfo(user);
-      } catch (err) { console.error('onTelegramAuth wrapper error', err); }
+      } else {
+        // Если cookies не приняты — не сохраняем, но можно временно использовать в сессии
+        sessionStorage.setItem('telegramUser', JSON.stringify(user));
+      }
+
+      // Обновляем UI
+      applyTelegramUser(user);
+
+      // Закрыть модалку если открыта
+      closeModalById('tgModal');
+
+      // Небольшое уведомление
+      alert('Вход выполнен как ' + (user.first_name || '') + (user.last_name ? ' ' + user.last_name : '') + (user.username ? ' ( @' + user.username + ' )' : ''));
+    } catch (err) {
+      console.error('onTelegramAuth error', err);
     }
   };
-});
+
+  function applyTelegramUser(user){
+    const name = user && (user.first_name || user.username) ? (user.first_name || user.username) : 'Гость';
+    greeting.textContent = 'Привет ' + name + '!';
+    // Если у пользователя есть username — можно составить ссылку на телеграм-аккаунт и использовать как avatar
+    // Но виджет не даёт URL на аватар — поэтому оставляем static image или можно заменить на telegram profile pic если загрузите отдельно
+    // Отмечаем в UI что пользователь вошёл
+    loginBtn.textContent = 'Выйти';
+    loginBtn.classList.remove('primary');
+    loginBtn.addEventListener('click', logoutHandler);
+  }
+
+  function logoutHandler(e){
+    // удаляем сохранённого юзера
+    localStorage.removeItem('telegramUser');
+    sessionStorage.removeItem('telegramUser');
+    greeting.textContent = 'Привет Гость!';
+    loginBtn.textContent = 'Войти через Telegram';
+    loginBtn.classList.add('primary');
+    // снять обработчик выхода, восстановить открытие модалки
+    loginBtn.removeEventListener('click', logoutHandler);
+    loginBtn.addEventListener('click', () => openModal(tgModal));
+  }
+
+  // On load: check cookie consent and saved telegram user
+  (function init(){
+    const cookie = localStorage.getItem('cookieAccepted');
+    const saved = localStorage.getItem('telegramUser') || sessionStorage.getItem('telegramUser');
+
+    if(cookie === null){
+      // показать баннер согласия
+      showCookieBanner();
+    } else if(cookie === 'no'){
+      hideCookieBanner();
+    } else {
+      hideCookieBanner();
+      // если cookie приняты и есть сохранённый пользователь — применить
+      if(saved){
+        try {
+          const user = JSON.parse(saved);
+          applyTelegramUser(user);
+        } catch(e){ console.warn('Invalid saved telegram user'); }
+      } else {
+        // нет сохранённого — показать модал авторизации
+        openModal(tgModal);
+      }
+    }
+
+    // Если cookie accepted = yes и пользователь сохранён — подставить
+    if(cookie === 'yes' && localStorage.getItem('telegramUser')){
+      try {
+        const user = JSON.parse(localStorage.getItem('telegramUser'));
+        applyTelegramUser(user);
+      } catch(e){}
+    }
+  })();
+
+  // Accessibility: close modal by Esc
+  document.addEventListener('keydown', (e) => {
+    if(e.key === 'Escape'){
+      document.querySelectorAll('.modal').forEach(m => m.setAttribute('aria-hidden','true'));
+    }
+  });
+
+  // If user reloads and logged in via sessionStorage (cookie declined), try to populate greeting
+  (function trySessionUser(){
+    const s = sessionStorage.getItem('telegramUser');
+    if(s && !localStorage.getItem('telegramUser')){
+      try{
+        const user = JSON.parse(s);
+        greeting.textContent = 'Привет ' + (user.first_name || user.username || 'Гость') + '!';
+      }catch(e){}
+    }
+  })();
+
+})();
