@@ -3,19 +3,16 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Golkatok — Главная</title>
+  <title>Главная — Golkatok</title>
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
-  <!-- невидимый отступ 1.3cm -->
-  <div class="top-spacer" aria-hidden="true"></div>
+  <!-- невидимый куб 1.3 см -->
+  <div class="invisible-cube" aria-hidden="true"></div>
 
   <header class="header">
     <div class="left">
       <button id="menuBtn" class="btn">☰ Меню</button>
-    </div>
-    <div class="center">
-      <h1 class="site-title">Golkatok</h1>
     </div>
     <div class="right">
       <button id="settingsBtn" class="btn">⚙ Настройки</button>
@@ -23,19 +20,26 @@
   </header>
 
   <main class="main">
-    <section class="card profile-card" id="profileCard">
+    <section class="card profile-card" id="profileCard" aria-live="polite">
       <div class="avatar-wrap">
         <img src="images/image1.png" alt="Аватар" id="avatarImg" class="avatar">
         <div class="avatar-glow" aria-hidden="true"></div>
       </div>
+
       <h2 id="greeting">Привет Гость!</h2>
       <p class="subtext">последний ролик</p>
 
-      <div class="video-wrap">
-        <!-- встроенный ютуб (пока что статичная ссылка) -->
-        <iframe id="ytframe" src="https://www.youtube.com/embed/7upmUi_AnbE" title="YouTube video" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+      <div class="video-wrap" id="videoWrap">
+        <!-- Статичное видео (по согласованию) -->
+        <iframe id="ytframe"
+                src="https://www.youtube.com/embed/7upmUi_AnbE"
+                title="YouTube video"
+                frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen></iframe>
       </div>
 
+      <!-- кнопка находится на 2 мм ниже видео через CSS -->
       <div class="card-actions">
         <button id="loginBtn" class="btn primary">Войти через Telegram</button>
       </div>
@@ -48,10 +52,10 @@
       <button class="modal-close" data-close="menuModal">✕</button>
       <h3>Выберите страницу</h3>
       <ul class="menu-list">
-        <li><a href="https://golkatok.github.io" target="_self">Главная</a></li>
-        <li><a href="https://golkatok.github.io/social.html" target="_self">Соц. Сети</a></li>
-        <li><a href="https://golkatok.github.io/news.html" target="_self">Новости</a></li>
-        <li><a href="https://Golkatok.github.io/mini-games.html" target="_self">Мини-игры</a></li>
+        <li><a href="index.html">Главная</a></li>
+        <li><a href="social.html">Соц. Сети</a></li>
+        <li><a href="news.html">Новости</a></li>
+        <li><a href="mini-games.html">Мини-игры</a></li>
       </ul>
     </div>
   </div>
@@ -93,17 +97,19 @@
       <button class="modal-close" data-close="tgModal">✕</button>
       <h3>Вход через Telegram</h3>
 
-      <!-- Telegram widget скрипт (данный вами виджет) -->
       <div id="telegramWidgetWrap">
         <script async src="https://telegram.org/js/telegram-widget.js?22"
                 data-telegram-login="Jahvirapelacionsbot"
                 data-size="large"
-                data-onauth="onTelegramAuth(user)"
-                data-request-access="write">
+                data-userpic="false"
+                data-radius="8"
+                data-lang="ru"
+                data-request-access="write"
+                data-onauth="onTelegramAuth(user)">
         </script>
       </div>
 
-      <p class="hint">После успешной авторизации имя пользователя будет подставлено в приветствии.</p>
+      <p class="hint">После авторизации имя пользователя подставится в приветствии.</p>
     </div>
   </div>
 
@@ -120,4 +126,4 @@
 
   <script src="js/script.js" defer></script>
 </body>
-</html>
+  </html>
