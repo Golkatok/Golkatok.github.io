@@ -1,71 +1,96 @@
 // ======= Telegram Login =======
-function onTelegramAuth(user) {
+window.onTelegramAuth = function (user) {
   localStorage.setItem("tgUser", JSON.stringify(user));
-  document.querySelector(".card h1").innerText = `Привет, ${user.first_name}!`;
-  document.querySelector(".logout-btn").style.display = "inline-block";
-  document.getElementById("tgLogin").style.display = "none";
+  updateUserInfo(user);
+};
+
+// ======= Обновление интерфейса =======
+function updateUserInfo(user) {
+  const name = user?.first_name || "Гость";
+  const nameEl = document.querySelector(".card h1");
+  const logoutBtn = document.querySelector(".logout-btn");
+  const tgLogin = document.getElementById("tgLogin");
+
+  if (nameEl) nameEl.innerText = `Привет, ${name}!`;
+  if (logoutBtn) logoutBtn.style.display = user ? "inline-block" : "none";
+  if (tgLogin) tgLogin.style.display = user ? "none" : "inline-block";
 }
 
 // ======= Выход =======
 function logout() {
   localStorage.removeItem("tgUser");
-  location.reload();
+  updateUserInfo(null);
 }
 
-// ======= Меню и настройки =======
-const menuBtn = document.getElementById("menuBtn");
-const settingsBtn = document.getElementById("settingsBtn");
-const menuModal = document.getElementById("menuModal");
-const settingsModal = document.getElementById("settingsModal");
+// ======= Инициализация DOM =======
+document.addEventListener("DOMContentLoaded", () => {
+  // Меню и настройки
+  const menuBtn = document.getElementById("menuBtn");
+  const settingsBtn = document.getElementById("settingsBtn");
+  const menuModal = document.getElementById("menuModal");
+  const settingsModal = document.getElementById("settingsModal");
 
-menuBtn.addEventListener("click", () => {
-  menuModal.style.display = "flex";
-});
-settingsBtn.addEventListener("click", () => {
-  settingsModal.style.display = "flex";
-});
-document.querySelectorAll(".modal").forEach(m => {
-  m.addEventListener("click", (e) => {
-    if (e.target.classList.contains("modal")) m.style.display = "none";
-  });
-});
+  if (menuBtn && menuModal) {
+    menuBtn.addEventListener("click", () => (menuModal.style.display = "flex"));
+  }
 
-// ======= Темы =======
-const themeSelect = document.getElementById("themeSelect");
-themeSelect.addEventListener("change", () => {
-  const theme = themeSelect.value;
-  document.body.classList.toggle("light", theme === "light");
-  localStorage.setItem("theme", theme);
-});
+  if (settingsBtn && settingsModal) {
+    settingsBtn.addEventListener("click", () => (settingsModal.style.display = "flex"));
+  }
 
-const savedTheme = localStorage.getItem("theme");
-if (savedTheme === "light") {
-  document.body.classList.add("light");
-  themeSelect.value = "light";
-}
+  document.querySelectorAll(".modal").forEach((m) =>
+    m.addEventListener("click", (e) => {
+      if (e.target.classList.contains("modal")) m.style.display = "none";
+    })
+  );
 
-// ======= Язык =======
-const langSelect = document.getElementById("langSelect");
-langSelect.addEventListener("change", () => {
-  localStorage.setItem("lang", langSelect.value);
-});
+  // ======= Тема =======
+  const themeSelect = document.getElementById("themeSelect");
+  if (themeSelect) {
+    const savedTheme = localStorage.getItem("theme");
+    if (savedTheme === "light") {
+      document.body.classList.add("light");
+      themeSelect.value = "light";
+    }
 
-const savedLang = localStorage.getItem("lang");
-if (savedLang) langSelect.value = savedLang;
+    themeSelect.addEventListener("change", () => {
+      const theme = themeSelect.value;
+      document.body.classList.toggle("light", theme === "light");
+      localStorage.setItem("theme", theme);
+    });
+  }
 
-// ======= Cookie =======
-const cookiePopup = document.getElementById("cookiePopup");
-if (!localStorage.getItem("cookieAccepted")) {
-  cookiePopup.style.display = "block";
-}
+  // ======= Язык =======
+  const langSelect = document.getElementById("langSelect");
+  if (langSelect) {
+    const savedLang = localStorage.getItem("lang");
+    if (savedLang) langSelect.value = savedLang;
 
-document.getElementById("acceptCookies").addEventListener("click", () => {
-  localStorage.setItem("cookieAccepted", "true");
-  cookiePopup.style.display = "none";
-});
-document.getElementById("declineCookies").addEventListener("click", () => {
-  alert("Без cookies данные (например, авторизация) не сохранятся.");
-  cookiePopup.style.display = "none";
+    langSelect.addEventListener("change", () => {
+      localStorage.setItem("lang", langSelect.value);
+    });
+  }
+
+  // ======= Cookie =======
+  const cookiePopup = document.getElementById("cookiePopup");
+  if (cookiePopup && !localStorage.getItem("cookieAccepted")) {
+    cookiePopup.style.display = "block";
+    document.getElementById("acceptCookies").onclick = () => {
+      localStorage.setItem("cookieAccepted", "true");
+      cookiePopup.style.display = "none";
+    };
+    document.getElementById("declineCookies").onclick = () => {
+      alert("Без cookies данные (например, вход через Telegram) не сохранятся.");
+      cookiePopup.style.display = "none";
+    };
+  }
+
+  // ======= Twitch Stream =======
+  if (window.location.pathname.includes("news.html")) checkTwitchStream();
+
+  // ======= Восстановление Telegram-пользователя =======
+  const tgUser = localStorage.getItem("tgUser");
+  updateUserInfo(tgUser ? JSON.parse(tgUser) : null);
 });
 
 // ======= Twitch stream indicator =======
@@ -92,20 +117,4 @@ async function checkTwitchStream() {
   } catch (err) {
     console.error("Ошибка при проверке стрима:", err);
   }
-}
-
-// Проверяем стрим на новостной странице
-if (window.location.pathname.includes("news.html")) {
-  checkTwitchStream();
-}
-
-// ======= Инициализация =======
-window.addEventListener("DOMContentLoaded", () => {
-  const tgUser = localStorage.getItem("tgUser");
-  if (tgUser) {
-    const user = JSON.parse(tgUser);
-    document.querySelector(".card h1").innerText = `Привет, ${user.first_name}!`;
-    document.querySelector(".logout-btn").style.display = "inline-block";
-    document.getElementById("tgLogin").style.display = "none";
-  }
-});
+        }
