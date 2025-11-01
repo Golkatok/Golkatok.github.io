@@ -3,14 +3,14 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Jahvir MiniApp — Liquid Nav</title>
+  <title>Jahvir MiniApp — Liquid Nav + Telegram</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
   <main>
-    <div class="glass-card">
-      <img src="images/image1.png" alt="Jahvir" class="main-image">
+    <div class="glass-card" id="mainCard">
+      <img src="images/image1.png" alt="Jahvir" class="main-image" id="brandImage">
       <div class="intro-text">
         <h1>Привет!</h1>
         <p>
@@ -18,6 +18,20 @@
           <a href="https://youtube.com" target="_blank">Канала Jahvir</a>.<br>
           Здесь ты можешь найти все соц. сети канала, новости и более!
         </p>
+      </div>
+
+      <!-- Блок виджета Telegram (заполняется твоим js/telegramlogin.js) -->
+      <div id="telegram-login" class="telegram-login-container"></div>
+
+      <!-- Блок профиля пользователя -->
+      <div id="user-info" class="user-info hidden">
+        <img id="user-photo" class="user-photo" alt="Аватар">
+        <div>
+          <div id="user-name" class="user-name"></div>
+          <div id="user-username" class="user-username"></div>
+        </div>
+        <div style="height:8px"></div>
+        <button id="logoutBtn" class="btn-ghost">Выйти</button>
       </div>
 
       <div class="social-section">
@@ -74,11 +88,12 @@
 
   <!-- Подвал -->
   <footer class="site-footer">
-    ©2025<br>
-    В разработке активно использовался <a href="https://chat.openai.com" target="_blank">ChatGPT</a><br>
-    Язык: HTML, JavaScript, CSS — v1.0.0
+    ©2025 Jahvir MiniApp — Telegram Login интеграция
   </footer>
 
+  <!-- Твой файл: js/telegramlogin.js (оставляю без изменений) -->
+  <script src="js/telegramlogin.js"></script>
+  <!-- Главный скрипт: обёртка onTelegramAuth + UI -->
   <script src="js/script.js"></script>
 </body>
 </html>
