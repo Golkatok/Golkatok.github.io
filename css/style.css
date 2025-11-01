@@ -1,187 +1,142 @@
-/* Общие стили */
 body {
   margin: 0;
-  font-family: "Segoe UI", sans-serif;
-  background: var(--bg-color);
-  color: var(--text-color);
-  transition: background 0.4s, color 0.4s;
-  overflow-x: hidden;
+  font-family: 'Segoe UI', sans-serif;
+  background-color: var(--bg);
+  color: var(--text);
+  transition: 0.3s;
 }
 
 /* Темы */
 :root {
-  --bg-color: #0e0e10;
-  --card-bg: rgba(255, 255, 255, 0.06);
-  --text-color: #fff;
-  --accent-color: #5865f2;
-  --shadow: 0 4px 25px rgba(0, 0, 0, 0.2);
+  --bg: #0e0e0e;
+  --text: #fff;
+  --card-bg: rgba(255, 255, 255, 0.08);
+  --button-bg: #222;
+  --accent: #4fc3f7;
+}
+.light-theme {
+  --bg: #f2f2f2;
+  --text: #111;
+  --card-bg: rgba(0, 0, 0, 0.05);
+  --button-bg: #ddd;
+  --accent: #0077cc;
 }
 
-body.light {
-  --bg-color: #f4f4f8;
-  --card-bg: rgba(255, 255, 255, 0.85);
-  --text-color: #1a1a1a;
-  --accent-color: #0077ff;
-  --shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-}
-
-/* Невидимый отступ */
-.spacer {
+.top-spacer {
   height: 1.3cm;
 }
 
-/* Верхние кнопки */
-header {
+.top-buttons {
   display: flex;
   justify-content: flex-start;
   gap: 10px;
-  padding: 10px 15px;
-  position: relative;
-  z-index: 5;
+  padding: 0 15px;
 }
 
 button {
-  background: var(--card-bg);
+  background: var(--button-bg);
+  color: var(--text);
   border: none;
-  padding: 10px 18px;
+  padding: 8px 15px;
   border-radius: 10px;
-  color: var(--text-color);
   cursor: pointer;
-  font-size: 15px;
-  backdrop-filter: blur(15px);
-  transition: 0.3s;
+  transition: 0.2s;
 }
-
 button:hover {
-  background: var(--accent-color);
-  color: #fff;
-}
-
-/* Меню и настройки */
-.modal {
-  display: none;
-  position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  background: rgba(0,0,0,0.4);
-  backdrop-filter: blur(5px);
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-}
-
-.modal-content {
-  background: var(--card-bg);
-  box-shadow: var(--shadow);
-  border-radius: 20px;
-  padding: 25px;
-  width: 80%;
-  max-width: 400px;
-  color: var(--text-color);
-  animation: fadeIn 0.3s ease;
-}
-
-.modal-content h2 {
-  margin-top: 0;
-  font-size: 22px;
-  text-align: center;
-}
-
-.modal-content select {
-  width: 100%;
-  padding: 8px;
-  margin: 10px 0;
-  border-radius: 8px;
-  border: none;
-}
-
-/* Приветственная карточка */
-.card {
-  margin: 30px auto;
-  width: 85%;
-  max-width: 450px;
-  background: var(--card-bg);
-  border-radius: 25px;
-  text-align: center;
-  padding: 25px;
-  box-shadow: var(--shadow);
-  backdrop-filter: blur(20px);
-  transition: 0.3s;
-}
-
-.card:hover {
-  transform: scale(1.02);
-}
-
-.card img {
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-  border: 3px solid var(--accent-color);
-  margin-bottom: 10px;
-}
-
-.card h1 {
-  font-size: 22px;
-  margin: 5px 0;
-}
-
-.card p {
-  margin: 0;
   opacity: 0.8;
 }
 
-/* Видео */
-.video {
-  margin-top: 10px;
-  border-radius: 15px;
-  overflow: hidden;
-  box-shadow: var(--shadow);
-}
-
-/* Кнопка выхода */
-.logout-btn {
+.popup {
   display: none;
-  background: crimson;
-  color: white;
-  font-weight: 500;
-  margin-top: 10px;
-}
-
-/* Twitch индикатор */
-#streamStatus {
-  margin-top: 10px;
-  font-weight: 500;
-  padding: 6px 10px;
-  border-radius: 8px;
-  display: inline-block;
-}
-.online {
-  background: #00c851;
-  color: white;
-}
-.offline {
-  background: #ff4444;
-  color: white;
-}
-
-/* Окно cookie */
-#cookiePopup {
   position: fixed;
-  bottom: 20px;
-  left: 20px;
-  right: 20px;
+  top: 20%;
+  left: 50%;
+  transform: translate(-50%, -20%);
   background: var(--card-bg);
-  box-shadow: var(--shadow);
+  padding: 20px;
   border-radius: 15px;
-  padding: 15px;
-  text-align: center;
-  z-index: 2000;
-  display: none;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  z-index: 20;
+  min-width: 260px;
 }
 
-/* Анимация */
-@keyframes fadeIn {
-  from { opacity: 0; transform: scale(0.9); }
-  to { opacity: 1; transform: scale(1); }
+.setting-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 10px 0;
+}
+
+/* Красивая кнопка-тумблер темы */
+.theme-switch {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 26px;
+}
+.theme-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+.slider {
+  position: absolute;
+  cursor: pointer;
+  inset: 0;
+  background-color: #ccc;
+  border-radius: 34px;
+  transition: 0.4s;
+}
+.slider::before {
+  content: "🌙";
+  position: absolute;
+  height: 20px;
+  width: 20px;
+  left: 4px;
+  top: 3px;
+  transition: 0.4s;
+  font-size: 14px;
+}
+.theme-switch input:checked + .slider {
+  background-color: var(--accent);
+}
+.theme-switch input:checked + .slider::before {
+  transform: translateX(24px);
+  content: "☀️";
+}
+
+/* Карточка */
+.card {
+  margin: 60px auto;
+  background: var(--card-bg);
+  border-radius: 20px;
+  padding: 20px;
+  max-width: 340px;
+  text-align: center;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+}
+
+.avatar {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  border: 3px solid #555;
+  margin-bottom: 10px;
+}
+
+.video-container {
+  margin: 15px 0;
+}
+
+.cookie-popup {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  background: var(--card-bg);
+  text-align: center;
+  padding: 10px;
+  backdrop-filter: blur(10px);
+}
+.cookie-popup button {
+  margin: 5px;
   }
