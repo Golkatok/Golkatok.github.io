@@ -85,7 +85,20 @@ h2 { margin:6px 0 6px; font-size:1.5rem; }
   .top-spacer { height:1.2cm; } /* slight adjust on small screens */
                 }
 
-/* YouTube карточка */
+/* Centered header */
+.center-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.lang-switcher {
+  display: flex;
+  gap: 6px;
+}
+
+/* YouTube Card */
 .youtube-card {
   margin-top: 20px;
   padding: 16px;
@@ -106,4 +119,4 @@ h2 { margin:6px 0 6px; font-size:1.5rem; }
   font-size:1.5rem;
   font-weight:600;
   color: var(--accent);
-              }
+}
