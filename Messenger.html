@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <title>GitHub Messenger 💬</title>
+  <title>Supabase Messenger 💬</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     :root {
@@ -110,7 +110,7 @@
     <button onclick="enterChat()">Войти</button>
   </div>
 
-  <header>GitHub Messenger 💬</header>
+  <header>Supabase Messenger 💬</header>
   <div id="messages"></div>
 
   <div id="input">
@@ -118,29 +118,16 @@
     <button id="sendBtn" onclick="sendMessage()">➤</button>
   </div>
 
-  <!-- Новый Firebase SDK -->
-<script type="module">
-  // Import the functions you need from the SDKs you need
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-app.js";
-  import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-analytics.js";
-  // TODO: Add SDKs for Firebase products that you want to use
-  // https://firebase.google.com/docs/web/setup#available-libraries
+  <!-- Подключаем Supabase -->
+  <script type="module">
+    import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-  // Your web app's Firebase configuration
-  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-  const firebaseConfig = {
-    apiKey: "AIzaSyCvd9cgetTmQob9dr6B1752JiwqKOXpImw",
-    authDomain: "jahvirwebappmess.firebaseapp.com",
-    projectId: "jahvirwebappmess",
-    storageBucket: "jahvirwebappmess.firebasestorage.app",
-    messagingSenderId: "147057099011",
-    appId: "1:147057099011:web:174ccce845c5754ada2936",
-    measurementId: "G-1VCYR2076E"
-  };
+    // 👉 ВСТАВЬ СЮДА СВОИ ДАННЫЕ:
+    const SUPABASE_URL = "https://rqryjohpzvhitwcuesgz.supabase.co";
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJxcnlqb2hwenZoaXR3Y3Vlc2d6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIwMzU2MTQsImV4cCI6MjA3NzYxMTYxNH0.gYUjNurKQ2bIkoY2IH8an8-hGUc5UXlD_XVsQM3M8q4";
 
-  // Initialize Firebase
-  const app = initializeApp(firebaseConfig);
-  const analytics = getAnalytics(app);
+    const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+
     let username = localStorage.getItem("chatUser") || "";
     const loginDiv = document.getElementById('login');
     const messagesDiv = document.getElementById('messages');
@@ -154,28 +141,35 @@
       username = name;
       localStorage.setItem("chatUser", name);
       loginDiv.style.display = "none";
+      loadMessages();
     }
 
-    const messagesRef = ref(db, "messages");
+    async function loadMessages() {
+      const { data } = await supabase.from("messages").select("*").order("id", { ascending: true });
+      data.forEach(addMessage);
+      messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }
 
-    onChildAdded(messagesRef, (data) => {
-      const msg = data.val();
+    function addMessage(msg) {
       const div = document.createElement("div");
       div.classList.add("msg");
       if (msg.user === username) div.classList.add("mine");
       div.innerHTML = `<b>${msg.user}:</b> ${msg.text}`;
       messagesDiv.appendChild(div);
       messagesDiv.scrollTop = messagesDiv.scrollHeight;
-    });
+    }
 
-    window.sendMessage = function() {
+    // Слушаем новые сообщения в реальном времени
+    supabase.channel('realtime:messages')
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, payload => {
+        addMessage(payload.new);
+      })
+      .subscribe();
+
+    window.sendMessage = async function() {
       const text = inputField.value.trim();
       if (!text) return;
-      push(messagesRef, {
-        user: username || "Гость",
-        text,
-        time: Date.now()
-      });
+      await supabase.from("messages").insert([{ user: username || "Гость", text }]);
       inputField.value = "";
     }
 
