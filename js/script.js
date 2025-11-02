@@ -1,10 +1,13 @@
-// script.js — полная версия
+// script.js
+// Поведение модалок, тема, языковой переключатель, Telegram auth, cookie consent, подстановка имени, YouTube API
+
 (function(){
-  // DOM elements
+  // DOM элементы
   const menuBtn = document.getElementById('menuBtn');
   const menuModal = document.getElementById('menuModal');
   const tgModal = document.getElementById('tgModal');
   const loginBtn = document.getElementById('loginBtn');
+  const loginWrapper = document.getElementById('loginWrapper');
   const cookieBanner = document.getElementById('cookieBanner');
   const acceptCookies = document.getElementById('acceptCookies');
   const declineCookies = document.getElementById('declineCookies');
@@ -12,14 +15,11 @@
   const avatarImg = document.getElementById('avatarImg');
   const langButtons = document.querySelectorAll('.lang-btn');
   const i18nElements = document.querySelectorAll('[data-i18n]');
-
-  // YouTube elements (may be null if removed)
   const ytFrame = document.getElementById('ytframe');
-  const subscriberEl = document.getElementById('subscriber-count');
 
-  // YouTube API config
-  const YT_API_KEY = 'AIzaSyAF--RJuLhHoKvQlucjj2_NF_RTcrvjqeo';
-  const YT_CHANNEL_ID = 'UCrZA2Mj6yKZkEcBIqdfF6Ag';
+  // YouTube API
+  const API_KEY = 'AIzaSyAF--RJuLhHoKvQlucjj2_NF_RTcrvjqeo';
+  const CHANNEL_ID = 'UCrZA2Mj6yKZkEcBIqdfF6Ag';
 
   // Translations
   const translations = {
@@ -34,6 +34,7 @@
       greeting_prefix: 'Привет',
       lastLabel: 'Последний ролик:',
       loginBtn: 'Войти через Telegram',
+      logoutBtn: 'Выйти',
       tgHeading: 'Вход через Telegram',
       tgHint: 'После успешной авторизации имя пользователя будет подставлено в приветствии.',
       cookieText: 'Этот сайт использует cookies для запоминания входа через Telegram и настроек. Принять?',
@@ -51,6 +52,7 @@
       greeting_prefix: 'Привіт',
       lastLabel: 'Останнє відео:',
       loginBtn: 'Увійти через Telegram',
+      logoutBtn: 'Вийти',
       tgHeading: 'Вхід через Telegram',
       tgHint: 'Після успішної авторизації імʼя користувача зʼявиться у привітанні.',
       cookieText: 'Цей сайт використовує cookies для запамʼятовування входу через Telegram та налаштувань. Прийняти?',
@@ -68,6 +70,7 @@
       greeting_prefix: 'Hello',
       lastLabel: 'Latest video:',
       loginBtn: 'Login with Telegram',
+      logoutBtn: 'Logout',
       tgHeading: 'Telegram login',
       tgHint: 'After successful authorization, the username will appear in the greeting.',
       cookieText: 'This site uses cookies to remember Telegram login and settings. Accept?',
@@ -76,7 +79,7 @@
     }
   };
 
-  /* -------------------- Utility: modals & i18n -------------------- */
+  // Modal helpers
   function openModal(el){
     if(!el) return;
     el.setAttribute('aria-hidden','false');
@@ -86,7 +89,7 @@
     if(el) el.setAttribute('aria-hidden','true');
   }
 
-  // Apply translations to elements with data-i18n
+  // i18n apply
   function applyTranslations(lang){
     const dict = translations[lang] || translations.ru;
     i18nElements.forEach(el => {
@@ -97,13 +100,12 @@
       }
     });
 
-    // greeting handling
     const saved = localStorage.getItem('telegramUser') || sessionStorage.getItem('telegramUser');
     if(saved){
       try {
         const user = JSON.parse(saved);
         setGreetingWithUser(user, lang);
-        setLoginAsLogin(lang); // always show login button (no logout)
+        setLoginAsLogout(lang);
       } catch(e){
         setGreetingGuest(lang);
         setLoginAsLogin(lang);
@@ -113,37 +115,91 @@
       setLoginAsLogin(lang);
     }
 
-    // highlight active lang button
     langButtons.forEach(b => {
       if(b.dataset.lang === lang) b.classList.add('active-lang');
       else b.classList.remove('active-lang');
     });
 
-    // set html lang
-    document.documentElement.lang = (lang === 'uk' ? 'uk' : (lang === 'en' ? 'en' : 'ru'));
+    document.documentElement.lang = lang;
   }
 
+  // Greeting helpers
   function setGreetingGuest(lang){
-    const txt = translations[lang].greeting_guest || translations.ru.greeting_guest;
-    if(greeting) greeting.textContent = txt;
+    greeting.textContent = translations[lang].greeting_guest || translations.ru.greeting_guest;
   }
   function setGreetingWithUser(user, lang){
-    if(!greeting) return;
     const prefix = translations[lang].greeting_prefix || translations.ru.greeting_prefix;
     const name = (user && (user.first_name || user.username)) ? (user.first_name || user.username) : (translations[lang].greeting_guest || translations.ru.greeting_guest);
     greeting.textContent = prefix + ' ' + name + '!';
   }
 
-  // Keep only login behavior (no logout button)
+  // Login / logout
+  function setLoginAsLogout(lang){
+    loginBtn.onclick = null;
+    loginBtn.textContent = translations[lang].logoutBtn || translations.ru.logoutBtn;
+    loginBtn.classList.remove('primary');
+    loginBtn.onclick = logoutHandler;
+    if(loginWrapper) loginWrapper.classList.add('hidden');
+  }
   function setLoginAsLogin(lang){
-    if(!loginBtn) return;
     loginBtn.onclick = null;
     loginBtn.textContent = translations[lang].loginBtn || translations.ru.loginBtn;
     loginBtn.classList.add('primary');
     loginBtn.onclick = () => openModal(tgModal);
+    if(loginWrapper) loginWrapper.classList.remove('hidden');
+  }
+  function logoutHandler(){
+    localStorage.removeItem('telegramUser');
+    sessionStorage.removeItem('telegramUser');
+    const lang = localStorage.getItem('siteLang') || 'ru';
+    setGreetingGuest(lang);
+    setLoginAsLogin(lang);
   }
 
-  /* -------------------- Toast -------------------- */
+  // Attach menu button
+  menuBtn.addEventListener('click', () => openModal(menuModal));
+
+  // Cookie handlers
+  acceptCookies.addEventListener('click', () => {
+    localStorage.setItem('cookieAccepted','yes');
+    hideCookieBanner();
+    const saved = localStorage.getItem('telegramUser');
+    if(!saved) openModal(tgModal);
+  });
+  declineCookies.addEventListener('click', () => {
+    localStorage.setItem('cookieAccepted','no');
+    hideCookieBanner();
+    localStorage.removeItem('telegramUser');
+  });
+  function showCookieBanner(){
+    cookieBanner.classList.add('show');
+    cookieBanner.setAttribute('aria-hidden','false');
+  }
+  function hideCookieBanner(){
+    cookieBanner.classList.remove('show');
+    cookieBanner.setAttribute('aria-hidden','true');
+  }
+
+  // Telegram auth
+  window.onTelegramAuth = function(user){
+    try {
+      const cookieAccepted = localStorage.getItem('cookieAccepted') === 'yes';
+      if(cookieAccepted){
+        localStorage.setItem('telegramUser', JSON.stringify(user));
+      } else {
+        sessionStorage.setItem('telegramUser', JSON.stringify(user));
+      }
+      const lang = localStorage.getItem('siteLang') || 'ru';
+      setGreetingWithUser(user, lang);
+      setLoginAsLogout(lang);
+      closeModalById('tgModal');
+      showToast((translations[lang].loginBtn ? translations[lang].loginBtn + ' ' : '') + (user.first_name || user.username || ''));
+    } catch (err) {
+      console.error('onTelegramAuth error', err);
+    }
+  };
+
+  // Tiny toast
   function showToast(msg, ms = 2200){
     let t = document.getElementById('siteToast');
     if(!t){
@@ -167,121 +223,10 @@
     t._h = setTimeout(()=>{ t.style.opacity = '0'; }, ms);
   }
 
-  /* -------------------- Event wiring -------------------- */
-  // menu open
-  if(menuBtn){
-    menuBtn.addEventListener('click', () => openModal(menuModal));
-  }
-
-  // modal close buttons (data-close attribute should contain modal id)
-  document.querySelectorAll('.modal-close').forEach(btn => {
-    btn.addEventListener('click', (e)=>{
-      const target = btn.dataset.close;
-      if(target) closeModalById(target);
-      else {
-        // try to detect parent modal
-        const parent = btn.closest('.modal');
-        if(parent && parent.id) parent.setAttribute('aria-hidden','true');
-      }
-    });
-  });
-
-  // close modal by clicking outside
-  document.querySelectorAll('.modal').forEach(m => {
-    m.addEventListener('click', (e) => {
-      if(e.target === m) m.setAttribute('aria-hidden','true');
-    });
-  });
-
-  // close by Esc
-  document.addEventListener('keydown', (e) => {
-    if(e.key === 'Escape'){
-      document.querySelectorAll('.modal').forEach(m => m.setAttribute('aria-hidden','true'));
-    }
-  });
-
-  // cookie handlers
-  if(acceptCookies){
-    acceptCookies.addEventListener('click', () => {
-      localStorage.setItem('cookieAccepted','yes');
-      hideCookieBanner();
-      // if no stored user yet, open tg modal
-      if(!localStorage.getItem('telegramUser')){
-        openModal(tgModal);
-      }
-    });
-  }
-  if(declineCookies){
-    declineCookies.addEventListener('click', () => {
-      localStorage.setItem('cookieAccepted','no');
-      hideCookieBanner();
-      // remove persistent stored user if any
-      localStorage.removeItem('telegramUser');
-    });
-  }
-
-  function showCookieBanner(){
-    if(!cookieBanner) return;
-    cookieBanner.classList.add('show');
-    cookieBanner.setAttribute('aria-hidden','false');
-  }
-  function hideCookieBanner(){
-    if(!cookieBanner) return;
-    cookieBanner.classList.remove('show');
-    cookieBanner.setAttribute('aria-hidden','true');
-  }
-
-  // language buttons
+  // Language buttons
   langButtons.forEach(btn => {
     btn.addEventListener('click', () => {
-      const lang = btn.dataset.lang;
-      if(!lang) return;
-      localStorage.setItem('siteLang', lang);
-      applyTranslations(lang);
-    });
-  });
-
-  // detect browser lang
-  function detectBrowserLang(){
-    const nav = navigator.language || navigator.userLanguage || 'ru';
-    if(nav.startsWith('uk')) return 'uk';
-    if(nav.startsWith('en')) return 'en';
-    if(nav.startsWith('be')) return 'ru';
-    if(nav.startsWith('ru')) return 'ru';
-    return 'ru';
-  }
-
-  /* -------------------- Telegram auth callback (global) -------------------- */
-  window.onTelegramAuth = function(user){
-    try {
-      const cookieAccepted = localStorage.getItem('cookieAccepted') === 'yes';
-      if(cookieAccepted){
-        localStorage.setItem('telegramUser', JSON.stringify(user));
-      } else {
-        sessionStorage.setItem('telegramUser', JSON.stringify(user));
-      }
-      const lang = localStorage.getItem('siteLang') || 'ru';
-      setGreetingWithUser(user, lang);
-      setLoginAsLogin(lang);
-      closeModalById('tgModal');
-      showToast((translations[lang].loginBtn ? translations[lang].loginBtn + ' ' : '') + (user.first_name || user.username || ''));
-    } catch (err) {
-      console.error('onTelegramAuth error', err);
-    }
-  };
-
-  /* -------------------- YouTube: latest video + subscriber count -------------------- */
-  async function fetchLatestVideo(){
-    if(!ytFrame) return;
-    try {
-      const url = `https://www.googleapis.com/youtube/v3/search?key=${YT_API_KEY}&channelId=${YT_CHANNEL_ID}&part=snippet&order=date&maxResults=1&type=video`;
-      const res = await fetch(url);
-      if(!res.ok) throw new Error('YouTube search API error: '+res.status);
-      const data = await res.json();
-      if(data.items && data.items.length>0 && data.items[0].id && data.items[0].id.videoId){
-        const videoId = data.items[0].id.videoId;
-        // set iframe src only if changed to avoid reloads
-        const newSrc = `https://www.youtube.com/embed/${videoId}`;
+      const langutube.com/embed/${videoId}`;
         if(ytFrame.src !== newSrc) ytFrame.src = newSrc;
       }
     } catch(e){
