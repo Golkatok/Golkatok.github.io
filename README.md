@@ -1,2 +1,1 @@
 # Golkatok.github.io
-сро
