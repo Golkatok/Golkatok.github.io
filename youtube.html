@@ -5,80 +5,73 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Счётчик подписчиков YouTube</title>
   <style>
-    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;margin:0;
-      display:flex;align-items:center;justify-content:center;height:100vh;background:#0f1724;color:#e6eef8}
-    .card{background:rgba(255,255,255,0.04);backdrop-filter:blur(8px);padding:28px;border-radius:16px;
-      box-shadow: 0 6px 24px rgba(2,6,23,0.6);text-align:center;min-width:260px}
-    .title{font-size:14px;opacity:.75}
-    .count{font-size:44px;margin-top:10px;font-weight:700;letter-spacing:0.6px}
-    .note{font-size:12px;opacity:.6;margin-top:8px}
-    .small{font-size:12px}
-    .error{color:#ffaaaa;margin-top:8px;font-size:13px}
+    body {
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      background: #0f1724;
+      color: #e6eef8;
+    }
+    .card {
+      background: rgba(255,255,255,0.04);
+      backdrop-filter: blur(8px);
+      padding: 28px;
+      border-radius: 16px;
+      box-shadow: 0 6px 24px rgba(2,6,23,0.6);
+      text-align: center;
+      min-width: 260px;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .card:hover {
+      transform: scale(1.03);
+      box-shadow: 0 8px 32px rgba(2,6,23,0.8);
+    }
+    .title {
+      font-size: 14px;
+      opacity: .75;
+    }
+    .count {
+      font-size: 44px;
+      margin-top: 10px;
+      font-weight: 700;
+      letter-spacing: 0.6px;
+    }
+    .note {
+      font-size: 12px;
+      opacity: .6;
+      margin-top: 8px;
+    }
+    .error {
+      color: #ffaaaa;
+      margin-top: 8px;
+      font-size: 13px;
+      display: none;
+    }
+    .loading {
+      font-size: 13px;
+      color: #9aa7c4;
+      margin-top: 12px;
+      animation: blink 1.2s infinite;
+    }
+    @keyframes blink {
+      0%, 100% { opacity: 0.3; }
+      50% { opacity: 1; }
+    }
   </style>
 </head>
 <body>
-  <div class="card" id="card">
+  <div class="card">
     <div class="title">Подписчики канала</div>
     <div class="count" id="subCount">—</div>
     <div class="note" id="channelName">Загрузка…</div>
-    <div class="error" id="err" style="display:none"></div>
+    <div class="loading" id="loading">⏳ Получаем данные...</div>
+    <div class="error" id="err"></div>
   </div>
 
-<script>
-/*
-  Настройте эти значения:
-  - API_KEY: ваш YouTube Data API v3 ключ
-  - CHANNEL_ID: ID канала (начинается с "UC...")
-*/
-const API_KEY = "AIzaSyAF--RJuLhHoKvQlucjj2_NF_RTcrvjqeo";
-const CHANNEL_ID = "UCrZA2Mj6yKZkEcBIqdfF6Ag"; // замените на ваш CHANNEL_ID
-const POLL_INTERVAL = 3 * 1000; // интервал обновления в миллисекундах (здесь 60с)
-
-const subEl = document.getElementById('subCount');
-const nameEl = document.getElementById('channelName');
-const errEl = document.getElementById('err');
-
-async function fetchSubs(){
-  try{
-    errEl.style.display = 'none';
-    const url = https://www.googleapis.com/youtube/v3/channels?part=statistics,snippet&id=${CHANNEL_ID}&key=${API_KEY};
-    const resp = await fetch(url);
-    if(!resp.ok){
-      throw new Error('HTTP ' + resp.status);
-    }
-    const j = await resp.json();
-    if(!j.items || j.items.length === 0) throw new Error('Канал не найден');
-    const stats = j.items[0].statistics;
-    const snippet = j.items[0].snippet;
-    const count = stats.subscriberCount ?? '0';
-    animateCount(count);
-    nameEl.textContent = snippet.title || 'Канал';
-  } catch (e){
-    console.error(e);
-    errEl.style.display = 'block';
-    errEl.textContent = 'Ошибка: ' + e.message;
-  }
-}
-
-// Плавная анимация изменения числа
-let current = 0;
-function animateCount(newCount){
-  const target = Number(newCount);
-  const step = Math.max(1, Math.floor(Math.abs(target - current) / 20));
-  if (isNaN(target)) { subEl.textContent = newCount; current = target; return; }
-  const tick = () => {
-    if (current === target) return;
-    if (current < target) current = Math.min(target, current + step);
-    else current = Math.max(target, current - step);
-    subEl.textContent = current.toLocaleString('ru-RU');
-    requestAnimationFrame(tick);
-  };
-  tick();
-}
-
-// Первичный вызов + периодическое обновление
-fetchSubs();
-setInterval(fetchSubs, POLL_INTERVAL);
-</script>
+  <!-- Подключаем JS из папки -->
+  <script src="js/you.js"></script>
 </body>
 </html>
