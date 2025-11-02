@@ -15,10 +15,9 @@
       <button id="menuBtn" class="btn" data-i18n="menuBtn">☰ Меню</button>
     </div>
     <div class="center">
-      <h1 class="site-title">         </h1>
+      <h1 class="site-title"></h1>
     </div>
     <div class="right">
-      <!-- Language switcher -->
       <div id="langSwitcher" class="lang-switcher" aria-label="Language selector">
         <button class="btn lang-btn" data-lang="ru">RU</button>
         <button class="btn lang-btn" data-lang="uk">UA</button>
@@ -37,13 +36,19 @@
       <p class="subtext" id="lastLabel" data-i18n="lastLabel">Последний ролик:</p>
 
       <div class="video-wrap">
-        <!-- встроенный ютуб (пока что статичная ссылка) -->
         <iframe id="ytframe" src="https://www.youtube.com/embed/7upmUi_AnbE" title="YouTube video" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
       </div>
 
       <div class="card-actions">
         <button id="loginBtn" class="btn primary" data-i18n="loginBtn">Войти через Telegram</button>
       </div>
+
+      <!-- YouTube подписчики внутри карточки профиля -->
+      <div class="youtube-card">
+        <h3>Подписчиков на YouTube:</h3>
+        <div id="subscriber-count" class="subscriber-count">Загрузка...</div>
+      </div>
+
     </section>
   </main>
 
@@ -61,13 +66,11 @@
     </div>
   </div>
 
-  <!-- Telegram login modal (появляется при первом заходе если нет сохранённого юзера) -->
+  <!-- Telegram login modal -->
   <div class="modal" id="tgModal" aria-hidden="true" role="dialog" aria-labelledby="tgHeading">
     <div class="modal-card">
       <button class="modal-close" data-close="tgModal">✕</button>
       <h3 id="tgHeading" data-i18n="tgHeading">Вход через Telegram</h3>
-
-      <!-- Telegram widget скрипт (данный вами виджет) -->
       <div id="telegramWidgetWrap">
         <script async src="https://telegram.org/js/telegram-widget.js?22"
                 data-telegram-login="Jahvirapelacionsbot"
@@ -76,7 +79,6 @@
                 data-request-access="write">
         </script>
       </div>
-
       <p class="hint" id="tgHint" data-i18n="tgHint">После успешной авторизации имя пользователя будет подставлено в приветствии.</p>
     </div>
   </div>
@@ -91,15 +93,7 @@
       </div>
     </div>
   </div>
-  <!-- YouTube подписчики -->
-<link rel="stylesheet" href="css/you.css">
 
-<div class="youtube-counter">
-  <h3>Подписчиков на YouTube:</h3>
-  <div id="subscriber-count" class="subscriber-count">Загрузка...</div>
-</div>
-
-  <script src="js/you.js"></script>
   <script src="js/script.js" defer></script>
 </body>
 </html>
