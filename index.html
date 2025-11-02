@@ -7,25 +7,21 @@
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
-  <!-- невидимый отступ 1.3cm -->
   <div class="top-spacer" aria-hidden="true"></div>
 
+  <!-- Header -->
   <header class="header">
-    <div class="left">
-      <button id="menuBtn" class="btn" data-i18n="menuBtn">☰ Меню</button>
-    </div>
-    <div class="center">
-      <h1 class="site-title"></h1>
-    </div>
-    <div class="right">
+    <div class="center-header">
       <div id="langSwitcher" class="lang-switcher" aria-label="Language selector">
         <button class="btn lang-btn" data-lang="ru">RU</button>
         <button class="btn lang-btn" data-lang="uk">UA</button>
         <button class="btn lang-btn" data-lang="en">EN</button>
       </div>
+      <button id="menuBtn" class="btn" data-i18n="menuBtn">☰ Меню</button>
     </div>
   </header>
 
+  <!-- Main -->
   <main class="main">
     <section class="card profile-card" id="profileCard">
       <div class="avatar-wrap">
@@ -35,15 +31,16 @@
       <h2 id="greeting" data-i18n="greeting">Привет Гость!</h2>
       <p class="subtext" id="lastLabel" data-i18n="lastLabel">Последний ролик:</p>
 
+      <!-- YouTube Video -->
       <div class="video-wrap">
-        <iframe id="ytframe" src="https://www.youtube.com/embed/7upmUi_AnbE" title="YouTube video" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+        <iframe id="ytframe" src="" title="YouTube video" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
       </div>
 
       <div class="card-actions">
         <button id="loginBtn" class="btn primary" data-i18n="loginBtn">Войти через Telegram</button>
       </div>
 
-      <!-- YouTube подписчики внутри карточки профиля -->
+      <!-- YouTube Subscribers -->
       <div class="youtube-card">
         <h3>Подписчиков на YouTube:</h3>
         <div id="subscriber-count" class="subscriber-count">Загрузка...</div>
@@ -52,7 +49,7 @@
     </section>
   </main>
 
-  <!-- Меню modal -->
+  <!-- Menu Modal -->
   <div class="modal" id="menuModal" aria-hidden="true" role="dialog" aria-labelledby="menuHeading">
     <div class="modal-card">
       <button class="modal-close" data-close="menuModal">✕</button>
