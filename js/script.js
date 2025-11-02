@@ -307,3 +307,31 @@
   });
 
 })();
+
+// YouTube subscriber count
+(function(){
+  const subscriberEl = document.getElementById('subscriber-count');
+  if(!subscriberEl) return;
+
+  const apiKey = 'AIzaSyAF--RJuLhHoKvQlucjj2_NF_RTcrvjqeo';
+  const channelId = 'UCrZA2Mj6yKZkEcBIqdfF6Ag';
+
+  async function fetchSubscribers(){
+    try {
+      const res = await fetch(`https://www.googleapis.com/youtube/v3/channels?part=statistics&id=${channelId}&key=${apiKey}`);
+      if(!res.ok) throw new Error('YouTube API error');
+      const data = await res.json();
+      if(data.items && data.items.length > 0){
+        subscriberEl.textContent = Number(data.items[0].statistics.subscriberCount).toLocaleString('en-US');
+      } else {
+        subscriberEl.textContent = 'Ошибка';
+      }
+    } catch(e){
+      console.error(e);
+      subscriberEl.textContent = 'Ошибка';
+    }
+  }
+
+  fetchSubscribers();
+  setInterval(fetchSubscribers, 60000); // обновление раз в минуту
+})();
