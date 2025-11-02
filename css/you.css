@@ -1,31 +1,32 @@
-.youtube-counter {
-  backdrop-filter: blur(10px);
+.yt-card {
+  margin-top: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 16px;
-  padding: 20px 30px;
-  text-align: center;
-  color: #fff;
-  font-family: 'Segoe UI', sans-serif;
-  width: fit-content;
-  margin: 20px auto;
-  box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border-radius: 15px;
+  padding: 10px 20px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 0 10px rgba(0,0,0,0.3);
+  transition: 0.3s;
 }
 
-.youtube-counter:hover {
-  transform: scale(1.05);
-  box-shadow: 0 0 25px rgba(255, 255, 255, 0.15);
+.yt-card:hover {
+  transform: scale(1.02);
 }
 
-.youtube-counter h3 {
-  font-size: 1.1rem;
-  margin-bottom: 10px;
-  opacity: 0.8;
+.yt-icon {
+  width: 50px;
+  height: 50px;
+  margin-right: 15px;
 }
 
-.subscriber-count {
-  font-size: 2rem;
-  font-weight: 600;
-  letter-spacing: 1px;
+.yt-info {
+  text-align: left;
+}
+
+#yt-subs {
+  font-size: 1.4em;
+  font-weight: bold;
+  color: #ff4b4b;
 }
