@@ -308,20 +308,36 @@
 
 })();
 
-// YouTube subscriber count
+// Последнее видео с YouTube + подписчики
 (function(){
-  const subscriberEl = document.getElementById('subscriber-count');
-  if(!subscriberEl) return;
-
   const apiKey = 'AIzaSyAF--RJuLhHoKvQlucjj2_NF_RTcrvjqeo';
   const channelId = 'UCrZA2Mj6yKZkEcBIqdfF6Ag';
 
+  const ytFrame = document.getElementById('ytframe');
+  const subscriberEl = document.getElementById('subscriber-count');
+
+  // Получаем последнее видео
+  async function fetchLatestVideo(){
+    try {
+      const res = await fetch(`https://www.googleapis.com/youtube/v3/search?key=${apiKey}&channelId=${channelId}&part=snippet&order=date&maxResults=1&type=video`);
+      if(!res.ok) throw new Error('YouTube API error');
+      const data = await res.json();
+      if(data.items && data.items.length>0){
+        const videoId = data.items[0].id.videoId;
+        ytFrame.src = `https://www.youtube.com/embed/${videoId}`;
+      }
+    } catch(e){
+      console.error(e);
+    }
+  }
+
+  // Получаем количество подписчиков
   async function fetchSubscribers(){
     try {
       const res = await fetch(`https://www.googleapis.com/youtube/v3/channels?part=statistics&id=${channelId}&key=${apiKey}`);
       if(!res.ok) throw new Error('YouTube API error');
       const data = await res.json();
-      if(data.items && data.items.length > 0){
+      if(data.items && data.items.length>0){
         subscriberEl.textContent = Number(data.items[0].statistics.subscriberCount).toLocaleString('en-US');
       } else {
         subscriberEl.textContent = 'Ошибка';
@@ -332,6 +348,7 @@
     }
   }
 
+  fetchLatestVideo();
   fetchSubscribers();
-  setInterval(fetchSubscribers, 60000); // обновление раз в минуту
+  setInterval(fetchSubscribers,5000); // обновление подписчиков раз в минуту
 })();
