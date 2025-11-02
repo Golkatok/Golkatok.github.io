@@ -1,7 +1,7 @@
 // ========== НАСТРОЙКИ ==========
 const API_KEY = "AIzaSyAF--RJuLhHoKvQlucjj2_NF_RTcrvjqeo";
 const CHANNEL_ID = "UCrZA2Mj6yKZkEcBIqdfF6Ag"; // ID твоего канала
-const POLL_INTERVAL = 5 * 100; // обновление раз в 60 секунд
+const POLL_INTERVAL = 1 * 1000; // обновление раз в 60 секунд
 // ===============================
 
 const subEl = document.getElementById('subCount');
