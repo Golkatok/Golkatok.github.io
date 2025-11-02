@@ -1,0 +1,31 @@
+.youtube-counter {
+  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 16px;
+  padding: 20px 30px;
+  text-align: center;
+  color: #fff;
+  font-family: 'Segoe UI', sans-serif;
+  width: fit-content;
+  margin: 20px auto;
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.youtube-counter:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 25px rgba(255, 255, 255, 0.15);
+}
+
+.youtube-counter h3 {
+  font-size: 1.1rem;
+  margin-bottom: 10px;
+  opacity: 0.8;
+}
+
+.subscriber-count {
+  font-size: 2rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+}
