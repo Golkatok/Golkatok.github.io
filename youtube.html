@@ -1,77 +1,98 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Счётчик подписчиков YouTube</title>
-  <style>
-    body {
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial;
-      margin: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      background: #0f1724;
-      color: #e6eef8;
-    }
-    .card {
-      background: rgba(255,255,255,0.04);
-      backdrop-filter: blur(8px);
-      padding: 28px;
-      border-radius: 16px;
-      box-shadow: 0 6px 24px rgba(2,6,23,0.6);
-      text-align: center;
-      min-width: 260px;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-    .card:hover {
-      transform: scale(1.03);
-      box-shadow: 0 8px 32px rgba(2,6,23,0.8);
-    }
-    .title {
-      font-size: 14px;
-      opacity: .75;
-    }
-    .count {
-      font-size: 44px;
-      margin-top: 10px;
-      font-weight: 700;
-      letter-spacing: 0.6px;
-    }
-    .note {
-      font-size: 12px;
-      opacity: .6;
-      margin-top: 8px;
-    }
-    .error {
-      color: #ffaaaa;
-      margin-top: 8px;
-      font-size: 13px;
-      display: none;
-    }
-    .loading {
-      font-size: 13px;
-      color: #9aa7c4;
-      margin-top: 12px;
-      animation: blink 1.2s infinite;
-    }
-    @keyframes blink {
-      0%, 100% { opacity: 0.3; }
-      50% { opacity: 1; }
-    }
-  </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Golkatok</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/you.css">
+  <script src="js/script.js" defer></script>
+  <script src="js/telegramlogin.js" defer></script>
+  <script src="js/you.js" defer></script>
 </head>
 <body>
-  <div class="card">
-    <div class="title">Подписчики канала</div>
-    <div class="count" id="subCount">—</div>
-    <div class="note" id="channelName">Загрузка…</div>
-    <div class="loading" id="loading"></div>
-    <div class="error" id="err"></div>
+  <div class="spacer"></div>
+  <div class="header">
+    <button id="menuBtn">☰ Меню</button>
+    <button id="settingsBtn">⚙️ Настройки</button>
   </div>
 
-  <!-- Подключаем JS из папки -->
-  <script src="js/you.js"></script>
+  <!-- Меню -->
+  <div id="menuModal" class="modal">
+    <div class="modal-content">
+      <button class="close" id="closeMenu">&times;</button>
+      <h2>Меню</h2>
+      <ul>
+        <li><a href="index.html">Главная</a></li>
+        <li><a href="social.html">Соц. Сети</a></li>
+        <li><a href="news.html">Новости</a></li>
+        <li><a href="mini-games.html">Мини-игры</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Настройки -->
+  <div id="settingsModal" class="modal">
+    <div class="modal-content">
+      <button class="close" id="closeSettings">&times;</button>
+      <h2>Настройки</h2>
+      <div class="theme-switcher">
+        <label>
+          Тема:
+          <select id="themeSelect">
+            <option value="dark">Тёмная</option>
+            <option value="light">Светлая</option>
+          </select>
+        </label>
+      </div>
+      <div class="lang-switcher">
+        <label>
+          Язык:
+          <select id="langSelect">
+            <option value="ru">Русский</option>
+            <option value="uk">Українська</option>
+            <option value="en">English</option>
+          </select>
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <!-- Основная карточка -->
+  <div class="card">
+    <img src="images/image1.png" alt="Avatar" class="avatar">
+    <h1 id="greeting">Привет, Гость!</h1>
+
+    <p>Последний ролик:</p>
+    <iframe width="560" height="315"
+      src="https://www.youtube.com/embed/7upmUi_AnbE?si=PBrsn3RIf_pPH2-S"
+      title="YouTube video"
+      frameborder="0"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+      allowfullscreen></iframe>
+
+    <!-- Счётчик подписчиков -->
+    <div class="yt-card">
+      <img src="images/youtube.png" alt="YouTube" class="yt-icon">
+      <div class="yt-info">
+        <h3>Подписчики YouTube:</h3>
+        <div id="yt-subs">Загрузка...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Telegram Login -->
+  <div class="telegram-login">
+    <script async src="https://telegram.org/js/telegram-widget.js?22"
+      data-telegram-login="jahvirappelacionsbot"
+      data-size="medium"
+      data-auth-url="https://golkatok.github.io"
+      data-request-access="write">
+    </script>
+  </div>
+
+  <footer>
+    <p>© 2025 Golkatok, DavaJahvir.</p>
+  </footer>
 </body>
 </html>
