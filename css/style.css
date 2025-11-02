@@ -84,3 +84,25 @@ h2 { margin:6px 0 6px; font-size:1.5rem; }
   .modal-card { padding:14px; }
   .top-spacer { height:1.2cm; } /* slight adjust on small screens */
                 }
+/* YouTube карточка */
+.youtube-card {
+  margin-top: 20px;
+  padding: 16px;
+  border-radius: var(--radius);
+  background: var(--card);
+  backdrop-filter: blur(8px) saturate(120%);
+  box-shadow: 0 8px 30px rgba(2,6,23,0.6);
+  text-align: center;
+}
+
+.youtube-card h3 {
+  margin:0 0 8px;
+  font-size:1.1rem;
+  color: var(--text);
+}
+
+.subscriber-count {
+  font-size:1.5rem;
+  font-weight:600;
+  color: var(--accent);
+              }
