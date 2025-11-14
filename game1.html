@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Платформер 3.0 (Локальный Звук)</title>
+    <style>
+        body {
+            background-color: #222; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            touch-action: manipulation; 
+        }
+
+        #game-container {
+            position: relative;
+            width: 100%; 
+            max-width: 800px;
+            height: 400px; 
+            border: 5px solid #fff;
+            background-color: #55aaff; 
+            overflow: hidden;
+        }
+
+        #player {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            background-color: #ff5555; 
+            bottom: 50px; 
+            left: 50%; 
+            transform: translateX(-50%);
+            transition: background-color 0.1s;
+        }
+
+        #ground {
+            position: absolute;
+            width: 100%;
+            height: 50px;
+            background-color: #4CAF50; 
+            bottom: 0;
+        }
+
+        /* Кнопки управления для мобильных */
+        #controls {
+            position: absolute;
+            bottom: 10px;
+            width: 100%;
+            max-width: 800px;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 10px;
+            box-sizing: border-box;
+        }
+        .control-button {
+            width: 80px;
+            height: 80px;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            font-size: 30px;
+            line-height: 80px;
+            text-align: center;
+            border-radius: 10px;
+            user-select: none;
+            cursor: pointer;
+            border: 2px solid white;
+        }
+        #jump-button {
+            position: absolute;
+            right: 20px;
+            bottom: 100px;
+            background-color: rgba(0, 255, 0, 0.6);
+        }
+
+        #sound-hint {
+            position: absolute;
+            top: 10px;
+            width: 100%;
+            text-align: center;
+            color: yellow;
+            font-family: sans-serif;
+            font-size: 14px;
+            z-index: 10;
+        }
+    </style>
+</head>
+<body>
+
+<div id="game-container">
+    <div id="sound-hint">Нажми где-нибудь, чтобы запустить музыку!</div>
+    <div id="ground"></div>
+    <div id="player"></div>
+</div>
+
+<div id="controls">
+    <div class="control-button" id="left-button" ontouchstart="moveStart(-1)" ontouchend="moveEnd()" onmousedown="moveStart(-1)" onmouseup="moveEnd()">⬅️</div>
+    <div class="control-button" id="right-button" ontouchstart="moveStart(1)" ontouchend="moveEnd()" onmousedown="moveStart(1)" onmouseup="moveEnd()">➡️</div>
+    <div class="control-button" id="jump-button" ontouchstart="jump()" onmousedown="jump()">⬆️</div>
+</div>
+
+<script>
+    // 🎧 Звуки! 🎧
+    // Твоя локальная музыка
+    const backgroundMusic = new Audio('music/Music1 (prod. penguinmusic).mp3'); 
+    backgroundMusic.loop = true; 
+    backgroundMusic.volume = 0.3; 
+
+    // Звук прыжка - оставил публичную ссылку для примера
+    const jumpSound = new Audio('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3'); 
+    
+    let musicStarted = false;
+    const soundHint = document.getElementById('sound-hint');
+
+
+    // 🕹️ Логика игры
+    const player = document.getElementById('player');
+    
+    // Физика/Движение (переменные из прошлого кода)
+    let gravity = 0.8; 
+    let velocityY = 0; 
+    let isJumping = false;
+    let playerY = 50; 
+    let playerX = 400; 
+    const groundHeight = 50; 
+    const jumpPower = 15; 
+    const moveSpeed = 5;
+    let moveDirection = 0; 
+    const playerWidth = 30;
+    const containerWidth = 800;
+    
+    function gameLoop() {
+        // --- Попытка автозапуска музыки здесь ---
+        if (!musicStarted) {
+            backgroundMusic.play()
+                .then(() => {
+                    // Музыка запустилась, убираем подсказку
+                    musicStarted = true;
+                    soundHint.style.display = 'none';
+                })
+                .catch(e => {
+                    // Музыка заблокирована браузером, ждем клика
+                    console.log("Автозапуск музыки заблокирован.");
+                });
+        }
+        
+        // --- Вертикальная физика ---
+        if (playerY > groundHeight || velocityY > 0) {
+            velocityY -= gravity;
+            playerY += velocityY;
+        }
+        
+        if (playerY <= groundHeight) {
+            playerY = groundHeight; 
+            velocityY = 0; 
+            isJumping = false; 
+        }
+        
+        // --- Горизонтальное движение ---
+        if (moveDirection !== 0) {
+            playerX += moveDirection * moveSpeed;
+            
+            // Ограничение границ
+            if (playerX < playerWidth / 2) {
+                playerX = playerWidth / 2;
+            }
+            if (playerX > containerWidth - playerWidth / 2) {
+                playerX = containerWidth - playerWidth / 2;
+            }
+            
+            player.style.backgroundColor = '#55ff55'; 
+        } else {
+            player.style.backgroundColor = '#ff5555'; 
+        }
+
+        // --- Обновление позиций ---
+        player.style.bottom = playerY + 'px';
+        player.style.left = playerX + 'px';
+        player.style.transform = `translateX(-50%)`; 
+        
+        requestAnimationFrame(gameLoop);
+    }
+
+    // --- Функции управления ---
+
+    function jump() {
+        if (!isJumping) {
+            isJumping = true;
+            velocityY = jumpPower; 
+            jumpSound.currentTime = 0; 
+            jumpSound.play().catch(e => console.log("Звук прыжка не запустился"));
+        }
+    }
+
+    function moveStart(direction) {
+        moveDirection = direction;
+    }
+
+    function moveEnd() {
+        moveDirection = 0;
+    }
+    
+    // --- Управление с клавиатуры (PC) ---
+    document.addEventListener('keydown', (event) => {
+        if (event.code === 'Space') {
+            jump();
+        } else if (event.code === 'KeyA' || event.code === 'ArrowLeft') {
+            moveStart(-1);
+        } else if (event.code === 'KeyD' || event.code === 'ArrowRight') {
+            moveStart(1);
+        }
+    });
+
+    document.addEventListener('keyup', (event) => {
+        if (event.code === 'KeyA' || event.code === 'ArrowLeft' || event.code === 'KeyD' || event.code === 'ArrowRight') {
+            moveEnd();
+        }
+    });
+
+    // *** Глобальный обработчик для запуска музыки при первом клике ***
+    // Это нужно, чтобы обойти блокировку браузера, если автозапуск не сработал
+    document.addEventListener('click', () => {
+        if (!musicStarted) {
+            backgroundMusic.play().then(() => {
+                musicStarted = true;
+                soundHint.style.display = 'none';
+            }).catch(e => {});
+        }
+    }, { once: true });
+
+
+    // --- Запуск ---
+    gameLoop();
+</script>
+
+</body>
+</html>
