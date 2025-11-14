@@ -1,87 +1,84 @@
-/* ===== Меню ===== */
-document.getElementById("menu-btn").onclick = () => {
-  document.getElementById("menu-popup").style.display = "block";
-};
-document.getElementById("settings-btn").onclick = () => {
-  document.getElementById("settings-popup").style.display = "block";
-};
+// -------------------- МЕНЮ --------------------
+const menuBtn = document.getElementById('menu-btn');
+const menuModal = document.getElementById('menu-modal');
+const menuClose = document.getElementById('menu-close');
 
-/* ===== Cookie ===== */
-document.getElementById("cookie-accept").onclick = () => {
-  localStorage.setItem("cookies", "yes");
-  document.getElementById("cookie-popup").style.display = "none";
-};
+menuBtn.onclick = () => menuModal.style.display = 'block';
+menuClose.onclick = () => menuModal.style.display = 'none';
 
-/* ===== Показать popup Cookie если впервые ===== */
-if (!localStorage.getItem("cookies")) {
-  document.getElementById("cookie-popup").style.display = "flex";
+// -------------------- НАСТРОЙКИ --------------------
+const settingsBtn = document.getElementById('settings-btn');
+const settingsModal = document.getElementById('settings-modal');
+const settingsClose = document.getElementById('settings-close');
+
+settingsBtn.onclick = () => settingsModal.style.display = 'block';
+settingsClose.onclick = () => settingsModal.style.display = 'none';
+
+// Закрытие модальных окон при клике вне них
+window.onclick = function(event) {
+    if (event.target === menuModal) menuModal.style.display = 'none';
+    if (event.target === settingsModal) settingsModal.style.display = 'none';
 }
 
-/* ===== Проверка Telegram авторизации ===== */
-const savedUser = localStorage.getItem("tg_user");
-if (!savedUser) {
-  document.getElementById("tg-login-popup").style.display = "flex";
-} else {
-  const u = JSON.parse(savedUser);
-  document.getElementById("welcome-name").textContent = u.first_name;
+// -------------------- ТЕМЫ --------------------
+const themeSelect = document.getElementById('theme-select');
+themeSelect.onchange = function() {
+    if (this.value === 'dark') {
+        document.body.classList.add('dark');
+    } else {
+        document.body.classList.remove('dark');
+    }
 }
 
-/* ===== Настройки темы ===== */
-document.getElementById("theme-select").onchange = e => {
-  localStorage.setItem("theme", e.target.value);
-  if (e.target.value === "light") {
-    document.body.style.background = "#fafafa";
-    document.body.style.color = "#111";
-  } else {
-    document.body.style.background = "#0d0d14";
-    document.body.style.color = "white";
-  }
+// -------------------- ЯЗЫК --------------------
+const langSelect = document.getElementById('lang-select');
+// Здесь можно добавить динамическую замену текста по языку
+
+// -------------------- COOKIE --------------------
+const cookieBanner = document.getElementById('cookie-banner');
+const acceptCookies = document.getElementById('accept-cookies');
+const declineCookies = document.getElementById('decline-cookies');
+
+acceptCookies.onclick = () => {
+    localStorage.setItem('cookiesAccepted', 'true');
+    cookieBanner.style.display = 'none';
+    telegramLoginDiv.style.display = 'block'; // показываем Telegram виджет
 };
 
-/* Применить сохранённую тему */
-let savedTheme = localStorage.getItem("theme");
-if (savedTheme === "light") {
-  document.body.style.background = "#fafafa";
-  document.body.style.color = "#111";
+declineCookies.onclick = () => {
+    localStorage.setItem('cookiesAccepted', 'false');
+    cookieBanner.style.display = 'none';
+    telegramLoginDiv.style.display = 'none'; // скрываем Telegram виджет
+};
+
+// -------------------- TELEGRAM --------------------
+const telegramLoginDiv = document.getElementById('telegram-login');
+const greeting = document.getElementById('greeting');
+
+function onTelegramAuth(user) {
+    // Сохраняем имя в localStorage
+    localStorage.setItem('telegramName', user.first_name);
+    greeting.textContent = `Привет, ${user.first_name}!`;
+    alert('Logged in as ' + user.first_name + ' ' + (user.last_name || '') + ' (' + user.id + (user.username ? ', @' + user.username : '') + ')');
+    // Скрываем виджет после авторизации
+    telegramLoginDiv.style.display = 'none';
 }
 
-/* ===== Локализация ===== */
-const translations = {
-  ru: {
-    menu: "Меню",
-    settings: "Настройки",
-    theme: "Тема",
-    language: "Язык"
-  },
-  uk: {
-    menu: "Меню",
-    settings: "Налаштування",
-    theme: "Тема",
-    language: "Мова"
-  },
-  by: {
-    menu: "Меню",
-    settings: "Налады",
-    theme: "Тэма",
-    language: "Мова"
-  },
-  en: {
-    menu: "Menu",
-    settings: "Settings",
-    theme: "Theme",
-    language: "Language"
-  }
-};
+// -------------------- ЗАГРУЗКА СТРАНИЦЫ --------------------
+window.addEventListener('load', () => {
+    const cookiesAccepted = localStorage.getItem('cookiesAccepted');
+    const telegramName = localStorage.getItem('telegramName');
 
-document.getElementById("lang-select").onchange = e => {
-  localStorage.setItem("lang", e.target.value);
-  applyLang(e.target.value);
-};
-
-function applyLang(code) {
-  document.querySelectorAll("[data-i18n]").forEach(el => {
-    el.innerText = translations[code][el.dataset.i18n];
-  });
-}
-
-applyLang(localStorage.getItem("lang") || "ru");
+    if (cookiesAccepted === 'true') {
+        // Cookie приняты
+        if (telegramName) {
+            greeting.textContent = `Привет, ${telegramName}!`;
+        }
+        telegramLoginDiv.style.display = telegramName ? 'none' : 'block';
+        cookieBanner.style.display = 'none';
+    } else {
+        // Cookie ещё не приняты
+        telegramLoginDiv.style.display = 'block';
+        cookieBanner.style.display = 'block';
+    }
+});
