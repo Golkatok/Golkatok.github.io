@@ -4,14 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Главная страница</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <div class="header-space"></div>
     <header class="top-bar">
         <div class="container">
-            <button class="menu-btn" id="menuBtn">Меню</button>
-            <button class="settings-btn" id="settingsBtn">Настройки</button>
+            <button class="icon-btn" id="menuBtn">
+                <i class="fas fa-bars"></i>
+            </button>
+            <button class="icon-btn" id="settingsBtn">
+                <i class="fas fa-cog"></i>
+            </button>
         </div>
     </header>
 
@@ -21,10 +25,22 @@
             <span class="close">&times;</span>
             <h2>Навигация</h2>
             <div class="menu-links">
-                <a href="https://golkatok.github.io">Главная</a>
-                <a href="https://golkatok.github.io/social.html">Соц. Сети</a>
-                <a href="https://golkatok.github.io/news.html">Новости</a>
-                <a href="https://golkatok.github.io/mini-games.html">Мини-игры</a>
+                <a href="https://golkatok.github.io" class="menu-link">
+                    <i class="fas fa-home"></i>
+                    <span>Главная</span>
+                </a>
+                <a href="https://golkatok.github.io/social.html" class="menu-link">
+                    <i class="fas fa-share-alt"></i>
+                    <span>Соц. Сети</span>
+                </a>
+                <a href="https://golkatok.github.io/news.html" class="menu-link">
+                    <i class="fas fa-newspaper"></i>
+                    <span>Новости</span>
+                </a>
+                <a href="https://golkatok.github.io/mini-games.html" class="menu-link">
+                    <i class="fas fa-gamepad"></i>
+                    <span>Мини-игры</span>
+                </a>
             </div>
         </div>
     </div>
@@ -35,14 +51,15 @@
             <span class="close">&times;</span>
             <h2>Настройки</h2>
             <div class="setting-group">
-                <label>Тема:</label>
+                <label><i class="fas fa-palette"></i> Тема:</label>
                 <select id="themeSelect">
                     <option value="light">Светлая</option>
                     <option value="dark">Тёмная</option>
+                    <option value="auto">Системная</option>
                 </select>
             </div>
             <div class="setting-group">
-                <label>Язык:</label>
+                <label><i class="fas fa-language"></i> Язык:</label>
                 <select id="languageSelect">
                     <option value="ru">Русский</option>
                     <option value="uk">Украинский</option>
@@ -57,40 +74,41 @@
     <div id="authModal" class="modal auth-modal">
         <div class="modal-content">
             <h2>Авторизация</h2>
-            <p>Войдите через Telegram</p>
-            <script async src="https://telegram.org/js/telegram-widget.js?22" 
-                    data-telegram-login="Jahvirapelacionsbot" 
-                    data-size="large" 
-                    data-onauth="onTelegramAuth(user)" 
-                    data-request-access="write"></script>
+            <p>Войдите через Telegram для персонализации</p>
+            <div id="telegram-widget"></div>
         </div>
     </div>
 
     <!-- Окно cookies -->
     <div id="cookiesModal" class="modal cookies-modal">
         <div class="modal-content">
-            <h2>Файлы Cookies</h2>
-            <p>Мы используем cookies для сохранения ваших настроек и авторизации</p>
+            <h2><i class="fas fa-cookie-bite"></i> Файлы Cookies</h2>
+            <p>Мы используем cookies для сохранения ваших настроек и авторизации. Это помогает нам запомнить вас при повторном посещении.</p>
             <div class="cookie-buttons">
-                <button id="acceptCookies">Принять</button>
-                <button id="declineCookies">Отклонить</button>
+                <button id="acceptCookies" class="btn-primary">
+                    <i class="fas fa-check"></i> Принять
+                </button>
+                <button id="declineCookies" class="btn-secondary">
+                    <i class="fas fa-times"></i> Отклонить
+                </button>
             </div>
         </div>
     </div>
 
     <!-- Основной контент -->
-    <main class="container">
+    <main class="container main-content">
         <div class="profile-card">
             <div class="avatar-container">
-                <img src="images/image1.png" alt="Аватар" class="avatar">
+                <img src="images/image1.png" alt="Аватар" class="avatar" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwIiBoZWlnaHQ9IjEyMCIgdmlld0JveD0iMCAwIDEyMCAxMjAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMjAiIGhlaWdodD0iMTIwIiByeD0iNjAiIGZpbGw9IiM3NTc1NzUiLz4KPHBhdGggZD0iTTQ1IDQ1QzQ1IDM4LjkyNDkgNDkuOTI0OSAzNCA1NiAzNEg2NEM3MC4wNzUxIDM0IDc1IDM4LjkyNDkgNzUgNDVWNzVDNzUgODEuMDc1MSA3MC4wNzUxIDg2IDY0IDg2SDU2QzQ5LjkyNDkgODYgNDUgODEuMDc1MSA0NSA3NVY0NVoiIGZpbGw9IiM5OTk5OTkiLz4KPHBhdGggZD0iTTUyIDQ3QzUyIDQzLjEzODEgNTUuMTM4MSA0MCA1OSA0MEg2MUM2NC44NjE5IDQwIDY4IDQzLjEzODEgNjggNDdWNzFDNjggNzQuODYxOSA2NC44NjE5IDc4IDYxIDc4SDU5QzU1LjEzODEgNzggNTIgNzQuODYxOSA1MiA3MVY0N1oiIGZpbGw9IiNCOUI5QjkiLz4KPC9zdmc+'">
                 <div class="avatar-glow"></div>
             </div>
             <h1 id="greeting">Привет!</h1>
             <div class="video-section">
-                <h3>Последний ролик</h3>
+                <h3><i class="fas fa-play-circle"></i> Последний ролик</h3>
                 <div class="video-container">
                     <iframe src="https://www.youtube.com/embed/7upmUi_AnbE" 
                             frameborder="0" 
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
                             allowfullscreen></iframe>
                 </div>
             </div>
