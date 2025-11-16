@@ -1,9 +1,7 @@
 // File: js/script.js
 /* eslint-env browser */
-
-/
- * I18n dictionary.
- * Keys must match data-i18n-key values in HTML.
+ /* I18n dictionary.
+ /* Keys must match data-i18n-key values in HTML.
  */
 const I18N = {
   ru: {
