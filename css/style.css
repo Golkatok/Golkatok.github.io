@@ -5,11 +5,12 @@
 }
 
 :root {
-    /* Фиолетовая схема по умолчанию */
-    --primary-color: #8b5cf6;
-    --primary-hover: #7c3aed;
-    --secondary-color: #a78bfa;
-    --accent-color: #c4b5fd;
+    /* Закат схема по умолчанию */
+    --primary-color: #ff6b6b;
+    --primary-hover: #ff5252;
+    --secondary-color: #ffa726;
+    --accent-color: #ffd54f;
+    --gradient: linear-gradient(135deg, #ff6b6b, #ffa726);
     --bg-color: #fafafa;
     --text-color: #2c3e50;
     --card-bg: #ffffff;
@@ -27,36 +28,40 @@
     --shadow: 0 8px 25px -8px rgba(0, 0, 0, 0.4);
 }
 
-/* Синяя цветовая схема */
-[data-color-scheme="blue"] {
-    --primary-color: #3b82f6;
-    --primary-hover: #2563eb;
-    --secondary-color: #60a5fa;
-    --accent-color: #93c5fd;
+/* Океан цветовая схема */
+[data-color-scheme="ocean"] {
+    --primary-color: #4fc3f7;
+    --primary-hover: #29b6f6;
+    --secondary-color: #4db6ac;
+    --accent-color: #81c784;
+    --gradient: linear-gradient(135deg, #4fc3f7, #4db6ac);
 }
 
-/* Зелёная цветовая схема */
-[data-color-scheme="green"] {
-    --primary-color: #10b981;
-    --primary-hover: #059669;
-    --secondary-color: #34d399;
-    --accent-color: #6ee7b7;
+/* Лес цветовая схема */
+[data-color-scheme="forest"] {
+    --primary-color: #66bb6a;
+    --primary-hover: #4caf50;
+    --secondary-color: #9ccc65;
+    --accent-color: #d4e157;
+    --gradient: linear-gradient(135deg, #66bb6a, #9ccc65);
 }
 
-/* Оранжевая цветовая схема */
-[data-color-scheme="orange"] {
-    --primary-color: #f59e0b;
-    --primary-hover: #d97706;
-    --secondary-color: #fbbf24;
-    --accent-color: #fcd34d;
+/* Ягоды цветовая схема */
+[data-color-scheme="berry"] {
+    --primary-color: #ba68c8;
+    --primary-hover: #ab47bc;
+    --secondary-color: #f06292;
+    --accent-color: #ff8a65;
+    --gradient: linear-gradient(135deg, #ba68c8, #f06292);
 }
 
-/* Розовая цветовая схема */
-[data-color-scheme="pink"] {
-    --primary-color: #ec4899;
-    --primary-hover: #db2777;
-    --secondary-color: #f472b6;
-    --accent-color: #f9a8d4;
+/* Неон цветовая схема */
+[data-color-scheme="neon"] {
+    --primary-color: #00e5ff;
+    --primary-hover: #00b8d4;
+    --secondary-color: #76ff03;
+    --accent-color: #ff4081;
+    --gradient: linear-gradient(135deg, #00e5ff, #76ff03);
 }
 
 body {
@@ -110,7 +115,7 @@ body {
     height: 50px;
     border: none;
     border-radius: 50%;
-    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    background: var(--gradient);
     color: white;
     cursor: pointer;
     display: flex;
@@ -224,13 +229,18 @@ body {
     border-radius: 12px;
     transition: var(--transition);
     border: 1px solid transparent;
+    background: none;
+    width: 100%;
+    cursor: pointer;
+    font-size: 1rem;
+    text-align: left;
 }
 
 .menu-link:hover {
-    background: var(--primary-color);
+    background: var(--gradient);
     color: white;
     transform: translateX(5px);
-    border-color: var(--primary-color);
+    border-color: transparent;
 }
 
 .menu-link i {
@@ -278,6 +288,18 @@ body {
     width: 90%;
     margin: 0 auto;
     transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+}
+
+.profile-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--gradient);
 }
 
 .avatar-container {
@@ -303,7 +325,7 @@ body {
     right: -4px;
     bottom: -4px;
     border-radius: 50%;
-    background: var(--primary-color);
+    background: var(--gradient);
     z-index: 1;
     filter: blur(12px);
     opacity: 0.7;
@@ -324,7 +346,7 @@ body {
 .profile-card h1 {
     font-size: clamp(1.8rem, 4vw, 2.5rem);
     margin-bottom: 1.5rem;
-    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    background: var(--gradient);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -384,7 +406,7 @@ body {
 }
 
 .btn-primary {
-    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    background: var(--gradient);
     color: white;
 }
 
@@ -516,4 +538,4 @@ body {
 
 .cookies-modal .modal-content {
     text-align: center;
-    }
+}
