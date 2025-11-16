@@ -413,24 +413,19 @@ function initializeResponsive() {
 }
 
 function showNotification(message) {
+    // Удаляем существующие уведомления
+    document.querySelectorAll('.notification').forEach(notification => {
+        notification.remove();
+    });
+    
     // Создаем элемент уведомления
     const notification = document.createElement('div');
-    notification.style.cssText = `
-        position: fixed;
-        top: 100px;
-        right: 20px;
-        background: var(--gradient);
-        color: white;
-        padding: 12px 20px;
-        border-radius: 10px;
-        box-shadow: var(--shadow);
-        z-index: 1002;
-        transform: translateX(100%);
-        transition: transform 0.3s ease;
-        max-width: 300px;
-        word-wrap: break-word;
+    notification.className = 'notification';
+    
+    notification.innerHTML = `
+        <div class="notification-content">${message}</div>
+        <button class="notification-close">&times;</button>
     `;
-    notification.textContent = message;
     
     document.body.appendChild(notification);
     
@@ -439,15 +434,36 @@ function showNotification(message) {
         notification.style.transform = 'translateX(0)';
     }, 100);
     
-    // Автоматическое скрытие через 3 секунды
-    setTimeout(() => {
-        notification.style.transform = 'translateX(100%)';
+    // Обработчик закрытия уведомления
+    const closeBtn = notification.querySelector('.notification-close');
+    closeBtn.addEventListener('click', function() {
+        closeNotification(notification);
+    });
+    
+    // Автоматическое скрытие через 5 секунд
+    const autoCloseTimeout = setTimeout(() => {
+        closeNotification(notification);
+    }, 5000);
+    
+    // Отмена авто-закрытия при наведении
+    notification.addEventListener('mouseenter', () => {
+        clearTimeout(autoCloseTimeout);
+    });
+    
+    notification.addEventListener('mouseleave', () => {
         setTimeout(() => {
-            if (notification.parentNode) {
-                notification.parentNode.removeChild(notification);
-            }
-        }, 300);
-    }, 3000);
+            closeNotification(notification);
+        }, 3000);
+    });
+}
+
+function closeNotification(notification) {
+    notification.style.transform = 'translateX(100%)';
+    setTimeout(() => {
+        if (notification.parentNode) {
+            notification.parentNode.removeChild(notification);
+        }
+    }, 300);
 }
 
 // Обработчик системной темы
