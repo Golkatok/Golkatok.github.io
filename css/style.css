@@ -160,6 +160,8 @@ body {
     background-color: rgba(0, 0, 0, 0.5);
     backdrop-filter: blur(5px);
     animation: fadeIn 0.3s ease;
+    overflow-y: auto;
+    padding: 20px 0;
 }
 
 @keyframes fadeIn {
@@ -169,7 +171,7 @@ body {
 
 .modal-content {
     background-color: var(--card-bg);
-    margin: 10% auto;
+    margin: auto;
     padding: 2rem;
     border-radius: 20px;
     width: 90%;
@@ -178,16 +180,21 @@ body {
     box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
     border: 1px solid var(--border-color);
     animation: slideUp 0.3s ease;
+    /* Центрирование по вертикали и горизонтали */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 
 @keyframes slideUp {
     from { 
         opacity: 0;
-        transform: translateY(30px);
+        transform: translate(-50%, -40%);
     }
     to { 
         opacity: 1;
-        transform: translateY(0);
+        transform: translate(-50%, -50%);
     }
 }
 
@@ -288,18 +295,7 @@ body {
     width: 90%;
     margin: 0 auto;
     transition: var(--transition);
-    position: relative;
-    overflow: hidden;
-}
-
-.profile-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 4px;
-    background: var(--gradient);
+    /* Убрали полоску сверху */
 }
 
 .avatar-container {
@@ -434,11 +430,56 @@ body {
     flex-wrap: wrap;
 }
 
+/* Стили для уведомлений */
+.notification {
+    position: fixed;
+    top: 100px;
+    right: 20px;
+    background: var(--gradient);
+    color: white;
+    padding: 15px 20px;
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+    z-index: 1002;
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+    max-width: 300px;
+    word-wrap: break-word;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+}
+
+.notification-content {
+    flex: 1;
+}
+
+.notification-close {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 18px;
+    cursor: pointer;
+    width: 25px;
+    height: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: var(--transition);
+    flex-shrink: 0;
+}
+
+.notification-close:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
 /* Адаптивность */
 @media (max-width: 768px) {
     .modal-content {
-        margin: 15% auto;
         padding: 1.5rem;
+        width: 95%;
     }
     
     .profile-card {
@@ -484,6 +525,12 @@ body {
     .main-content {
         padding-top: calc(1.3cm + 80px);
     }
+    
+    .notification {
+        right: 10px;
+        left: 10px;
+        max-width: none;
+    }
 }
 
 @media (max-width: 480px) {
@@ -523,6 +570,10 @@ body {
     .video-section h3 {
         font-size: 1.1rem;
     }
+    
+    .modal-content {
+        padding: 1.2rem;
+    }
 }
 
 /* Стили для Telegram виджета */
@@ -538,4 +589,4 @@ body {
 
 .cookies-modal .modal-content {
     text-align: center;
-}
+    }
