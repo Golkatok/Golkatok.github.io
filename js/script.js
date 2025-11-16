@@ -478,7 +478,7 @@ window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e =
 async function fetchYouTubeSubscribers() {
     // ВАЖНО: Замените 'YOUR_CHANNEL_ID' на реальный ID вашего канала
     // Чтобы получить ID канала: https://www.youtube.com/account_advanced
-    const channelId = 'YOUR_CHANNEL_ID'; 
+    const channelId = 'UCrZA2Mj6yKZkEcBIqdfF6Ag'; 
     
     try {
         // Используем прокси для обхода CORS
@@ -514,7 +514,7 @@ async function fetchYouTubeSubscribers() {
 // Альтернативная функция через YouTube Data API (требуется API ключ)
 async function fetchYouTubeSubscribersAPI() {
     // ВАЖНО: Для этого метода нужен API ключ от Google Cloud Console
-    const apiKey = 'AIzaSyAF--RJuLhHoKvQlucjj2_NF_RTcrvjqeo'; // Замените на ваш API ключ
+    const apiKey = 'AIzaSyD3opTxFhIJSNfJILXGRxuWSbFpmyxEuzc'; // Замените на ваш API ключ
     const channelId = 'UCrZA2Mj6yKZkEcBIqdfF6Ag'; // Замените на ID вашего канала
     
     try {
