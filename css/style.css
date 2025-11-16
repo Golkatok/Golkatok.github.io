@@ -5,10 +5,11 @@
 }
 
 :root {
-    --primary-color: #e91e63;
-    --primary-hover: #d81b60;
-    --secondary-color: #9c27b0;
-    --accent-color: #ff4081;
+    /* Фиолетовая схема по умолчанию */
+    --primary-color: #8b5cf6;
+    --primary-hover: #7c3aed;
+    --secondary-color: #a78bfa;
+    --accent-color: #c4b5fd;
     --bg-color: #fafafa;
     --text-color: #2c3e50;
     --card-bg: #ffffff;
@@ -19,15 +20,43 @@
 }
 
 [data-theme="dark"] {
-    --primary-color: #ff4081;
-    --primary-hover: #e91e63;
-    --secondary-color: #ba68c8;
-    --accent-color: #ff79a6;
     --bg-color: #121212;
     --text-color: #e0e0e0;
     --card-bg: #1e1e1e;
     --border-color: #333333;
     --shadow: 0 8px 25px -8px rgba(0, 0, 0, 0.4);
+}
+
+/* Синяя цветовая схема */
+[data-color-scheme="blue"] {
+    --primary-color: #3b82f6;
+    --primary-hover: #2563eb;
+    --secondary-color: #60a5fa;
+    --accent-color: #93c5fd;
+}
+
+/* Зелёная цветовая схема */
+[data-color-scheme="green"] {
+    --primary-color: #10b981;
+    --primary-hover: #059669;
+    --secondary-color: #34d399;
+    --accent-color: #6ee7b7;
+}
+
+/* Оранжевая цветовая схема */
+[data-color-scheme="orange"] {
+    --primary-color: #f59e0b;
+    --primary-hover: #d97706;
+    --secondary-color: #fbbf24;
+    --accent-color: #fcd34d;
+}
+
+/* Розовая цветовая схема */
+[data-color-scheme="pink"] {
+    --primary-color: #ec4899;
+    --primary-hover: #db2777;
+    --secondary-color: #f472b6;
+    --accent-color: #f9a8d4;
 }
 
 body {
@@ -61,12 +90,12 @@ body {
 
 /* Основной контент */
 .main-content {
-    padding: 2rem 1rem 3rem;
+    padding: 1rem 1rem 3rem;
     min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: flex-start;
-    padding-top: calc(1.3cm + 100px);
+    padding-top: calc(1.3cm + 90px);
 }
 
 .container {
@@ -240,7 +269,7 @@ body {
 /* Карточка профиля */
 .profile-card {
     text-align: center;
-    padding: 2.5rem;
+    padding: 2rem;
     background: var(--card-bg);
     border-radius: 20px;
     box-shadow: var(--shadow);
@@ -293,17 +322,21 @@ body {
 }
 
 .profile-card h1 {
-    font-size: 2.2rem;
-    margin-bottom: 2rem;
+    font-size: clamp(1.8rem, 4vw, 2.5rem);
+    margin-bottom: 1.5rem;
     background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
     font-weight: 700;
+    line-height: 1.2;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    max-width: 100%;
 }
 
 .video-section {
-    margin-top: 2rem;
+    margin-top: 1.5rem;
 }
 
 .video-section h3 {
@@ -312,7 +345,7 @@ body {
     justify-content: center;
     gap: 10px;
     margin-bottom: 1.5rem;
-    font-size: 1.4rem;
+    font-size: 1.3rem;
     color: var(--text-color);
 }
 
@@ -387,12 +420,12 @@ body {
     }
     
     .profile-card {
-        padding: 2rem 1.5rem;
+        padding: 1.5rem;
         width: 95%;
     }
     
     .profile-card h1 {
-        font-size: 1.8rem;
+        font-size: 1.6rem;
     }
     
     .avatar {
@@ -427,17 +460,17 @@ body {
     }
     
     .main-content {
-        padding-top: calc(1.3cm + 90px);
+        padding-top: calc(1.3cm + 80px);
     }
 }
 
 @media (max-width: 480px) {
     .profile-card {
-        padding: 1.5rem 1rem;
+        padding: 1.2rem;
     }
     
     .profile-card h1 {
-        font-size: 1.6rem;
+        font-size: 1.4rem;
     }
     
     .avatar {
@@ -452,7 +485,7 @@ body {
     }
     
     .main-content {
-        padding-top: calc(1.3cm + 80px);
+        padding-top: calc(1.3cm + 70px);
         padding-left: 0.5rem;
         padding-right: 0.5rem;
     }
@@ -463,6 +496,10 @@ body {
     
     .buttons-container {
         top: 1.2cm;
+    }
+    
+    .video-section h3 {
+        font-size: 1.1rem;
     }
 }
 
@@ -479,4 +516,4 @@ body {
 
 .cookies-modal .modal-content {
     text-align: center;
-}
+    }
