@@ -43,6 +43,7 @@ function initializeApp() {
     
     // Настройки
     const themeSelect = document.getElementById('themeSelect');
+    const colorSchemeSelect = document.getElementById('colorSchemeSelect');
     const languageSelect = document.getElementById('languageSelect');
 
     // Инициализация Telegram Widget
@@ -82,6 +83,7 @@ function initializeApp() {
 
     // Обработчики настроек
     themeSelect.addEventListener('change', updateTheme);
+    colorSchemeSelect.addEventListener('change', updateColorScheme);
     languageSelect.addEventListener('change', updateLanguage);
 
     // Загрузка сохраненных настроек
@@ -143,11 +145,12 @@ function updateGreeting(userData) {
         en: 'Hello'
     };
     
-    greeting.textContent = `${greetings[language]} ${name}!`;
-    greeting.style.opacity = '0';
-    greeting.style.transform = 'translateY(20px)';
+    const greetingText = greetings[language] || 'Привет';
+    greeting.textContent = `${greetingText} ${name}!`;
     
     // Анимация появления
+    greeting.style.opacity = '0';
+    greeting.style.transform = 'translateY(20px)';
     setTimeout(() => {
         greeting.style.transition = 'all 0.5s ease';
         greeting.style.opacity = '1';
@@ -166,6 +169,7 @@ function declineCookiesHandler() {
     localStorage.removeItem('cookiesAccepted');
     localStorage.removeItem('theme');
     localStorage.removeItem('language');
+    localStorage.removeItem('colorScheme');
     document.getElementById('cookiesModal').style.display = 'none';
     showNotification('Cookies отклонены. Некоторые функции могут работать некорректно.');
 }
@@ -183,7 +187,28 @@ function updateTheme() {
     }
     
     localStorage.setItem('theme', theme);
-    showNotification(`Тема изменена на: ${themeSelect.options[themeSelect.selectedIndex].text}`);
+    showNotification(`Тема изменена на: ${getTranslatedText('theme_' + theme)}`);
+}
+
+function updateColorScheme() {
+    const colorSchemeSelect = document.getElementById('colorSchemeSelect');
+    const colorScheme = colorSchemeSelect.value;
+    
+    // Удаляем все классы цветовых схем и добавляем нужную
+    document.documentElement.removeAttribute('data-color-scheme');
+    document.documentElement.setAttribute('data-color-scheme', colorScheme);
+    
+    localStorage.setItem('colorScheme', colorScheme);
+    
+    const schemeNames = {
+        purple: 'Фиолетовая',
+        blue: 'Синяя', 
+        green: 'Зелёная',
+        orange: 'Оранжевая',
+        pink: 'Розовая'
+    };
+    
+    showNotification(`Цветовая схема изменена на: ${schemeNames[colorScheme]}`);
 }
 
 function updateLanguage() {
@@ -198,83 +223,115 @@ function updateLanguage() {
 function applyLanguage(lang) {
     const translations = {
         ru: {
-            menu: 'Меню',
-            settings: 'Настройки',
-            greeting: 'Привет',
-            lastVideo: 'Последний ролик',
+            // Меню
             navigation: 'Навигация',
+            home: 'Главная',
+            social: 'Соц. Сети',
+            news: 'Новости',
+            games: 'Мини-игры',
+            
+            // Настройки
+            settings: 'Настройки',
             theme: 'Тема',
+            colorScheme: 'Цветовая схема',
             language: 'Язык',
+            light: 'Светлая',
+            dark: 'Тёмная',
+            auto: 'Системная',
+            
+            // Авторизация
             authTitle: 'Авторизация',
             authText: 'Войдите через Telegram для персонализации',
+            
+            // Cookies
             cookiesTitle: 'Файлы Cookies',
             cookiesText: 'Мы используем cookies для сохранения ваших настроек и авторизации. Это помогает нам запомнить вас при повторном посещении.',
             accept: 'Принять',
-            decline: 'Отклонить'
+            decline: 'Отклонить',
+            
+            // Приветствие
+            greeting: 'Привет',
+            
+            // Видео
+            lastVideo: 'Последний ролик'
         },
         uk: {
-            menu: 'Меню',
-            settings: 'Налаштування',
-            greeting: 'Привіт',
-            lastVideo: 'Останнє відео',
             navigation: 'Навігація',
+            home: 'Головна',
+            social: 'Соц. Мережі',
+            news: 'Новини',
+            games: 'Міні-ігри',
+            settings: 'Налаштування',
             theme: 'Тема',
+            colorScheme: 'Кольорова схема',
             language: 'Мова',
+            light: 'Світла',
+            dark: 'Темна',
+            auto: 'Системна',
             authTitle: 'Авторизація',
             authText: 'Увійдіть через Telegram для персоналізації',
             cookiesTitle: 'Файли Cookies',
             cookiesText: 'Ми використовуємо cookies для збереження ваших налаштувань та авторизації. Це допомагає нам запам\'ятати вас при повторному відвідуванні.',
             accept: 'Прийняти',
-            decline: 'Відхилити'
+            decline: 'Відхилити',
+            greeting: 'Привіт',
+            lastVideo: 'Останнє відео'
         },
         be: {
-            menu: 'Меню',
-            settings: 'Налады',
-            greeting: 'Прывітанне',
-            lastVideo: 'Апошняе відэа',
             navigation: 'Навігацыя',
+            home: 'Галоўная',
+            social: 'Сац. Сеткі',
+            news: 'Навіны',
+            games: 'Міні-гульні',
+            settings: 'Налады',
             theme: 'Тэма',
+            colorScheme: 'Каляровая схема',
             language: 'Мова',
+            light: 'Светлая',
+            dark: 'Цёмная',
+            auto: 'Сістэмная',
             authTitle: 'Аўтарызацыя',
             authText: 'Увайдзіце праз Telegram для персаналізацыі',
             cookiesTitle: 'Файлы Cookies',
             cookiesText: 'Мы выкарыстоўваем cookies для захавання вашых наладаў і аўтарызацыі. Гэта дапамагае нам запомніць вас пры паўторным наведванні.',
             accept: 'Прыняць',
-            decline: 'Адхіліць'
+            decline: 'Адхіліць',
+            greeting: 'Прывітанне',
+            lastVideo: 'Апошняе відэа'
         },
         en: {
-            menu: 'Menu',
-            settings: 'Settings',
-            greeting: 'Hello',
-            lastVideo: 'Last video',
             navigation: 'Navigation',
+            home: 'Home',
+            social: 'Social Networks',
+            news: 'News',
+            games: 'Mini Games',
+            settings: 'Settings',
             theme: 'Theme',
+            colorScheme: 'Color Scheme',
             language: 'Language',
+            light: 'Light',
+            dark: 'Dark',
+            auto: 'System',
             authTitle: 'Authorization',
             authText: 'Log in via Telegram for personalization',
             cookiesTitle: 'Cookies',
             cookiesText: 'We use cookies to save your settings and authorization. This helps us remember you on repeat visits.',
             accept: 'Accept',
-            decline: 'Decline'
+            decline: 'Decline',
+            greeting: 'Hello',
+            lastVideo: 'Last video'
         }
     };
 
-    const t = translations[lang];
+    const t = translations[lang] || translations.ru;
     
-    // Обновляем тексты
-    document.querySelector('#menuModal h2').textContent = t.navigation;
-    document.querySelector('#settingsModal h2').textContent = t.settings;
-    document.querySelector('#authModal h2').textContent = t.authTitle;
-    document.querySelector('#authModal p').textContent = t.authText;
-    document.querySelector('#cookiesModal h2').innerHTML = `<i class="fas fa-cookie-bite"></i> ${t.cookiesTitle}`;
-    document.querySelector('#cookiesModal p').textContent = t.cookiesText;
-    document.querySelector('#acceptCookies').innerHTML = `<i class="fas fa-check"></i> ${t.accept}`;
-    document.querySelector('#declineCookies').innerHTML = `<i class="fas fa-times"></i> ${t.decline}`;
-    document.querySelector('.video-section h3').innerHTML = `<i class="fas fa-play-circle"></i> ${t.lastVideo}`;
-    
-    // Обновляем настройки
-    document.querySelectorAll('.setting-group label')[0].innerHTML = `<i class="fas fa-palette"></i> ${t.theme}:`;
-    document.querySelectorAll('.setting-group label')[1].innerHTML = `<i class="fas fa-language"></i> ${t.language}:`;
+    // Обновляем все элементы с data-i18n атрибутом
+    document.querySelectorAll('[data-i18n]').forEach(element => {
+        const key = element.getAttribute('data-i18n');
+        if (t[key]) {
+            element.textContent = t[key];
+        }
+    });
     
     // Обновляем приветствие если пользователь авторизован
     const user = localStorage.getItem('telegramUser');
@@ -285,22 +342,52 @@ function applyLanguage(lang) {
     }
 }
 
+function getTranslatedText(key) {
+    const language = localStorage.getItem('language') || 'ru';
+    const translations = {
+        ru: {
+            theme_light: 'Светлая',
+            theme_dark: 'Тёмная',
+            theme_auto: 'Системная'
+        },
+        uk: {
+            theme_light: 'Світла',
+            theme_dark: 'Темна',
+            theme_auto: 'Системна'
+        },
+        be: {
+            theme_light: 'Светлая',
+            theme_dark: 'Цёмная',
+            theme_auto: 'Сістэмная'
+        },
+        en: {
+            theme_light: 'Light',
+            theme_dark: 'Dark',
+            theme_auto: 'System'
+        }
+    };
+    
+    return (translations[language] && translations[language][key]) || key;
+}
+
 function loadSettings() {
     const savedTheme = localStorage.getItem('theme') || 'auto';
+    const savedColorScheme = localStorage.getItem('colorScheme') || 'purple';
     const savedLanguage = localStorage.getItem('language') || 'ru';
     
     document.getElementById('themeSelect').value = savedTheme;
+    document.getElementById('colorSchemeSelect').value = savedColorScheme;
     document.getElementById('languageSelect').value = savedLanguage;
     
     updateTheme();
+    updateColorScheme();
     applyLanguage(savedLanguage);
 }
 
 function initializeResponsive() {
     // Обработчик изменения размера окна
     window.addEventListener('resize', function() {
-        // При необходимости можно добавить дополнительную логику адаптивности
-        console.log('Window resized:', window.innerWidth);
+        // Дополнительная логика адаптивности при необходимости
     });
 }
 
