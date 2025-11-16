@@ -1,323 +1,166 @@
-// File: js/script.js
-/* eslint-env browser */
- /* I18n dictionary.
- /* Keys must match data-i18n-key values in HTML.
- */
-const I18N = {
-  ru: {
-    menu: "Меню",
-    settings: "Настройки",
-    home: "Главная",
-    social: "Соц. Сети",
-    news: "Новости",
-    miniGames: "Мини-игры",
-    greeting: "Привет {name}!",
-    lastVideo: "последний ролик",
-    theme: "Тема",
-    language: "Язык",
-    light: "Светлая",
-    dark: "Тёмная",
-    system: "Системная",
-    save: "Сохранить",
-    close: "Закрыть",
-    cookieText: "Мы используем файлы cookies, чтобы запомнить вас при повторном входе.",
-    cookieAccept: "Принять",
-    cookieDecline: "Отклонить",
-    loginTitle: "Вход через Telegram",
-    logout: "Выйти",
-    loggedAs: "Вы вошли как {name}",
-  },
-  uk: {
-    menu: "Меню",
-    settings: "Налаштування",
-    home: "Головна",
-    social: "Соцмережі",
-    news: "Новини",
-    miniGames: "Міні-ігри",
-    greeting: "Привіт, {name}!",
-    lastVideo: "останнє відео",
-    theme: "Тема",
-    language: "Мова",
-    light: "Світла",
-    dark: "Темна",
-    system: "Системна",
-    save: "Зберегти",
-    close: "Закрити",
-    cookieText: "Ми використовуємо файли cookies, щоб запам’ятати вас під час наступного входу.",
-    cookieAccept: "Прийняти",
-    cookieDecline: "Відхилити",
-    loginTitle: "Вхід через Telegram",
-    logout: "Вийти",
-    loggedAs: "Ви увійшлі як {name}",
-  },
-  be: {
-    menu: "Меню",
-    settings: "Налады",
-    home: "Галоўная",
-    social: "Сац. сеткі",
-    news: "Навіны",
-    miniGames: "Міні-гульні",
-    greeting: "Прывітанне, {name}!",
-    lastVideo: "апошняе відэа",
-    theme: "Тэма",
-    language: "Мова",
-    light: "Светлая",
-    dark: "Цёмная",
-    system: "Сістэмная",
-    save: "Захаваць",
-    close: "Закрыць",
-    cookieText: "Мы выкарыстоўваем cookies, каб запомніць вас пры наступным уваходзе.",
-    cookieAccept: "Прыняць",
-    cookieDecline: "Адхіліць",
-    loginTitle: "Уваход праз Telegram",
-    logout: "Выйсці",
-    loggedAs: "Вы ўвайшлі як {name}",
-  },
-  en: {
-    menu: "Menu",
-    settings: "Settings",
-    home: "Home",
-    social: "Social",
-    news: "News",
-    miniGames: "Mini-games",
-    greeting: "Hello, {name}!",
-    lastVideo: "latest video",
-    theme: "Theme",
-    language: "Language",
-    light: "Light",
-    dark: "Dark",
-    system: "System",
-    save: "Save",
-    close: "Close",
-    cookieText: "We use cookies to remember you on your next visit.",
-    cookieAccept: "Accept",
-    cookieDecline: "Decline",
-    loginTitle: "Sign in with Telegram",
-    logout: "Log out",
-    loggedAs: "You are signed in as {name}",
-  },
-};
+document.addEventListener('DOMContentLoaded', function() {
+    // Элементы модальных окон
+    const menuModal = document.getElementById('menuModal');
+    const settingsModal = document.getElementById('settingsModal');
+    const authModal = document.getElementById('authModal');
+    const cookiesModal = document.getElementById('cookiesModal');
+    
+    // Кнопки
+    const menuBtn = document.getElementById('menuBtn');
+    const settingsBtn = document.getElementById('settingsBtn');
+    const acceptCookies = document.getElementById('acceptCookies');
+    const declineCookies = document.getElementById('declineCookies');
+    
+    // Настройки
+    const themeSelect = document.getElementById('themeSelect');
+    const languageSelect = document.getElementById('languageSelect');
+    const greeting = document.getElementById('greeting');
 
-/ Storage helpers (respect cookie consent). */
-const Storage = (() => {
-  const LS = window.localStorage;
-  const SS = window.sessionStorage;
+    // Проверка авторизации и cookies при загрузке
+    checkAuthAndCookies();
 
-  function consentAccepted() {
-    return LS.getItem("cookieConsent") === "accepted";
-  }
+    // Обработчики открытия модальных окон
+    menuBtn.onclick = () => menuModal.style.display = 'block';
+    settingsBtn.onclick = () => settingsModal.style.display = 'block';
 
-  return {
-    set(key, value) {
-      const data = JSON.stringify(value);
-      if (key === "user" && !consentAccepted()) {
-        // Avoid persistent storage without consent
-        try { SS.setItem(key, data); } catch {}
-        return;
-      }
-      try { LS.setItem(key, data); } catch {}
-    },
-    get(key) {
-      try {
-        const fromLS = localStorage.getItem(key);
-        if (fromLS) return JSON.parse(fromLS);
-        const fromSS = sessionStorage.getItem(key);
-        if (fromSS) return JSON.parse(fromSS);
-      } catch {}
-      return null;
-    },
-    remove(key) {
-      try { localStorage.removeItem(key); } catch {}
-      try { sessionStorage.removeItem(key); } catch {}
-    },
-  };
-})();
-
-/ Apply theme to <html>. */
-function applyTheme(pref) {
-  let theme = pref;
-  if (pref === "system") {
-    const mq = window.matchMedia("(prefers-color-scheme: dark)");
-    theme = mq.matches ? "dark" : "light";
-  }
-  document.documentElement.setAttribute("data-theme", theme || "light");
-}
-
-/ Replace placeholders like {name}. */
-function fmt(str, params) {
-  return str.replace(/\{(\w+)\}/g, (_, k) => (params?.[k] ?? ""));
-}
-
-/ Apply i18n texts to elements with [data-i18n-key]. */
-function applyI18n(lang, name) {
-  const dict = I18N[lang] || I18N.ru;
-  document.documentElement.lang = lang;
-  document.querySelectorAll("[data-i18n-key]").forEach((el) => {
-    const key = el.getAttribute("data-i18n-key");
-    const s = dict[key];
-    if (!s) return;
-    const needsFmt = el.getAttribute("data-i18n-fmt");
-    el.textContent = needsFmt ? fmt(s, { name }) : s;
-  });
-}
-
-/ Modal open/close utilities. */
-const Modal = {
-  open(id) {
-    const m = document.getElementById(id);
-    if (!m) return;
-    m.setAttribute("aria-hidden", "false");
-    // trap focus minimal
-    setTimeout(() => {
-      const btn = m.querySelector("button, [href], input, select, textarea, [tabindex]:not([tabindex='-1'])");
-      btn?.focus();
-    }, 0);
-  },
-  close(id) {
-    const m = document.getElementById(id);
-    if (!m) return;
-    m.setAttribute("aria-hidden", "true");
-  },
-};
-
-function setGreeting(name, lang) {
-  const dict = I18N[lang]  I18N.ru;
-  const el = document.getElementById("greeting");
-  el.textContent = fmt(dict.greeting, { name: name  "Гость" });
-  const signedAs = document.getElementById("signedAs");
-  signedAs.textContent = fmt(dict.loggedAs, { name: name  "Гость" });
-  document.getElementById("logoutBtn").hidden = !name;
-}
-
-/** Init cookie banner and behavior. */
-function initCookies(lang) {
-  const banner = document.getElementById("cookieBanner");
-  const consent = localStorage.getItem("cookieConsent");
-  if (!consent) {
-    banner.hidden = false;
-  }
-  document.getElementById("cookieAccept").addEventListener("click", () => {
-    localStorage.setItem("cookieConsent", "accepted");
-    // migrate session user to local if exists
-    const user = Storage.get("user");
-    if (user) {
-      try { localStorage.setItem("user", JSON.stringify(user)); } catch {}
-    }
-    banner.hidden = true;
-  });
-  document.getElementById("cookieDecline").addEventListener("click", () => {
-    localStorage.setItem("cookieConsent", "declined");
-    // purge persistent data
-    try { localStorage.removeItem("user"); } catch {}
-    banner.hidden = true;
-  });
-  // Re-apply text (in case lang changed before banner shown)
-  applyI18n(lang, Storage.get("user")?.first_name  "Гость");
-}
-
-/** Setup Settings modal values and saving. */
-function initSettings(lang, theme) {
-  const form = document.getElementById("settingsForm");
-  // Theme radios
-  const themeVal = theme  "light";
-  form.theme.value = themeVal;
-  // Language select
-  document.getElementById("langSelect").value = lang  "ru";
-
-document.getElementById("saveSettingsBtn").addEventListener("click", () => {
-    const newTheme = form.theme.value;
-    const newLang = document.getElementById("langSelect").value;
-    try { localStorage.setItem("theme", JSON.stringify(newTheme)); } catch {}
-    try { localStorage.setItem("lang", JSON.stringify(newLang)); } catch {}
-    applyTheme(newTheme);
-    const user = Storage.get("user");
-    applyI18n(newLang, user?.first_name  "Гость");
-    setGreeting(user?.first_name, newLang);
-    Modal.close("settingsModal");
-  });
-}
-
-/** Wire UI events. */
-function wireEvents() {
-  document.getElementById("menuBtn").addEventListener("click", () => Modal.open("menuModal"));
-  document.getElementById("settingsBtn").addEventListener("click", () => Modal.open("settingsModal"));
-  document.querySelectorAll("[data-close]").forEach((el) => {
-    el.addEventListener("click", (e) => {
-      const id = el.getAttribute("data-close");
-      Modal.close(id);
+    // Закрытие модальных окон
+    document.querySelectorAll('.close').forEach(closeBtn => {
+        closeBtn.onclick = () => {
+            menuModal.style.display = 'none';
+            settingsModal.style.display = 'none';
+        }
     });
-  });
-  // Close by ESC or backdrop click is handled via [data-close] on backdrop
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") {
-      ["menuModal", "settingsModal", "tgModal"].forEach(Modal.close);
+
+    // Закрытие при клике вне окна
+    window.onclick = (event) => {
+        if (event.target.classList.contains('modal')) {
+            menuModal.style.display = 'none';
+            settingsModal.style.display = 'none';
+            authModal.style.display = 'none';
+            cookiesModal.style.display = 'none';
+        }
     }
-  });
 
-  const logoutBtn = document.getElementById("logoutBtn");
-  logoutBtn.addEventListener("click", () => {
-    Storage.remove("user");
-    setGreeting(null, getLang());
-  });
+    // Обработчики cookies
+    acceptCookies.onclick = acceptCookiesHandler;
+    declineCookies.onclick = declineCookiesHandler;
+
+    // Обработчики настроек
+    themeSelect.onchange = updateTheme;
+    languageSelect.onchange = updateLanguage;
+
+    // Загрузка сохраненных настроек
+    loadSettings();
+
+    function checkAuthAndCookies() {
+        const user = localStorage.getItem('telegramUser');
+        const cookiesAccepted = localStorage.getItem('cookiesAccepted');
+
+        if (!user) {
+            authModal.style.display = 'block';
+        } else {
+            updateGreeting(user);
+        }
+
+        if (!cookiesAccepted && user) {
+            setTimeout(() => {
+                cookiesModal.style.display = 'block';
+            }, 1000);
+        }
+    }
+
+    function updateGreeting(userData) {
+        const user = JSON.parse(userData);
+        const name = user.first_name || 'Гость';
+        greeting.textContent = `Привет ${name}!`;
+    }
+
+    function acceptCookiesHandler() {
+        localStorage.setItem('cookiesAccepted', 'true');
+        cookiesModal.style.display = 'none';
+    }
+
+    function declineCookiesHandler() {
+        localStorage.clear();
+        cookiesModal.style.display = 'none';
+        authModal.style.display = 'block';
+    }
+
+    function updateTheme() {
+        const theme = themeSelect.value;
+        document.documentElement.setAttribute('data-theme', theme);
+        localStorage.setItem('theme', theme);
+    }
+
+    function updateLanguage() {
+        const language = languageSelect.value;
+        localStorage.setItem('language', language);
+        applyLanguage(language);
+    }
+
+    function applyLanguage(lang) {
+        const translations = {
+            ru: {
+                menu: 'Меню',
+                settings: 'Настройки',
+                greeting: 'Привет',
+                lastVideo: 'Последний ролик'
+            },
+            uk: {
+                menu: 'Меню',
+                settings: 'Налаштування',
+                greeting: 'Привіт',
+                lastVideo: 'Останнє відео'
+            },
+            be: {
+                menu: 'Меню',
+                settings: 'Налады',
+                greeting: 'Прывітанне',
+                lastVideo: 'Апошняе відэа'
+            },
+            en: {
+                menu: 'Menu',
+                settings: 'Settings',
+                greeting: 'Hello',
+                lastVideo: 'Last video'
+            }
+        };
+
+        const t = translations[lang];
+        document.getElementById('menuBtn').textContent = t.menu;
+        document.getElementById('settingsBtn').textContent = t.settings;
+        document.querySelector('.video-section h3').textContent = t.lastVideo;
+        
+        const user = localStorage.getItem('telegramUser');
+        if (user) {
+            const userData = JSON.parse(user);
+            const name = userData.first_name || '';
+            greeting.textContent = `${t.greeting} ${name}!`;
+        }
+    }
+
+    function loadSettings() {
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        const savedLanguage = localStorage.getItem('language') || 'ru';
+        
+        themeSelect.value = savedTheme;
+        languageSelect.value = savedLanguage;
+        
+        updateTheme();
+        applyLanguage(savedLanguage);
+    }
+});
+
+// Функция для обработки авторизации Telegram
+function onTelegramAuth(user) {
+    localStorage.setItem('telegramUser', JSON.stringify(user));
+    document.getElementById('authModal').style.display = 'none';
+    
+    const greeting = document.getElementById('greeting');
+    greeting.textContent = `Привет ${user.first_name}!`;
+    
+    // Показываем окно cookies после авторизации
+    setTimeout(() => {
+        document.getElementById('cookiesModal').style.display = 'block';
+    }, 500);
 }
-
-/** Decide whether to show TG login on first visit. */
-function maybeShowTelegramLogin() {
-  const hasUser = !!Storage.get("user");
-  if (!hasUser) {
-    Modal.open("tgModal");
-  }
-}
-
-/** Read persisted language or default RU. */
-function getLang() {
-  try {
-    const v = localStorage.getItem("lang");
-    if (v) return JSON.parse(v);
-  } catch {}
-  return "ru";
-}
-
-/** Read persisted theme or default light. */
-function getTheme() {
-  try {
-    const v = localStorage.getItem("theme");
-    if (v) return JSON.parse(v);
-  } catch {}
-  return "light";
-}
-
-/** Global Telegram auth callback (called by widget). */
-window.onTelegramAuth = function onTelegramAuth(user) {
-  // Minimal validation
-  if (!user  !user.first_name) {
-    alert("Telegram auth failed.");
-    return;
-  }
-  const consent = localStorage.getItem("cookieConsent") === "accepted";
-  if (consent) {
-    try { localStorage.setItem("user", JSON.stringify(user)); } catch {}
-  } else {
-    try { sessionStorage.setItem("user", JSON.stringify(user)); } catch {}
-  }
-  const lang = getLang();
-  applyI18n(lang, user.first_name);
-  setGreeting(user.first_name, lang);
-  alert(Logged in as ${user.first_name} ${user.last_name ?? ""} (${user.id}${user.username ? ", @" + user.username : ""}));
-  Modal.close("tgModal");
-};
-
-(function init() {
-  const theme = getTheme();
-  applyTheme(theme);
-
-  const lang = getLang();
-  const user = Storage.get("user");
-  applyI18n(lang, user?.first_name || "Гость");
-  setGreeting(user?.first_name, lang);
-
-  wireEvents();
-  initSettings(lang, theme);
-  initCookies(lang);
-  maybeShowTelegramLogin();
-})();
