@@ -86,11 +86,32 @@ function initializeApp() {
     colorSchemeSelect.addEventListener('change', updateColorScheme);
     languageSelect.addEventListener('change', updateLanguage);
 
+    // Обработчики навигации в меню
+    initializeMenuNavigation();
+
     // Загрузка сохраненных настроек
     loadSettings();
 
     // Инициализация адаптивности
     initializeResponsive();
+}
+
+function initializeMenuNavigation() {
+    // Обработчики для кнопок навигации в меню
+    document.querySelectorAll('.menu-link').forEach(button => {
+        button.addEventListener('click', function() {
+            const page = this.getAttribute('data-page');
+            if (page) {
+                // Закрываем меню
+                document.getElementById('menuModal').style.display = 'none';
+                
+                // Плавный переход на страницу
+                setTimeout(() => {
+                    window.location.href = page;
+                }, 300);
+            }
+        });
+    });
 }
 
 function initializeTelegramWidget() {
@@ -201,11 +222,11 @@ function updateColorScheme() {
     localStorage.setItem('colorScheme', colorScheme);
     
     const schemeNames = {
-        purple: 'Фиолетовая',
-        blue: 'Синяя', 
-        green: 'Зелёная',
-        orange: 'Оранжевая',
-        pink: 'Розовая'
+        sunset: 'Закат',
+        ocean: 'Океан', 
+        forest: 'Лес',
+        berry: 'Ягоды',
+        neon: 'Неон'
     };
     
     showNotification(`Цветовая схема изменена на: ${schemeNames[colorScheme]}`);
@@ -372,7 +393,7 @@ function getTranslatedText(key) {
 
 function loadSettings() {
     const savedTheme = localStorage.getItem('theme') || 'auto';
-    const savedColorScheme = localStorage.getItem('colorScheme') || 'purple';
+    const savedColorScheme = localStorage.getItem('colorScheme') || 'sunset';
     const savedLanguage = localStorage.getItem('language') || 'ru';
     
     document.getElementById('themeSelect').value = savedTheme;
@@ -398,7 +419,7 @@ function showNotification(message) {
         position: fixed;
         top: 100px;
         right: 20px;
-        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        background: var(--gradient);
         color: white;
         padding: 12px 20px;
         border-radius: 10px;
