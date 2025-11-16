@@ -24,23 +24,23 @@
     <div id="menuModal" class="modal">
         <div class="modal-content">
             <span class="close">&times;</span>
-            <h2>Навигация</h2>
+            <h2 data-i18n="navigation">Навигация</h2>
             <div class="menu-links">
-                <a href="https://golkatok.github.io" class="menu-link">
+                <a href="index.html" class="menu-link" data-key="home">
                     <i class="fas fa-home"></i>
-                    <span>Главная</span>
+                    <span data-i18n="home">Главная</span>
                 </a>
-                <a href="https://golkatok.github.io/social.html" class="menu-link">
+                <a href="social.html" class="menu-link" data-key="social">
                     <i class="fas fa-share-alt"></i>
-                    <span>Соц. Сети</span>
+                    <span data-i18n="social">Соц. Сети</span>
                 </a>
-                <a href="https://golkatok.github.io/news.html" class="menu-link">
+                <a href="news.html" class="menu-link" data-key="news">
                     <i class="fas fa-newspaper"></i>
-                    <span>Новости</span>
+                    <span data-i18n="news">Новости</span>
                 </a>
-                <a href="https://golkatok.github.io/mini-games.html" class="menu-link">
+                <a href="mini-games.html" class="menu-link" data-key="games">
                     <i class="fas fa-gamepad"></i>
-                    <span>Мини-игры</span>
+                    <span data-i18n="games">Мини-игры</span>
                 </a>
             </div>
         </div>
@@ -50,17 +50,27 @@
     <div id="settingsModal" class="modal">
         <div class="modal-content">
             <span class="close">&times;</span>
-            <h2>Настройки</h2>
+            <h2 data-i18n="settings">Настройки</h2>
             <div class="setting-group">
-                <label><i class="fas fa-palette"></i> Тема:</label>
+                <label><i class="fas fa-palette"></i> <span data-i18n="theme">Тема</span>:</label>
                 <select id="themeSelect">
-                    <option value="light">Светлая</option>
-                    <option value="dark">Тёмная</option>
-                    <option value="auto">Системная</option>
+                    <option value="light" data-i18n="light">Светлая</option>
+                    <option value="dark" data-i18n="dark">Тёмная</option>
+                    <option value="auto" data-i18n="auto">Системная</option>
                 </select>
             </div>
             <div class="setting-group">
-                <label><i class="fas fa-language"></i> Язык:</label>
+                <label><i class="fas fa-paint-brush"></i> <span data-i18n="colorScheme">Цветовая схема</span>:</label>
+                <select id="colorSchemeSelect">
+                    <option value="purple">Фиолетовая</option>
+                    <option value="blue">Синяя</option>
+                    <option value="green">Зелёная</option>
+                    <option value="orange">Оранжевая</option>
+                    <option value="pink">Розовая</option>
+                </select>
+            </div>
+            <div class="setting-group">
+                <label><i class="fas fa-language"></i> <span data-i18n="language">Язык</span>:</label>
                 <select id="languageSelect">
                     <option value="ru">Русский</option>
                     <option value="uk">Украинский</option>
@@ -74,8 +84,8 @@
     <!-- Окно авторизации -->
     <div id="authModal" class="modal auth-modal">
         <div class="modal-content">
-            <h2>Авторизация</h2>
-            <p>Войдите через Telegram для персонализации</p>
+            <h2 data-i18n="authTitle">Авторизация</h2>
+            <p data-i18n="authText">Войдите через Telegram для персонализации</p>
             <div id="telegram-widget"></div>
         </div>
     </div>
@@ -83,14 +93,14 @@
     <!-- Окно cookies -->
     <div id="cookiesModal" class="modal cookies-modal">
         <div class="modal-content">
-            <h2><i class="fas fa-cookie-bite"></i> Файлы Cookies</h2>
-            <p>Мы используем cookies для сохранения ваших настроек и авторизации. Это помогает нам запомнить вас при повторном посещении.</p>
+            <h2><i class="fas fa-cookie-bite"></i> <span data-i18n="cookiesTitle">Файлы Cookies</span></h2>
+            <p data-i18n="cookiesText">Мы используем cookies для сохранения ваших настроек и авторизации. Это помогает нам запомнить вас при повторном посещении.</p>
             <div class="cookie-buttons">
                 <button id="acceptCookies" class="btn-primary">
-                    <i class="fas fa-check"></i> Принять
+                    <i class="fas fa-check"></i> <span data-i18n="accept">Принять</span>
                 </button>
                 <button id="declineCookies" class="btn-secondary">
-                    <i class="fas fa-times"></i> Отклонить
+                    <i class="fas fa-times"></i> <span data-i18n="decline">Отклонить</span>
                 </button>
             </div>
         </div>
@@ -103,9 +113,9 @@
                 <img src="images/image1.png" alt="Аватар" class="avatar" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwIiBoZWlnaHQ9IjEyMCIgdmlld0JveD0iMCAwIDEyMCAxMjAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMjAiIGhlaWdodD0iMTIwIiByeD0iNjAiIGZpbGw9IiM3NTc1NzUiLz4KPHBhdGggZD0iTTQ1IDQ1QzQ1IDM4LjkyNDkgNDkuOTI0OSAzNCA1NiAzNEg2NEM3MC4wNzUxIDM0IDc1IDM4LjkyNDkgNzUgNDVWNzVDNzUgODEuMDc1MSA3MC4wNzUxIDg2IDY0IDg2SDU2QzQ5LjkyNDkgODYgNDUgODEuMDc1MSA0NSA3NVY0NVoiIGZpbGw9IiM5OTk5OTkiLz4KPHBhdGggZD0iTTUyIDQ3QzUyIDQzLjEzODEgNTUuMTM4MSA0MCA1OSA0MEg2MUM2NC44NjE5IDQwIDY4IDQzLjEzODEgNjggNDdWNzFDNjggNzQuODYxOSA2NC44NjE5IDc4IDYxIDc4SDU5QzU1LjEzODEgNzggNTIgNzQuODYxOSA1MiA3MVY0N1oiIGZpbGw9IiNCOUI5QjkiLz4KPC9zdmc+'">
                 <div class="avatar-glow"></div>
             </div>
-            <h1 id="greeting">Привет!</h1>
+            <h1 id="greeting" data-i18n="greeting">Привет!</h1>
             <div class="video-section">
-                <h3><i class="fas fa-play-circle"></i> Последний ролик</h3>
+                <h3><i class="fas fa-play-circle"></i> <span data-i18n="lastVideo">Последний ролик</span></h3>
                 <div class="video-container">
                     <iframe src="https://www.youtube.com/embed/7upmUi_AnbE" 
                             frameborder="0" 
