@@ -590,3 +590,119 @@ body {
 .cookies-modal .modal-content {
     text-align: center;
     }
+
+/* Стили для счетчика подписчиков YouTube */
+.youtube-stats {
+    margin: 2rem 0;
+    display: flex;
+    justify-content: center;
+}
+
+.subscribers-counter {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 15px 25px;
+    background: var(--card-bg);
+    border-radius: 15px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border-color);
+    transition: var(--transition);
+}
+
+.subscribers-counter:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.15);
+}
+
+.subscribers-counter i {
+    font-size: 2.5rem;
+    color: #ff0000;
+    background: linear-gradient(45deg, #ff0000, #cc0000);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.counter-content {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.counter-number {
+    font-size: 1.8rem;
+    font-weight: 700;
+    background: var(--gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1;
+}
+
+.counter-label {
+    font-size: 0.9rem;
+    color: var(--text-color);
+    opacity: 0.8;
+    margin-top: 2px;
+}
+
+/* Стили для описания видео */
+.video-description {
+    margin-top: 1rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-color);
+    text-align: center;
+}
+
+.video-tagline {
+    margin-top: 0.5rem;
+    font-size: 0.95rem;
+    color: var(--text-color);
+    opacity: 0.8;
+    text-align: center;
+    font-style: italic;
+}
+
+/* Адаптивность для счетчика */
+@media (max-width: 768px) {
+    .subscribers-counter {
+        padding: 12px 20px;
+    }
+    
+    .subscribers-counter i {
+        font-size: 2rem;
+    }
+    
+    .counter-number {
+        font-size: 1.5rem;
+    }
+    
+    .counter-label {
+        font-size: 0.8rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .subscribers-counter {
+        padding: 10px 15px;
+        gap: 12px;
+    }
+    
+    .subscribers-counter i {
+        font-size: 1.8rem;
+    }
+    
+    .counter-number {
+        font-size: 1.3rem;
+    }
+    
+    .video-description {
+        font-size: 1rem;
+    }
+    
+    .video-tagline {
+        font-size: 0.85rem;
+    }
+}
