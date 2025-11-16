@@ -1,87 +1,143 @@
+<!-- File: index.html -->
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="ru" data-theme="light">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Golkatok</title>
-    <link rel="stylesheet" href="css/style.css">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Golkatok</title>
+  <link rel="preconnect" href="https://telegram.org" />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="icon" href="data:," />
 </head>
 <body>
-    <!-- Постоянная верхняя панель -->
-    <div class="top-bar"></div>
+  <!-- Fixed always-on top bar (~1.2cm) -->
+  <header class="top-banner" role="banner">
+    <div class="top-banner__inner">
+      <div class="brand">Golkatok</div>
+      <div class="status">
+        <span id="signedAs" data-i18n-key="loggedAs" data-i18n-fmt="name">Вы вошли как Гость</span>
+        <button id="logoutBtn" class="linklike" type="button" data-i18n-key="logout" hidden>Выйти</button>
+      </div>
+    </div>
+  </header>
 
-    <!-- Невидимый отступ сверху -->
-    <div class="top-spacer" aria-hidden="true"></div>
+  <!-- Invisible spacer 1.3cm -->
+  <div class="top-spacer" aria-hidden="true"></div>
 
-    <!-- Кнопки Меню и Настройки -->
-    <div class="center-buttons">
-        <button id="menu-btn">Меню</button>
-        <button id="settings-btn">Настройки</button>
+  <!-- Main content -->
+  <main class="container" role="main">
+    <!-- Centered controls -->
+    <div class="controls">
+      <button id="menuBtn" class="btn btn-primary" type="button" data-i18n-key="menu">Меню</button>
+      <button id="settingsBtn" class="btn" type="button" data-i18n-key="settings">Настройки</button>
     </div>
 
-    <!-- Меню -->
-    <div id="menu-modal" class="modal">
-        <div class="modal-content">
-            <span class="close" id="menu-close">&times;</span>
-            <h2>Меню</h2>
-            <ul>
-                <li><a href="https://golkatok.github.io">Главная</a></li>
-                <li><a href="https://golkatok.github.io/social.html">Соц. Сети</a></li>
-                <li><a href="https://golkatok.github.io/news.html">Новости</a></li>
-                <li><a href="https://golkatok.github.io/mini-games.html">Мини-игры</a></li>
-            </ul>
-        </div>
-    </div>
+    <!-- Profile card -->
+    <section class="card">
+      <div class="avatar-wrap" aria-hidden="true">
+        <img src="images/image1.png" alt="" class="avatar" />
+        <span class="avatar-glow"></span>
+      </div>
+      <h1 class="greeting" id="greeting" data-i18n-key="greeting" data-i18n-fmt="name">Привет Гость!</h1>
+      <p class="muted" data-i18n-key="lastVideo">последний ролик</p>
+      <div class="video">
+        <iframe
+          title="YouTube"
+          src="https://www.youtube-nocookie.com/embed/7upmUi_AnbE?rel=0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          allowfullscreen loading="lazy"></iframe>
+      </div>
+    </section>
+  </main>
 
-    <!-- Настройки -->
-    <div id="settings-modal" class="modal">
-        <div class="modal-content">
-            <span class="close" id="settings-close">&times;</span>
-            <h2>Настройки</h2>
-            <div class="setting-item">
-                <label for="theme-select">Тема:</label>
-                <select id="theme-select">
-                    <option value="light">Светлая</option>
-                    <option value="dark">Тёмная</option>
-                </select>
-            </div>
-            <div class="setting-item">
-                <label for="lang-select">Язык:</label>
-                <select id="lang-select">
-                    <option value="ru" selected>Русский</option>
-                    <option value="ua">Украинский</option>
-                    <option value="by">Белорусский</option>
-                    <option value="en">Английский</option>
-                </select>
-            </div>
-        </div>
+  <!-- MENU MODAL -->
+  <div id="menuModal" class="modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="menuTitle">
+    <div class="modal__backdrop" data-close="menuModal"></div>
+    <div class="modal__dialog">
+      <div class="modal__header">
+        <h2 id="menuTitle" data-i18n-key="menu">Меню</h2>
+        <button class="icon-btn" type="button" data-close="menuModal" aria-label="Close">✕</button>
+      </div>
+      <div class="modal__body menu-grid">
+        <a class="menu-item" href="https://golkatok.github.io/" data-i18n-key="home">Главная</a>
+        <a class="menu-item" href="https://golkatok.github.io/social.html" data-i18n-key="social">Соц. Сети</a>
+        <a class="menu-item" href="https://golkatok.github.io/news.html" data-i18n-key="news">Новости</a>
+        <a class="menu-item" href="https://golkatok.github.io/mini-games.html" data-i18n-key="miniGames">Мини-игры</a>
+      </div>
+      <div class="modal__footer">
+        <button class="btn" type="button" data-close="menuModal" data-i18n-key="close">Закрыть</button>
+      </div>
     </div>
+  </div>
 
-    <!-- Cookie согласие -->
-    <div id="cookie-banner">
-        <p>Мы используем файлы cookies для лучшего опыта. <button id="accept-cookies">Принять</button> <button id="decline-cookies">Отклонить</button></p>
+<!-- SETTINGS MODAL -->
+  <div id="settingsModal" class="modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+    <div class="modal__backdrop" data-close="settingsModal"></div>
+    <div class="modal__dialog">
+      <div class="modal__header">
+        <h2 id="settingsTitle" data-i18n-key="settings">Настройки</h2>
+        <button class="icon-btn" type="button" data-close="settingsModal" aria-label="Close">✕</button>
+      </div>
+      <div class="modal__body">
+        <form id="settingsForm">
+          <fieldset class="field">
+            <legend data-i18n-key="theme">Тема</legend>
+            <label class="radio"><input type="radio" name="theme" value="light"> <span data-i18n-key="light">Светлая</span></label>
+            <label class="radio"><input type="radio" name="theme" value="dark"> <span data-i18n-key="dark">Тёмная</span></label>
+            <label class="radio"><input type="radio" name="theme" value="system"> <span data-i18n-key="system">Системная</span></label>
+          </fieldset>
+
+          <div class="field">
+            <label for="langSelect" class="label" data-i18n-key="language">Язык</label>
+            <select id="langSelect">
+              <option value="ru">Русский</option>
+              <option value="uk">Українська</option>
+              <option value="be">Беларуская</option>
+              <option value="en">English</option>
+            </select>
+          </div>
+        </form>
+      </div>
+      <div class="modal__footer">
+        <button class="btn btn-primary" type="button" id="saveSettingsBtn" data-i18n-key="save">Сохранить</button>
+        <button class="btn" type="button" data-close="settingsModal" data-i18n-key="close">Закрыть</button>
+      </div>
     </div>
+  </div>
 
-    <!-- Telegram авторизация -->
-    <div id="telegram-login">
-        <script async src="https://telegram.org/js/telegram-widget.js?22" 
-            data-telegram-login="Jahvirapelacionsbot" 
-            data-size="large" 
-            data-onauth="onTelegramAuth(user)" 
-            data-request-access="write">
+  <!-- TELEGRAM LOGIN MODAL -->
+  <div id="tgModal" class="modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="tgTitle">
+    <div class="modal__backdrop" data-close="tgModal"></div>
+    <div class="modal__dialog">
+      <div class="modal__header">
+        <h2 id="tgTitle" data-i18n-key="loginTitle">Вход через Telegram</h2>
+        <button class="icon-btn" type="button" data-close="tgModal" aria-label="Close">✕</button>
+      </div>
+      <div class="modal__body tg-body">
+        <!-- Telegram widget (calls global onTelegramAuth) -->
+        <script async src="https://telegram.org/js/telegram-widget.js?22"
+                data-telegram-login="Jahvirapelacionsbot"
+                data-size="large"
+                data-onauth="onTelegramAuth(user)"
+                data-request-access="write">
         </script>
+        <noscript>Enable JavaScript to use Telegram Login.</noscript>
+      </div>
+      <div class="modal__footer">
+        <button class="btn" type="button" data-close="tgModal" data-i18n-key="close">Закрыть</button>
+      </div>
     </div>
+  </div>
 
-    <!-- Карточка пользователя -->
-    <div class="card">
-        <img src="images/image1.png" alt="Avatar" class="avatar">
-        <h1 id="greeting">Привет, {name}!</h1>
-        <h3>Последний ролик</h3>
-        <div class="video-container">
-            <iframe width="560" height="315" src="https://www.youtube.com/embed/7upmUi_AnbE?si=PBrsn3RIf_pPH2-S" title="YouTube video" frameborder="0" allowfullscreen></iframe>
-        </div>
+  <!-- COOKIES BANNER -->
+  <div id="cookieBanner" class="cookie" hidden>
+    <div class="cookie__text" data-i18n-key="cookieText">Мы используем файлы cookies, чтобы запомнить вас при повторном входе.</div>
+    <div class="cookie__actions">
+      <button id="cookieAccept" class="btn btn-primary" type="button" data-i18n-key="cookieAccept">Принять</button>
+      <button id="cookieDecline" class="btn" type="button" data-i18n-key="cookieDecline">Отклонить</button>
     </div>
+  </div>
 
-    <script src="js/script.js"></script>
+  <script src="js/script.js" defer></script>
 </body>
-</html>
+    </html>
