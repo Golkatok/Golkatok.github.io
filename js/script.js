@@ -92,6 +92,9 @@ function initializeApp() {
     // Загрузка сохраненных настроек
     loadSettings();
 
+    // Загрузка данных YouTube
+    fetchYouTubeSubscribers();
+
     // Инициализация адаптивности
     initializeResponsive();
 }
@@ -127,6 +130,65 @@ function initializeTelegramWidget() {
     script.setAttribute('data-request-access', 'write');
     
     widgetContainer.appendChild(script);
+}
+
+// Функция для получения подписчиков через YouTube Data API v3
+async function fetchYouTubeSubscribers() {
+    // ⚠️ ЗАМЕНИ ЭТИ ДАННЫЕ НА СВОИ ⚠️
+    const apiKey = 'AIzaSyD3opTxFhIJSNfJILXGRxuWSbFpmyxEuzc'; // Твой API ключ
+    const channelId = 'UCrZA2Mj6yKZkEcBIqdfF6Ag'; // Твой Channel ID
+    
+    // Если нет API ключа, используем заглушку
+    if (apiKey === 'YOUR_API_KEY' || channelId === 'YOUR_CHANNEL_ID') {
+        document.getElementById('subscriberCount').textContent = '1,234';
+        return;
+    }
+    
+    try {
+        const url = `https://www.googleapis.com/youtube/v3/channels?part=statistics&id=${channelId}&key=${apiKey}`;
+        const response = await fetch(url);
+        const data = await response.json();
+
+        if (data.items && data.items[0]) {
+            const stats = data.items[0].statistics;
+            
+            // Проверяем, скрыт ли счётчик подписчиков
+            if (stats.hiddenSubscriberCount) {
+                document.getElementById('subscriberCount').textContent = 'Скрыто';
+            } else {
+                const subscribers = stats.subscriberCount;
+                // Выводим точное число без округления
+                document.getElementById('subscriberCount').textContent = 
+                    parseInt(subscribers).toLocaleString('ru-RU');
+            }
+        } else {
+            throw new Error('Канал не найден');
+        }
+    } catch (error) {
+        console.error('Ошибка при получении данных YouTube:', error);
+        // Запасной вариант на случай ошибки
+        document.getElementById('subscriberCount').textContent = '1,234';
+    }
+}
+
+// Альтернативная функция для получения ID канала по username
+async function getChannelIdFromUsername(username) {
+    const apiKey = 'YOUR_API_KEY'; // Твой API ключ
+    
+    try {
+        const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&type=channel&q=${username}&key=${apiKey}`;
+        const response = await fetch(url);
+        const data = await response.json();
+        
+        if (data.items && data.items[0]) {
+            const channelId = data.items[0].snippet.channelId;
+            console.log('Найден Channel ID:', channelId);
+            return channelId;
+        }
+    } catch (error) {
+        console.error('Ошибка при поиске канала:', error);
+    }
+    return null;
 }
 
 function checkAuthAndCookies() {
@@ -274,7 +336,10 @@ function applyLanguage(lang) {
             greeting: 'Привет',
             
             // Видео
-            lastVideo: 'Последний ролик'
+            lastVideo: 'Последний ролик',
+            
+            // Подписчики
+            subscribers: 'подписчиков'
         },
         uk: {
             navigation: 'Навігація',
@@ -296,7 +361,8 @@ function applyLanguage(lang) {
             accept: 'Прийняти',
             decline: 'Відхилити',
             greeting: 'Привіт',
-            lastVideo: 'Останнє відео'
+            lastVideo: 'Останнє відео',
+            subscribers: 'підписників'
         },
         be: {
             navigation: 'Навігацыя',
@@ -318,7 +384,8 @@ function applyLanguage(lang) {
             accept: 'Прыняць',
             decline: 'Адхіліць',
             greeting: 'Прывітанне',
-            lastVideo: 'Апошняе відэа'
+            lastVideo: 'Апошняе відэа',
+            subscribers: 'падпісчыкаў'
         },
         en: {
             navigation: 'Navigation',
@@ -340,7 +407,8 @@ function applyLanguage(lang) {
             accept: 'Accept',
             decline: 'Decline',
             greeting: 'Hello',
-            lastVideo: 'Last video'
+            lastVideo: 'Last video',
+            subscribers: 'subscribers'
         }
     };
 
@@ -351,6 +419,14 @@ function applyLanguage(lang) {
         const key = element.getAttribute('data-i18n');
         if (t[key]) {
             element.textContent = t[key];
+        }
+    });
+    
+    // Обновляем опции селектов
+    document.querySelectorAll('select option').forEach(option => {
+        const key = option.getAttribute('data-i18n');
+        if (key && t[key]) {
+            option.textContent = t[key];
         }
     });
     
@@ -473,3 +549,9 @@ window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e =
         updateTheme();
     }
 });
+
+// Функция для ручного обновления подписчиков (можно вызвать из консоли)
+window.updateSubscribers = function() {
+    fetchYouTubeSubscribers();
+    showNotification('Данные подписчиков обновляются...');
+};
