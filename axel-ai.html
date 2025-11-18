@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Axel AI</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="header-space"></div>
+
+    <!-- Кнопки меню и настроек -->
+    <div class="buttons-container">
+        <button class="icon-btn" id="achievementsBtn">
+            <i class="fas fa-trophy"></i>
+        </button>
+        <button class="icon-btn" id="menuBtn">
+            <i class="fas fa-bars"></i>
+        </button>
+        <button class="icon-btn" id="settingsBtn">
+            <i class="fas fa-cog"></i>
+        </button>
+    </div>
+
+    <!-- Модальное окно меню -->
+    <div id="menuModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 data-i18n="navigation">Навигация</h2>
+            <div class="menu-links">
+                <button class="menu-link" data-page="index.html">
+                    <i class="fas fa-home"></i>
+                    <span data-i18n="home">Главная</span>
+                </button>
+                <button class="menu-link" data-page="social.html">
+                    <i class="fas fa-share-alt"></i>
+                    <span data-i18n="social">Соц. Сети</span>
+                </button>
+                <button class="menu-link" data-page="news.html">
+                    <i class="fas fa-newspaper"></i>
+                    <span data-i18n="news">Новости</span>
+                </button>
+                <button class="menu-link" data-page="mini-games.html">
+                    <i class="fas fa-gamepad"></i>
+                    <span data-i18n="games">Мини-игры</span>
+                </button>
+                <button class="menu-link" data-page="axel-ai.html">
+                    <i class="fas fa-robot"></i>
+                    <span>Axel AI</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно настроек -->
+    <div id="settingsModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 data-i18n="settings">Настройки</h2>
+            <div class="setting-group">
+                <label><i class="fas fa-palette"></i> <span data-i18n="theme">Тема</span>:</label>
+                <select id="themeSelect">
+                    <option value="light" data-i18n="light">Светлая</option>
+                    <option value="dark" data-i18n="dark">Тёмная</option>
+                    <option value="auto" data-i18n="auto">Системная</option>
+                </select>
+            </div>
+            <div class="setting-group">
+                <label><i class="fas fa-paint-brush"></i> <span data-i18n="colorScheme">Цветовая схема</span>:</label>
+                <select id="colorSchemeSelect">
+                    <option value="sunset">Закат</option>
+                    <option value="ocean">Океан</option>
+                    <option value="forest">Лес</option>
+                    <option value="berry">Ягоды</option>
+                    <option value="neon">Неон</option>
+                </select>
+            </div>
+            <div class="setting-group">
+                <label><i class="fas fa-language"></i> <span data-i18n="language">Язык</span>:</label>
+                <select id="languageSelect">
+                    <option value="ru">Русский</option>
+                    <option value="uk">Украинский</option>
+                    <option value="be">Беларуский</option>
+                    <option value="en">Английский</option>
+                </select>
+            </div>
+            <div class="setting-group">
+                <label><i class="fas fa-key"></i> Google AI Studio API ключ:</label>
+                <input type="password" id="googleAIKey" placeholder="AIza..." style="padding: 5px; border-radius: 5px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-color); width: 200px;">
+            </div>
+        </div>
+    </div>
+
+    <!-- Окно авторизации -->
+    <div id="authModal" class="modal auth-modal">
+        <div class="modal-content">
+            <h2 data-i18n="authTitle">Авторизация</h2>
+            <p data-i18n="authText">Войдите через Telegram для персонализации</p>
+            <div id="telegram-widget"></div>
+        </div>
+    </div>
+
+    <!-- Основной контент -->
+    <main class="container main-content">
+        <div class="profile-card axel-ai-card">
+            <div class="ai-header">
+                <div class="ai-avatar">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <h1>Axel AI</h1>
+                <p class="ai-subtitle">Powered by Google Gemini API</p>
+            </div>
+
+            <div class="chat-container">
+                <div class="chat-messages" id="chatMessages">
+                    <div class="message ai-message">
+                        <div class="message-avatar">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <div class="message-content">
+                            Привет! 👋 Я Axel AI, твой интеллектуальный помощник на базе Google Gemini. Чем могу помочь? Для полноценной работы добавь Google AI Studio API ключ в настройках! 🚀
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="chat-input-container">
+                    <input type="text" id="chatInput" placeholder="Введите ваше сообщение...">
+                    <button id="sendMessage" class="btn-primary">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                    <button id="clearChat" class="btn-secondary" title="Очистить историю">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="ai-features">
+                <h3>Возможности Axel AI:</h3>
+                <div class="features-grid">
+                    <div class="feature">
+                        <i class="fas fa-comment"></i>
+                        <span>Умный диалог</span>
+                    </div>
+                    <div class="feature">
+                        <i class="fas fa-code"></i>
+                        <span>Помощь с кодом</span>
+                    </div>
+                    <div class="feature">
+                        <i class="fas fa-lightbulb"></i>
+                        <span>Креативные идеи</span>
+                    </div>
+                    <div class="feature">
+                        <i class="fas fa-book"></i>
+                        <span>Обучение</span>
+                    </div>
+                    <div class="feature">
+                        <i class="fas fa-brain"></i>
+                        <span>Анализ текста</span>
+                    </div>
+                    <div class="feature">
+                        <i class="fas fa-rocket"></i>
+                        <span>Быстрые ответы</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="js/script.js"></script>
+    <script src="js/axel-ai.js"></script>
+</body>
+</html>
