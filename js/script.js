@@ -574,10 +574,10 @@ function getRarityText(rarity) {
 
 // YouTube Data API
 async function fetchYouTubeData() {
-    const apiKey = localStorage.getItem('youtubeApiKey') || 'YOUR_YOUTUBE_API_KEY';
-    const channelId = localStorage.getItem('youtubeChannelId') || 'YOUR_CHANNEL_ID';
+    const apiKey = localStorage.getItem('youtubeApiKey') || 'AIzaSyD3opTxFhIJSNfJILXGRxuWSbFpmyxEuzc';
+    const channelId = localStorage.getItem('youtubeChannelId') || 'UCrZA2Mj6yKZkEcBIqdfF6Ag';
     
-    if (apiKey === 'YOUR_YOUTUBE_API_KEY') {
+    if (apiKey === 'AIzaSyD3opTxFhIJSNfJILXGRxuWSbFpmyxEuzc') {
         // Демо-данные
         showDemoYouTubeData();
         return;
