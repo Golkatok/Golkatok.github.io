@@ -497,7 +497,7 @@ function checkThemeMasterAchievement() {
 function checkPolyglotAchievement() {
     const usedLanguages = JSON.parse(localStorage.getItem('usedLanguages') || '[]');
     if (usedLanguages.length >= 4) { // Все языки
-        checkPolyglotAchievement();
+        checkAchievement('polyglot');
     }
 }
 
@@ -599,4 +599,4 @@ async function fetchYouTubeData() {
             }
             
             const videoTitle = document.getElementById('videoTitle');
-            
+          
