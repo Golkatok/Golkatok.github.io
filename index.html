@@ -12,6 +12,9 @@
 
     <!-- Кнопки меню и настроек -->
     <div class="buttons-container">
+        <button class="icon-btn" id="achievementsBtn">
+            <i class="fas fa-trophy"></i>
+        </button>
         <button class="icon-btn" id="menuBtn">
             <i class="fas fa-bars"></i>
         </button>
@@ -41,6 +44,10 @@
                 <button class="menu-link" data-page="mini-games.html">
                     <i class="fas fa-gamepad"></i>
                     <span data-i18n="games">Мини-игры</span>
+                </button>
+                <button class="menu-link" data-page="axel-ai.html">
+                    <i class="fas fa-robot"></i>
+                    <span>Axel AI</span>
                 </button>
             </div>
         </div>
@@ -77,6 +84,36 @@
                     <option value="be">Беларуский</option>
                     <option value="en">Английский</option>
                 </select>
+            </div>
+            <div class="setting-group">
+                <label><i class="fas fa-key"></i> Google AI Studio API ключ:</label>
+                <input type="password" id="googleAIKey" placeholder="AIza..." style="padding: 5px; border-radius: 5px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-color); width: 200px;">
+            </div>
+            <div class="setting-group">
+                <label><i class="fab fa-youtube"></i> YouTube API ключ:</label>
+                <input type="password" id="youtubeApiKey" placeholder="YouTube API ключ" style="padding: 5px; border-radius: 5px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-color); width: 200px;">
+            </div>
+            <div class="setting-group">
+                <label><i class="fab fa-youtube"></i> YouTube Channel ID:</label>
+                <input type="text" id="youtubeChannelId" placeholder="UC..." style="padding: 5px; border-radius: 5px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-color); width: 200px;">
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно достижений -->
+    <div id="achievementsModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2><i class="fas fa-trophy"></i> <span data-i18n="achievements">Достижения</span></h2>
+            <div class="achievements-container">
+                <div class="achievements-list" id="achievementsList">
+                    <!-- Достижения будут здесь -->
+                </div>
+                <div class="daily-achievement">
+                    <h3 data-i18n="dailyChallenge">Ежедневное задание</h3>
+                    <div id="dailyChallenge">-</div>
+                    <small data-i18n="refreshIn">Обновление через: <span id="refreshTimer">24:00:00</span></small>
+                </div>
             </div>
         </div>
     </div>
@@ -129,13 +166,35 @@
             <div class="video-section">
                 <h3><i class="fas fa-play-circle"></i> <span data-i18n="lastVideo">Последний ролик</span></h3>
                 <div class="video-container">
-                    <iframe src="https://www.youtube.com/embed/7upmUi_AnbE" 
-                            frameborder="0" 
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                            allowfullscreen></iframe>
+                    <iframe id="youtubeVideo" src="" frameborder="0" allowfullscreen></iframe>
                 </div>
-                <p class="video-description">LITTLE NIGHTMARES III – Jahvir</p>
+                <div class="video-stats">
+                    <div class="stat">
+                        <i class="fas fa-eye"></i>
+                        <span id="viewCount">0</span>
+                    </div>
+                    <div class="stat">
+                        <i class="fas fa-thumbs-up"></i>
+                        <span id="likeCount">0</span>
+                    </div>
+                    <div class="stat">
+                        <i class="fas fa-calendar"></i>
+                        <span id="videoDate">-</span>
+                    </div>
+                </div>
+                <p class="video-title" id="videoTitle">LITTLE NIGHTMARES III – Jahvir</p>
                 <p class="video-tagline">ТИШИНА, В КОТОРОЙ ЖИВЁТ СТРАХ</p>
+            </div>
+
+            <!-- Twitch статус -->
+            <div class="twitch-section" id="twitchSection" style="display: none;">
+                <h3><i class="fab fa-twitch"></i> <span data-i18n="twitchStatus">Twitch Статус</span></h3>
+                <div class="twitch-status" id="twitchStatus">
+                    <div class="stream-offline">
+                        <i class="fas fa-circle"></i>
+                        <span data-i18n="offline">Оффлайн</span>
+                    </div>
+                </div>
             </div>
         </div>
     </main>
