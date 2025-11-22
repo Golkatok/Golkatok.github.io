@@ -1,557 +1,388 @@
-// Глобальная функция для Telegram авторизации
-window.onTelegramAuth = function(user) {
-    console.log('Telegram user authenticated:', user);
-    
-    // Сохраняем данные пользователя
-    localStorage.setItem('telegramUser', JSON.stringify(user));
-    localStorage.setItem('userAuth', 'true');
-    
-    // Обновляем приветствие
-    updateGreeting(user);
-    
-    // Закрываем модальное окно авторизации
-    document.getElementById('authModal').style.display = 'none';
-    
-    // Показываем уведомление
-    showNotification(`Добро пожаловать, ${user.first_name || 'Гость'}!`);
-    
-    // Показываем окно cookies после авторизации
-    setTimeout(() => {
-        if (!localStorage.getItem('cookiesAccepted')) {
-            document.getElementById('cookiesModal').style.display = 'block';
-        }
-    }, 1000);
+/**
+ * Axel Hub Core Logic
+ * Complete implementation of original functionality in SPA structure.
+ */
+
+const CONFIG = {
+    defaultChannelId: 'UCrZA2Mj6yKZkEcBIqdfF6Ag', // Твой канал по умолчанию
+    defaultVideo: 'https://www.youtube.com/embed/dQw4w9WgXcQ' // Заглушка
 };
 
-document.addEventListener('DOMContentLoaded', function() {
-    // Инициализация приложения
-    initializeApp();
-});
+// Словарь переводов
+const TRANSLATIONS = {
+    ru: { greeting: 'Привет', subscribers: 'подписчиков', lastVideo: 'Последний ролик', navigation: 'Навигация', home: 'Главная', social: 'Соц. Сети', news: 'Новости', games: 'Мини-игры', settings: 'Настройки', theme: 'Тема', colorScheme: 'Схема', language: 'Язык', achievements: 'Достижения', authTitle: 'Авторизация', authText: 'Войдите для персонализации', cookiesText: 'Мы используем cookies.', accept: 'Принять', decline: 'Отклонить', light: 'Светлая', dark: 'Тёмная', auto: 'Системная' },
+    en: { greeting: 'Hello', subscribers: 'subscribers', lastVideo: 'Last Video', navigation: 'Navigation', home: 'Home', social: 'Social', news: 'News', games: 'Mini-Games', settings: 'Settings', theme: 'Theme', colorScheme: 'Scheme', language: 'Language', achievements: 'Achievements', authTitle: 'Login', authText: 'Login via Telegram', cookiesText: 'We use cookies.', accept: 'Accept', decline: 'Decline', light: 'Light', dark: 'Dark', auto: 'System' },
+    uk: { greeting: 'Привіт', subscribers: 'підписників', lastVideo: 'Останнє відео', navigation: 'Навігація', home: 'Головна', social: 'Соц. Мережі', news: 'Новини', games: 'Міні-ігри', settings: 'Налаштування', theme: 'Тема', colorScheme: 'Схема', language: 'Мова', achievements: 'Досягнення', authTitle: 'Авторизація', authText: 'Увійдіть через Telegram', cookiesText: 'Ми використовуємо cookies.', accept: 'Прийняти', decline: 'Відхилити', light: 'Світла', dark: 'Темна', auto: 'Системна' },
+    be: { greeting: 'Прывітанне', subscribers: 'падпісчыкаў', lastVideo: 'Апошняе відэа', navigation: 'Навігацыя', home: 'Галоўная', social: 'Сац. Сеткі', news: 'Навіны', games: 'Міні-гульні', settings: 'Налады', theme: 'Тэма', colorScheme: 'Схема', language: 'Мова', achievements: 'Дасягненні', authTitle: 'Аўтарызацыя', authText: 'Увайдзіце праз Telegram', cookiesText: 'Мы выкарыстоўваем cookies.', accept: 'Прыняць', decline: 'Адхіліць', light: 'Светлая', dark: 'Цёмная', auto: 'Сістэмная' }
+};
 
-function initializeApp() {
-    // Элементы модальных окон
-    const menuModal = document.getElementById('menuModal');
-    const settingsModal = document.getElementById('settingsModal');
-    const authModal = document.getElementById('authModal');
-    const cookiesModal = document.getElementById('cookiesModal');
-    
-    // Кнопки
-    const menuBtn = document.getElementById('menuBtn');
-    const settingsBtn = document.getElementById('settingsBtn');
-    const acceptCookies = document.getElementById('acceptCookies');
-    const declineCookies = document.getElementById('declineCookies');
-    
-    // Настройки
-    const themeSelect = document.getElementById('themeSelect');
-    const colorSchemeSelect = document.getElementById('colorSchemeSelect');
-    const languageSelect = document.getElementById('languageSelect');
+class App {
+    constructor() {
+        this.settings = new SettingsManager();
+        this.ui = new UIManager();
+        this.i18n = new LanguageManager();
+        this.auth = new AuthManager();
+        this.achievements = new AchievementManager();
+        this.social = new SocialManager(this.settings);
+        this.chat = new ChatBot(this.settings, this.achievements);
 
-    // Инициализация Telegram Widget
-    initializeTelegramWidget();
-
-    // Проверка авторизации и cookies при загрузке
-    checkAuthAndCookies();
-
-    // Обработчики открытия модальных окон
-    menuBtn.addEventListener('click', () => {
-        menuModal.style.display = 'block';
-        menuModal.querySelector('.modal-content').style.animation = 'slideUp 0.3s ease';
-    });
-    
-    settingsBtn.addEventListener('click', () => {
-        settingsModal.style.display = 'block';
-        settingsModal.querySelector('.modal-content').style.animation = 'slideUp 0.3s ease';
-    });
-
-    // Закрытие модальных окон
-    document.querySelectorAll('.close').forEach(closeBtn => {
-        closeBtn.addEventListener('click', function() {
-            this.closest('.modal').style.display = 'none';
-        });
-    });
-
-    // Закрытие при клике вне окна
-    window.addEventListener('click', (event) => {
-        if (event.target.classList.contains('modal')) {
-            event.target.style.display = 'none';
-        }
-    });
-
-    // Обработчики cookies
-    acceptCookies.addEventListener('click', acceptCookiesHandler);
-    declineCookies.addEventListener('click', declineCookiesHandler);
-
-    // Обработчики настроек
-    themeSelect.addEventListener('change', updateTheme);
-    colorSchemeSelect.addEventListener('change', updateColorScheme);
-    languageSelect.addEventListener('change', updateLanguage);
-
-    // Обработчики навигации в меню
-    initializeMenuNavigation();
-
-    // Загрузка сохраненных настроек
-    loadSettings();
-
-    // Загрузка данных YouTube
-    fetchYouTubeSubscribers();
-
-    // Инициализация адаптивности
-    initializeResponsive();
-}
-
-function initializeMenuNavigation() {
-    // Обработчики для кнопок навигации в меню
-    document.querySelectorAll('.menu-link').forEach(button => {
-        button.addEventListener('click', function() {
-            const page = this.getAttribute('data-page');
-            if (page) {
-                // Закрываем меню
-                document.getElementById('menuModal').style.display = 'none';
-                
-                // Плавный переход на страницу
-                setTimeout(() => {
-                    window.location.href = page;
-                }, 300);
-            }
-        });
-    });
-}
-
-function initializeTelegramWidget() {
-    const widgetContainer = document.getElementById('telegram-widget');
-    
-    // Создаем скрипт для Telegram Widget
-    const script = document.createElement('script');
-    script.async = true;
-    script.src = 'https://telegram.org/js/telegram-widget.js?22';
-    script.setAttribute('data-telegram-login', 'Jahvirapelacionsbot');
-    script.setAttribute('data-size', 'large');
-    script.setAttribute('data-onauth', 'onTelegramAuth(user)');
-    script.setAttribute('data-request-access', 'write');
-    
-    widgetContainer.appendChild(script);
-}
-
-// Функция для получения подписчиков через YouTube Data API v3
-async function fetchYouTubeSubscribers() {
-    // ⚠️ ЗАМЕНИ ЭТИ ДАННЫЕ НА СВОИ ⚠️
-    const apiKey = 'AIzaSyD3opTxFhIJSNfJILXGRxuWSbFpmyxEuzc'; // Твой API ключ
-    const channelId = 'UCrZA2Mj6yKZkEcBIqdfF6Ag'; // Твой Channel ID
-    
-    // Если нет API ключа, используем заглушку
-    if (apiKey === 'YOUR_API_KEY' || channelId === 'YOUR_CHANNEL_ID') {
-        document.getElementById('subscriberCount').textContent = '1,234';
-        return;
+        this.init();
     }
-    
-    try {
-        const url = `https://www.googleapis.com/youtube/v3/channels?part=statistics&id=${channelId}&key=${apiKey}`;
-        const response = await fetch(url);
-        const data = await response.json();
 
-        if (data.items && data.items[0]) {
-            const stats = data.items[0].statistics;
-            
-            // Проверяем, скрыт ли счётчик подписчиков
-            if (stats.hiddenSubscriberCount) {
-                document.getElementById('subscriberCount').textContent = 'Скрыто';
-            } else {
-                const subscribers = stats.subscriberCount;
-                // Выводим точное число без округления
-                document.getElementById('subscriberCount').textContent = 
-                    parseInt(subscribers).toLocaleString('ru-RU');
-            }
-        } else {
-            throw new Error('Канал не найден');
-        }
-    } catch (error) {
-        console.error('Ошибка при получении данных YouTube:', error);
-        // Запасной вариант на случай ошибки
-        document.getElementById('subscriberCount').textContent = '1,234';
-    }
-}
-
-// Альтернативная функция для получения ID канала по username
-async function getChannelIdFromUsername(username) {
-    const apiKey = 'YOUR_API_KEY'; // Твой API ключ
-    
-    try {
-        const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&type=channel&q=${username}&key=${apiKey}`;
-        const response = await fetch(url);
-        const data = await response.json();
+    init() {
+        this.settings.load();
+        this.i18n.setLanguage(this.settings.get('language') || 'ru');
+        this.ui.bindEvents();
+        this.chat.bindEvents();
+        this.auth.check();
+        this.achievements.render();
         
-        if (data.items && data.items[0]) {
-            const channelId = data.items[0].snippet.channelId;
-            console.log('Найден Channel ID:', channelId);
-            return channelId;
-        }
-    } catch (error) {
-        console.error('Ошибка при поиске канала:', error);
+        // Загрузка данных с задержкой, чтобы не блокировать UI
+        setTimeout(() => this.social.loadYouTubeStats(), 1000);
     }
-    return null;
 }
 
-function checkAuthAndCookies() {
-    const user = localStorage.getItem('telegramUser');
-    const cookiesAccepted = localStorage.getItem('cookiesAccepted');
-    const userAuth = localStorage.getItem('userAuth');
+class SettingsManager {
+    constructor() {
+        this.inputs = {
+            theme: document.getElementById('themeSelect'),
+            scheme: document.getElementById('colorSchemeSelect'),
+            lang: document.getElementById('languageSelect'),
+            aiKey: document.getElementById('googleAIKey'),
+            ytKey: document.getElementById('youtubeApiKey'),
+            channelId: document.getElementById('youtubeChannelId')
+        };
+        this.bindEvents();
+    }
 
-    // Проверяем авторизацию
-    if (!userAuth || userAuth !== 'true') {
-        // Показываем окно авторизации с задержкой для лучшего UX
+    bindEvents() {
+        this.inputs.theme.addEventListener('change', (e) => this.update('theme', e.target.value));
+        this.inputs.scheme.addEventListener('change', (e) => this.update('scheme', e.target.value));
+        this.inputs.lang.addEventListener('change', (e) => {
+            this.update('language', e.target.value);
+            window.app.i18n.setLanguage(e.target.value);
+        });
+        
+        ['aiKey', 'ytKey', 'channelId'].forEach(key => {
+            this.inputs[key].addEventListener('change', (e) => this.update(key, e.target.value));
+        });
+    }
+
+    update(key, value) {
+        localStorage.setItem(`axel_${key}`, value);
+        this.apply(key, value);
+        
+        // Триггер обновления данных при смене ключей
+        if (key === 'ytKey' || key === 'channelId') window.app.social.loadYouTubeStats();
+    }
+
+    get(key) { return localStorage.getItem(`axel_${key}`); }
+
+    load() {
+        const defaults = { theme: 'light', scheme: 'sunset', language: 'ru', channelId: CONFIG.defaultChannelId };
+        
+        for (const [key, input] of Object.entries(this.inputs)) {
+            const val = this.get(key) || defaults[key] || '';
+            input.value = val;
+            this.apply(key, val);
+        }
+    }
+
+    apply(key, value) {
+        if (key === 'theme') {
+            if (value === 'auto') {
+                const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+            } else {
+                document.documentElement.setAttribute('data-theme', value);
+            }
+        }
+        if (key === 'scheme') document.documentElement.setAttribute('data-color-scheme', value);
+    }
+}
+
+class LanguageManager {
+    setLanguage(lang) {
+        const t = TRANSLATIONS[lang] || TRANSLATIONS.ru;
+        document.querySelectorAll('[data-i18n]').forEach(el => {
+            const key = el.getAttribute('data-i18n');
+            if (t[key]) el.textContent = t[key];
+        });
+    }
+}
+
+class UIManager {
+    constructor() {
+        this.sections = document.querySelectorAll('main section');
+        this.modals = document.querySelectorAll('.modal');
+    }
+
+    bindEvents() {
+        // Открытие модалок
+        document.getElementById('btn-menu').onclick = () => this.openModal('modal-menu');
+        document.getElementById('btn-settings').onclick = () => this.openModal('modal-settings');
+        document.getElementById('btn-achievements').onclick = () => this.openModal('modal-achievements');
+
+        // Закрытие
+        document.querySelectorAll('.close').forEach(btn => {
+            btn.onclick = (e) => document.getElementById(e.target.dataset.close).style.display = 'none';
+        });
+
+        window.onclick = (e) => {
+            if (e.target.classList.contains('modal')) e.target.style.display = 'none';
+        };
+
+        // Навигация
+        document.querySelectorAll('.menu-link').forEach(btn => {
+            btn.onclick = () => {
+                this.switchSection(btn.dataset.target);
+                document.getElementById('modal-menu').style.display = 'none';
+            };
+        });
+    }
+
+    openModal(id) {
+        document.getElementById(id).style.display = 'flex';
+    }
+
+    switchSection(id) {
+        this.sections.forEach(s => {
+            s.classList.remove('active-section');
+            s.classList.add('hidden-section');
+        });
+        const target = document.getElementById(id);
+        if (target) {
+            target.classList.remove('hidden-section');
+            target.classList.add('active-section');
+        }
+    }
+
+    showToast(msg) {
+        const div = document.createElement('div');
+        div.className = 'notification';
+        div.textContent = msg;
+        document.body.appendChild(div);
+        setTimeout(() => div.classList.add('show'), 100);
         setTimeout(() => {
-            document.getElementById('authModal').style.display = 'block';
-        }, 500);
-    } else if (user) {
-        updateGreeting(JSON.parse(user));
-    }
-
-    // Проверяем принятие cookies
-    if (!cookiesAccepted && userAuth === 'true') {
-        setTimeout(() => {
-            document.getElementById('cookiesModal').style.display = 'block';
-        }, 1500);
-    }
-}
-
-function updateGreeting(userData) {
-    const user = typeof userData === 'string' ? JSON.parse(userData) : userData;
-    const greeting = document.getElementById('greeting');
-    const name = user.first_name || user.username || 'Гость';
-    
-    // Получаем текущий язык для приветствия
-    const language = localStorage.getItem('language') || 'ru';
-    const greetings = {
-        ru: 'Привет',
-        uk: 'Привіт',
-        be: 'Прывітанне',
-        en: 'Hello'
-    };
-    
-    const greetingText = greetings[language] || 'Привет';
-    greeting.textContent = `${greetingText} ${name}!`;
-    
-    // Анимация появления
-    greeting.style.opacity = '0';
-    greeting.style.transform = 'translateY(20px)';
-    setTimeout(() => {
-        greeting.style.transition = 'all 0.5s ease';
-        greeting.style.opacity = '1';
-        greeting.style.transform = 'translateY(0)';
-    }, 100);
-}
-
-function acceptCookiesHandler() {
-    localStorage.setItem('cookiesAccepted', 'true');
-    document.getElementById('cookiesModal').style.display = 'none';
-    showNotification('Cookies приняты!');
-}
-
-function declineCookiesHandler() {
-    // Очищаем только cookies-related данные, оставляя авторизацию
-    localStorage.removeItem('cookiesAccepted');
-    localStorage.removeItem('theme');
-    localStorage.removeItem('language');
-    localStorage.removeItem('colorScheme');
-    document.getElementById('cookiesModal').style.display = 'none';
-    showNotification('Cookies отклонены. Некоторые функции могут работать некорректно.');
-}
-
-function updateTheme() {
-    const themeSelect = document.getElementById('themeSelect');
-    const theme = themeSelect.value;
-    
-    if (theme === 'auto') {
-        // Определяем системную тему
-        const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
-    } else {
-        document.documentElement.setAttribute('data-theme', theme);
-    }
-    
-    localStorage.setItem('theme', theme);
-    showNotification(`Тема изменена на: ${getTranslatedText('theme_' + theme)}`);
-}
-
-function updateColorScheme() {
-    const colorSchemeSelect = document.getElementById('colorSchemeSelect');
-    const colorScheme = colorSchemeSelect.value;
-    
-    // Удаляем все классы цветовых схем и добавляем нужную
-    document.documentElement.removeAttribute('data-color-scheme');
-    document.documentElement.setAttribute('data-color-scheme', colorScheme);
-    
-    localStorage.setItem('colorScheme', colorScheme);
-    
-    const schemeNames = {
-        sunset: 'Закат',
-        ocean: 'Океан', 
-        forest: 'Лес',
-        berry: 'Ягоды',
-        neon: 'Неон'
-    };
-    
-    showNotification(`Цветовая схема изменена на: ${schemeNames[colorScheme]}`);
-}
-
-function updateLanguage() {
-    const languageSelect = document.getElementById('languageSelect');
-    const language = languageSelect.value;
-    
-    localStorage.setItem('language', language);
-    applyLanguage(language);
-    showNotification(`Язык изменен на: ${languageSelect.options[languageSelect.selectedIndex].text}`);
-}
-
-function applyLanguage(lang) {
-    const translations = {
-        ru: {
-            // Меню
-            navigation: 'Навигация',
-            home: 'Главная',
-            social: 'Соц. Сети',
-            news: 'Новости',
-            games: 'Мини-игры',
-            
-            // Настройки
-            settings: 'Настройки',
-            theme: 'Тема',
-            colorScheme: 'Цветовая схема',
-            language: 'Язык',
-            light: 'Светлая',
-            dark: 'Тёмная',
-            auto: 'Системная',
-            
-            // Авторизация
-            authTitle: 'Авторизация',
-            authText: 'Войдите через Telegram для персонализации',
-            
-            // Cookies
-            cookiesTitle: 'Файлы Cookies',
-            cookiesText: 'Мы используем cookies для сохранения ваших настроек и авторизации. Это помогает нам запомнить вас при повторном посещении.',
-            accept: 'Принять',
-            decline: 'Отклонить',
-            
-            // Приветствие
-            greeting: 'Привет',
-            
-            // Видео
-            lastVideo: 'Последний ролик',
-            
-            // Подписчики
-            subscribers: 'подписчиков'
-        },
-        uk: {
-            navigation: 'Навігація',
-            home: 'Головна',
-            social: 'Соц. Мережі',
-            news: 'Новини',
-            games: 'Міні-ігри',
-            settings: 'Налаштування',
-            theme: 'Тема',
-            colorScheme: 'Кольорова схема',
-            language: 'Мова',
-            light: 'Світла',
-            dark: 'Темна',
-            auto: 'Системна',
-            authTitle: 'Авторизація',
-            authText: 'Увійдіть через Telegram для персоналізації',
-            cookiesTitle: 'Файли Cookies',
-            cookiesText: 'Ми використовуємо cookies для збереження ваших налаштувань та авторизації. Це допомагає нам запам\'ятати вас при повторному відвідуванні.',
-            accept: 'Прийняти',
-            decline: 'Відхилити',
-            greeting: 'Привіт',
-            lastVideo: 'Останнє відео',
-            subscribers: 'підписників'
-        },
-        be: {
-            navigation: 'Навігацыя',
-            home: 'Галоўная',
-            social: 'Сац. Сеткі',
-            news: 'Навіны',
-            games: 'Міні-гульні',
-            settings: 'Налады',
-            theme: 'Тэма',
-            colorScheme: 'Каляровая схема',
-            language: 'Мова',
-            light: 'Светлая',
-            dark: 'Цёмная',
-            auto: 'Сістэмная',
-            authTitle: 'Аўтарызацыя',
-            authText: 'Увайдзіце праз Telegram для персаналізацыі',
-            cookiesTitle: 'Файлы Cookies',
-            cookiesText: 'Мы выкарыстоўваем cookies для захавання вашых наладаў і аўтарызацыі. Гэта дапамагае нам запомніць вас пры паўторным наведванні.',
-            accept: 'Прыняць',
-            decline: 'Адхіліць',
-            greeting: 'Прывітанне',
-            lastVideo: 'Апошняе відэа',
-            subscribers: 'падпісчыкаў'
-        },
-        en: {
-            navigation: 'Navigation',
-            home: 'Home',
-            social: 'Social Networks',
-            news: 'News',
-            games: 'Mini Games',
-            settings: 'Settings',
-            theme: 'Theme',
-            colorScheme: 'Color Scheme',
-            language: 'Language',
-            light: 'Light',
-            dark: 'Dark',
-            auto: 'System',
-            authTitle: 'Authorization',
-            authText: 'Log in via Telegram for personalization',
-            cookiesTitle: 'Cookies',
-            cookiesText: 'We use cookies to save your settings and authorization. This helps us remember you on repeat visits.',
-            accept: 'Accept',
-            decline: 'Decline',
-            greeting: 'Hello',
-            lastVideo: 'Last video',
-            subscribers: 'subscribers'
-        }
-    };
-
-    const t = translations[lang] || translations.ru;
-    
-    // Обновляем все элементы с data-i18n атрибутом
-    document.querySelectorAll('[data-i18n]').forEach(element => {
-        const key = element.getAttribute('data-i18n');
-        if (t[key]) {
-            element.textContent = t[key];
-        }
-    });
-    
-    // Обновляем опции селектов
-    document.querySelectorAll('select option').forEach(option => {
-        const key = option.getAttribute('data-i18n');
-        if (key && t[key]) {
-            option.textContent = t[key];
-        }
-    });
-    
-    // Обновляем приветствие если пользователь авторизован
-    const user = localStorage.getItem('telegramUser');
-    if (user) {
-        const userData = JSON.parse(user);
-        const name = userData.first_name || userData.username || '';
-        document.getElementById('greeting').textContent = `${t.greeting} ${name}!`;
-    }
-}
-
-function getTranslatedText(key) {
-    const language = localStorage.getItem('language') || 'ru';
-    const translations = {
-        ru: {
-            theme_light: 'Светлая',
-            theme_dark: 'Тёмная',
-            theme_auto: 'Системная'
-        },
-        uk: {
-            theme_light: 'Світла',
-            theme_dark: 'Темна',
-            theme_auto: 'Системна'
-        },
-        be: {
-            theme_light: 'Светлая',
-            theme_dark: 'Цёмная',
-            theme_auto: 'Сістэмная'
-        },
-        en: {
-            theme_light: 'Light',
-            theme_dark: 'Dark',
-            theme_auto: 'System'
-        }
-    };
-    
-    return (translations[language] && translations[language][key]) || key;
-}
-
-function loadSettings() {
-    const savedTheme = localStorage.getItem('theme') || 'auto';
-    const savedColorScheme = localStorage.getItem('colorScheme') || 'sunset';
-    const savedLanguage = localStorage.getItem('language') || 'ru';
-    
-    document.getElementById('themeSelect').value = savedTheme;
-    document.getElementById('colorSchemeSelect').value = savedColorScheme;
-    document.getElementById('languageSelect').value = savedLanguage;
-    
-    updateTheme();
-    updateColorScheme();
-    applyLanguage(savedLanguage);
-}
-
-function initializeResponsive() {
-    // Обработчик изменения размера окна
-    window.addEventListener('resize', function() {
-        // Дополнительная логика адаптивности при необходимости
-    });
-}
-
-function showNotification(message) {
-    // Удаляем существующие уведомления
-    document.querySelectorAll('.notification').forEach(notification => {
-        notification.remove();
-    });
-    
-    // Создаем элемент уведомления
-    const notification = document.createElement('div');
-    notification.className = 'notification';
-    
-    notification.innerHTML = `
-        <div class="notification-content">${message}</div>
-        <button class="notification-close">&times;</button>
-    `;
-    
-    document.body.appendChild(notification);
-    
-    // Анимация появления
-    setTimeout(() => {
-        notification.style.transform = 'translateX(0)';
-    }, 100);
-    
-    // Обработчик закрытия уведомления
-    const closeBtn = notification.querySelector('.notification-close');
-    closeBtn.addEventListener('click', function() {
-        closeNotification(notification);
-    });
-    
-    // Автоматическое скрытие через 5 секунд
-    const autoCloseTimeout = setTimeout(() => {
-        closeNotification(notification);
-    }, 5000);
-    
-    // Отмена авто-закрытия при наведении
-    notification.addEventListener('mouseenter', () => {
-        clearTimeout(autoCloseTimeout);
-    });
-    
-    notification.addEventListener('mouseleave', () => {
-        setTimeout(() => {
-            closeNotification(notification);
+            div.classList.remove('show');
+            setTimeout(() => div.remove(), 300);
         }, 3000);
-    });
-}
-
-function closeNotification(notification) {
-    notification.style.transform = 'translateX(100%)';
-    setTimeout(() => {
-        if (notification.parentNode) {
-            notification.parentNode.removeChild(notification);
-        }
-    }, 300);
-}
-
-// Обработчик системной темы
-window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
-    const theme = localStorage.getItem('theme');
-    if (theme === 'auto') {
-        updateTheme();
     }
-});
+}
 
-// Функция для ручного обновления подписчиков (можно вызвать из консоли)
-window.updateSubscribers = function() {
-    fetchYouTubeSubscribers();
-    showNotification('Данные подписчиков обновляются...');
-};
+class AchievementManager {
+    constructor() {
+        this.list = [
+            { id: 'login', title: 'Начало пути', desc: 'Войти в систему', icon: 'fa-door-open' },
+            { id: 'chat_first', title: 'Первый контакт', desc: 'Написать Axel AI', icon: 'fa-comment' },
+            { id: 'settings_tweak', title: 'Инженер', desc: 'Изменить настройки', icon: 'fa-cogs' }
+        ];
+        this.unlocked = JSON.parse(localStorage.getItem('axel_achievements') || '[]');
+    }
+
+    unlock(id) {
+        if (!this.unlocked.includes(id)) {
+            this.unlocked.push(id);
+            localStorage.setItem('axel_achievements', JSON.stringify(this.unlocked));
+            this.render();
+            window.app.ui.showToast(`🏆 Достижение: ${this.list.find(a => a.id === id).title}`);
+        }
+    }
+
+    render() {
+        const container = document.getElementById('achievementsList');
+        container.innerHTML = this.list.map(a => {
+            const isUnlocked = this.unlocked.includes(a.id);
+            return `
+                <div class="achievement-item ${isUnlocked ? 'unlocked' : ''}">
+                    <i class="fas ${a.icon} achievement-icon"></i>
+                    <div>
+                        <strong>${a.title}</strong>
+                        <div style="font-size:0.8em">${a.desc}</div>
+                    </div>
+                    ${isUnlocked ? '<i class="fas fa-check" style="margin-left:auto;color:green"></i>' : '<i class="fas fa-lock" style="margin-left:auto"></i>'}
+                </div>
+            `;
+        }).join('');
+    }
+}
+
+class ChatBot {
+    constructor(settings, achievements) {
+        this.settings = settings;
+        this.achievements = achievements;
+        this.history = [];
+        this.dom = {
+            input: document.getElementById('chatInput'),
+            send: document.getElementById('sendMessage'),
+            clear: document.getElementById('clearChat'),
+            msgs: document.getElementById('chatMessages')
+        };
+        this.isBusy = false;
+    }
+
+    bindEvents() {
+        this.dom.send.onclick = () => this.send();
+        this.dom.input.onkeypress = (e) => { if(e.key === 'Enter') this.send(); };
+        this.dom.clear.onclick = () => {
+            this.dom.msgs.innerHTML = '';
+            this.history = [];
+        };
+    }
+
+    async send() {
+        const text = this.dom.input.value.trim();
+        if (!text || this.isBusy) return;
+
+        this.addMsg(text, 'user');
+        this.dom.input.value = '';
+        this.achievements.unlock('chat_first');
+        
+        const apiKey = this.settings.get('aiKey');
+        if (!apiKey) {
+            setTimeout(() => this.addMsg('⚠️ Нужен API ключ Google AI Studio в настройках.', 'ai'), 500);
+            return;
+        }
+
+        this.isBusy = true;
+        this.showTyping();
+
+        try {
+            const reply = await this.fetchGemini(text, apiKey);
+            this.removeTyping();
+            this.addMsg(reply, 'ai');
+        } catch (e) {
+            this.removeTyping();
+            this.addMsg(`Ошибка: ${e.message}`, 'ai');
+        }
+        this.isBusy = false;
+    }
+
+    async fetchGemini(text, key) {
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${key}`;
+        const payload = {
+            contents: [...this.history.slice(-5).map(m => ({ role: m.role==='ai'?'model':'user', parts:[{text:m.text}] })), { role: 'user', parts:[{text}] }]
+        };
+        const res = await fetch(url, { method: 'POST', body: JSON.stringify(payload), headers: {'Content-Type': 'application/json'} });
+        const data = await res.json();
+        if(!res.ok) throw new Error(data.error?.message || 'API Error');
+        return data.candidates[0].content.parts[0].text;
+    }
+
+    addMsg(text, role) {
+        const div = document.createElement('div');
+        div.className = `message ${role === 'user' ? 'user-message' : 'ai-message'}`;
+        div.innerHTML = `
+            <div class="message-avatar"><i class="fas ${role==='user'?'fa-user':'fa-robot'}"></i></div>
+            <div class="message-content">${text.replace(/\n/g, '<br>')}</div>
+        `;
+        this.dom.msgs.appendChild(div);
+        this.dom.msgs.scrollTop = this.dom.msgs.scrollHeight;
+        this.history.push({ role, text });
+    }
+
+    showTyping() {
+        const div = document.createElement('div');
+        div.id = 'typing'; div.className = 'message ai-message';
+        div.innerHTML = `<div class="message-avatar"><i class="fas fa-robot"></i></div><div class="message-content">...</div>`;
+        this.dom.msgs.appendChild(div);
+        this.dom.msgs.scrollTop = this.dom.msgs.scrollHeight;
+    }
+    removeTyping() { document.getElementById('typing')?.remove(); }
+}
+
+class SocialManager {
+    constructor(settings) {
+        this.settings = settings;
+    }
+
+    async loadYouTubeStats() {
+        const key = this.settings.get('ytKey');
+        const channelId = this.settings.get('channelId') || CONFIG.defaultChannelId;
+        
+        if (!key) return; // Без ключа не грузим
+
+        try {
+            // 1. Получаем статистику канала
+            const channelRes = await fetch(`https://www.googleapis.com/youtube/v3/channels?part=statistics&id=${channelId}&key=${key}`);
+            const channelData = await channelRes.json();
+            
+            if (channelData.items?.[0]) {
+                const stats = channelData.items[0].statistics;
+                const count = parseInt(stats.subscriberCount).toLocaleString();
+                document.getElementById('subscriberCount').textContent = count;
+            }
+
+            // 2. Получаем последнее видео
+            const searchRes = await fetch(`https://www.googleapis.com/youtube/v3/search?key=${key}&channelId=${channelId}&part=snippet,id&order=date&maxResults=1`);
+            const searchData = await searchRes.json();
+
+            if (searchData.items?.[0]) {
+                const videoId = searchData.items[0].id.videoId;
+                const snippet = searchData.items[0].snippet;
+                
+                document.getElementById('youtubeVideo').src = `https://www.youtube.com/embed/${videoId}`;
+                document.getElementById('videoTitle').textContent = snippet.title;
+                document.getElementById('videoDate').textContent = new Date(snippet.publishedAt).toLocaleDateString();
+
+                // 3. Статистика видео
+                const vidStatsRes = await fetch(`https://www.googleapis.com/youtube/v3/videos?part=statistics&id=${videoId}&key=${key}`);
+                const vidStatsData = await vidStatsRes.json();
+                if (vidStatsData.items?.[0]) {
+                    const vStats = vidStatsData.items[0].statistics;
+                    document.getElementById('viewCount').textContent = parseInt(vStats.viewCount).toLocaleString();
+                    document.getElementById('likeCount').textContent = parseInt(vStats.likeCount).toLocaleString();
+                }
+            }
+        } catch (e) {
+            console.error('YouTube API Error:', e);
+        }
+    }
+}
+
+class AuthManager {
+    constructor() {
+        this.modal = document.getElementById('modal-auth');
+        this.cookiesModal = document.getElementById('modal-cookies');
+    }
+
+    check() {
+        const user = localStorage.getItem('axel_user');
+        const cookies = localStorage.getItem('axel_cookies');
+
+        if (!user) {
+            setTimeout(() => this.modal.style.display = 'flex', 1000);
+        } else {
+            this.updateGreeting(JSON.parse(user));
+        }
+
+        if (!cookies && user) {
+            setTimeout(() => this.cookiesModal.style.display = 'flex', 2000);
+        }
+
+        // Mock Auth Handler
+        document.getElementById('mockAuthBtn').onclick = () => {
+            const mockUser = { first_name: 'Тестер' };
+            localStorage.setItem('axel_user', JSON.stringify(mockUser));
+            this.updateGreeting(mockUser);
+            this.modal.style.display = 'none';
+            window.app.achievements.unlock('login');
+            if (!cookies) this.cookiesModal.style.display = 'flex';
+        };
+
+        // Cookies Handlers
+        document.getElementById('acceptCookies').onclick = () => {
+            localStorage.setItem('axel_cookies', 'true');
+            this.cookiesModal.style.display = 'none';
+        };
+        document.getElementById('declineCookies').onclick = () => this.cookiesModal.style.display = 'none';
+    }
+
+    updateGreeting(user) {
+        document.getElementById('user-name').textContent = user.first_name || 'Друг';
+    }
+}
+
+// Инициализация
+document.addEventListener('DOMContentLoaded', () => window.app = new App());
+                
