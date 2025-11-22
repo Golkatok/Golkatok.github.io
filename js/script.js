@@ -1,139 +1,3 @@
-// Глобальные переменные для достижений
-let userAchievements = {};
-let sessionStartTime = Date.now();
-let totalTimeSpent = 0;
-let visitedPages = new Set();
-let dailyAchievements = [];
-let lastDailyUpdate = null;
-
-// Достижения
-const ACHIEVEMENTS = {
-    first_visit: {
-        id: 'first_visit',
-        name: 'Первый шаг',
-        description: 'Впервые посетить сайт',
-        icon: '🚀',
-        rarity: 'common',
-        points: 10
-    },
-    time_10_min: {
-        id: 'time_10_min',
-        name: 'Задержался надолго',
-        description: 'Провести 10 минут на сайте',
-        icon: '⏰',
-        rarity: 'common',
-        points: 15
-    },
-    explorer: {
-        id: 'explorer',
-        name: 'Исследователь',
-        description: 'Посетить все разделы сайта',
-        icon: '🧭',
-        rarity: 'rare',
-        points: 30
-    },
-    collector: {
-        id: 'collector',
-        name: 'Коллекционер',
-        description: 'Получить все достижения',
-        icon: '🏆',
-        rarity: 'legendary',
-        points: 100
-    },
-    theme_master: {
-        id: 'theme_master',
-        name: 'Художник',
-        description: 'Использовать все цветовые схемы',
-        icon: '🎨',
-        rarity: 'rare',
-        points: 25
-    },
-    polyglot: {
-        id: 'polyglot',
-        name: 'Полиглот',
-        description: 'Использовать все языки',
-        icon: '🌎',
-        rarity: 'rare',
-        points: 25
-    },
-    speedrunner: {
-        id: 'speedrunner',
-        name: 'Спидраннер',
-        description: 'Выполнить 5 достижений за один день',
-        icon: '⚡',
-        rarity: 'epic',
-        points: 50
-    },
-    loyal_fan: {
-        id: 'loyal_fan',
-        name: 'Верный фанат',
-        description: 'Посещать сайт 7 дней подряд',
-        icon: '❤️',
-        rarity: 'epic',
-        points: 40
-    },
-    ai_user: {
-        id: 'ai_user',
-        name: 'Искусственный интеллект',
-        description: 'Отправить сообщение в Axel AI',
-        icon: '🤖',
-        rarity: 'common',
-        points: 20
-    }
-};
-
-// Ежедневные достижения
-const DAILY_ACHIEVEMENTS_POOL = [
-    {
-        id: 'daily_watcher',
-        name: 'Наблюдатель',
-        description: 'Посмотреть последнее видео до конца',
-        icon: '👀',
-        rarity: 'daily',
-        points: 20
-    },
-    {
-        id: 'daily_sharer',
-        name: 'Шеритель',
-        description: 'Поделиться сайтом с другом',
-        icon: '📤',
-        rarity: 'daily',
-        points: 15
-    },
-    {
-        id: 'daily_early_bird',
-        name: 'Ранняя пташка',
-        description: 'Посетить сайт до 12:00',
-        icon: '🐦',
-        rarity: 'daily',
-        points: 10
-    },
-    {
-        id: 'daily_night_owl',
-        name: 'Ночная сова',
-        description: 'Посетить сайт после 22:00',
-        icon: '🦉',
-        rarity: 'daily',
-        points: 10
-    },
-    {
-        id: 'daily_social',
-        name: 'Социалка',
-        description: 'Перейти в раздел Соц. Сети',
-        icon: '💬',
-        rarity: 'daily',
-        points: 15
-    },
-    {
-        id: 'daily_ai',
-        name: 'AI Помощник',
-        description: 'Задать вопрос Axel AI',
-        icon: '🤖',
-        rarity: 'daily',
-        points: 25
-    }
-];
-
 // Глобальная функция для Telegram авторизации
 window.onTelegramAuth = function(user) {
     console.log('Telegram user authenticated:', user);
@@ -150,9 +14,6 @@ window.onTelegramAuth = function(user) {
     
     // Показываем уведомление
     showNotification(`Добро пожаловать, ${user.first_name || 'Гость'}!`);
-    
-    // Проверяем достижение "Первый визит"
-    checkAchievement('first_visit');
     
     // Показываем окно cookies после авторизации
     setTimeout(() => {
@@ -173,20 +34,21 @@ function initializeApp() {
     const settingsModal = document.getElementById('settingsModal');
     const authModal = document.getElementById('authModal');
     const cookiesModal = document.getElementById('cookiesModal');
-    const achievementsModal = document.getElementById('achievementsModal');
     
     // Кнопки
     const menuBtn = document.getElementById('menuBtn');
     const settingsBtn = document.getElementById('settingsBtn');
-    const achievementsBtn = document.getElementById('achievementsBtn');
     const acceptCookies = document.getElementById('acceptCookies');
     const declineCookies = document.getElementById('declineCookies');
-
-    // Инициализация систем
-    initializeTelegramWidget();
-    initializeAchievements();
-    initializeTimeTracking();
     
+    // Настройки
+    const themeSelect = document.getElementById('themeSelect');
+    const colorSchemeSelect = document.getElementById('colorSchemeSelect');
+    const languageSelect = document.getElementById('languageSelect');
+
+    // Инициализация Telegram Widget
+    initializeTelegramWidget();
+
     // Проверка авторизации и cookies при загрузке
     checkAuthAndCookies();
 
@@ -199,12 +61,6 @@ function initializeApp() {
     settingsBtn.addEventListener('click', () => {
         settingsModal.style.display = 'block';
         settingsModal.querySelector('.modal-content').style.animation = 'slideUp 0.3s ease';
-    });
-    
-    achievementsBtn.addEventListener('click', () => {
-        achievementsModal.style.display = 'block';
-        achievementsModal.querySelector('.modal-content').style.animation = 'slideUp 0.3s ease';
-        updateAchievementsDisplay();
     });
 
     // Закрытие модальных окон
@@ -226,31 +82,9 @@ function initializeApp() {
     declineCookies.addEventListener('click', declineCookiesHandler);
 
     // Обработчики настроек
-    const themeSelect = document.getElementById('themeSelect');
-    const colorSchemeSelect = document.getElementById('colorSchemeSelect');
-    const languageSelect = document.getElementById('languageSelect');
-    const googleAIKey = document.getElementById('googleAIKey');
-    const youtubeApiKey = document.getElementById('youtubeApiKey');
-    const youtubeChannelId = document.getElementById('youtubeChannelId');
-
-    if (themeSelect) themeSelect.addEventListener('change', updateTheme);
-    if (colorSchemeSelect) colorSchemeSelect.addEventListener('change', updateColorScheme);
-    if (languageSelect) languageSelect.addEventListener('change', updateLanguage);
-    if (googleAIKey) {
-        googleAIKey.addEventListener('change', function() {
-            localStorage.setItem('googleAIKey', this.value);
-        });
-    }
-    if (youtubeApiKey) {
-        youtubeApiKey.addEventListener('change', function() {
-            localStorage.setItem('youtubeApiKey', this.value);
-        });
-    }
-    if (youtubeChannelId) {
-        youtubeChannelId.addEventListener('change', function() {
-            localStorage.setItem('youtubeChannelId', this.value);
-        });
-    }
+    themeSelect.addEventListener('change', updateTheme);
+    colorSchemeSelect.addEventListener('change', updateColorScheme);
+    languageSelect.addEventListener('change', updateLanguage);
 
     // Обработчики навигации в меню
     initializeMenuNavigation();
@@ -258,11 +92,8 @@ function initializeApp() {
     // Загрузка сохраненных настроек
     loadSettings();
 
-    // Загрузка данных YouTube и Twitch
-    if (window.location.pathname.includes('index.html') || window.location.pathname === '/') {
-        fetchYouTubeData();
-        fetchTwitchStatus();
-    }
+    // Загрузка данных YouTube
+    fetchYouTubeSubscribers();
 
     // Инициализация адаптивности
     initializeResponsive();
@@ -277,11 +108,6 @@ function initializeMenuNavigation() {
                 // Закрываем меню
                 document.getElementById('menuModal').style.display = 'none';
                 
-                // Добавляем страницу в историю посещений
-                visitedPages.add(page);
-                localStorage.setItem('visitedPages', JSON.stringify([...visitedPages]));
-                checkExplorerAchievement();
-                
                 // Плавный переход на страницу
                 setTimeout(() => {
                     window.location.href = page;
@@ -293,7 +119,6 @@ function initializeMenuNavigation() {
 
 function initializeTelegramWidget() {
     const widgetContainer = document.getElementById('telegram-widget');
-    if (!widgetContainer) return;
     
     // Создаем скрипт для Telegram Widget
     const script = document.createElement('script');
@@ -307,136 +132,374 @@ function initializeTelegramWidget() {
     widgetContainer.appendChild(script);
 }
 
-// Система достижений
-function initializeAchievements() {
-    // Загружаем достижения из localStorage
-    const saved = localStorage.getItem('userAchievements');
-    userAchievements = saved ? JSON.parse(saved) : {};
+// Функция для получения подписчиков через YouTube Data API v3
+async function fetchYouTubeSubscribers() {
+    // ⚠️ ЗАМЕНИ ЭТИ ДАННЫЕ НА СВОИ ⚠️
+    const apiKey = 'AIzaSyD3opTxFhIJSNfJILXGRxuWSbFpmyxEuzc'; // Твой API ключ
+    const channelId = 'UCrZA2Mj6yKZkEcBIqdfF6Ag'; // Твой Channel ID
     
-    // Загружаем время из localStorage
-    totalTimeSpent = parseInt(localStorage.getItem('totalTimeSpent') || '0');
+    // Если нет API ключа, используем заглушку
+    if (apiKey === 'YOUR_API_KEY' || channelId === 'YOUR_CHANNEL_ID') {
+        document.getElementById('subscriberCount').textContent = '1,234';
+        return;
+    }
     
-    // Загружаем историю посещений
-    const savedPages = localStorage.getItem('visitedPages');
-    visitedPages = new Set(savedPages ? JSON.parse(savedPages) : []);
-    
-    // Добавляем текущую страницу
-    visitedPages.add(window.location.pathname);
-    localStorage.setItem('visitedPages', JSON.stringify([...visitedPages]));
-    
-    // Инициализация ежедневных достижений
-    initializeDailyAchievements();
-    
-    // Проверяем достижения при загрузке
-    checkExplorerAchievement();
-    checkThemeMasterAchievement();
-    checkPolyglotAchievement();
+    try {
+        const url = `https://www.googleapis.com/youtube/v3/channels?part=statistics&id=${channelId}&key=${apiKey}`;
+        const response = await fetch(url);
+        const data = await response.json();
+
+        if (data.items && data.items[0]) {
+            const stats = data.items[0].statistics;
+            
+            // Проверяем, скрыт ли счётчик подписчиков
+            if (stats.hiddenSubscriberCount) {
+                document.getElementById('subscriberCount').textContent = 'Скрыто';
+            } else {
+                const subscribers = stats.subscriberCount;
+                // Выводим точное число без округления
+                document.getElementById('subscriberCount').textContent = 
+                    parseInt(subscribers).toLocaleString('ru-RU');
+            }
+        } else {
+            throw new Error('Канал не найден');
+        }
+    } catch (error) {
+        console.error('Ошибка при получении данных YouTube:', error);
+        // Запасной вариант на случай ошибки
+        document.getElementById('subscriberCount').textContent = '1,234';
+    }
 }
 
-function initializeDailyAchievements() {
-    const now = new Date();
-    const today = now.toDateString();
-    lastDailyUpdate = localStorage.getItem('lastDailyUpdate');
+// Альтернативная функция для получения ID канала по username
+async function getChannelIdFromUsername(username) {
+    const apiKey = 'YOUR_API_KEY'; // Твой API ключ
     
-    // Если прошло больше 24 часов или первый запуск
-    if (!lastDailyUpdate || lastDailyUpdate !== today) {
-        // Выбираем случайное ежедневное достижение
-        const randomAchievement = DAILY_ACHIEVEMENTS_POOL[
-            Math.floor(Math.random() * DAILY_ACHIEVEMENTS_POOL.length)
-        ];
+    try {
+        const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&type=channel&q=${username}&key=${apiKey}`;
+        const response = await fetch(url);
+        const data = await response.json();
         
-        dailyAchievements = [randomAchievement];
-        localStorage.setItem('dailyAchievements', JSON.stringify(dailyAchievements));
-        localStorage.setItem('lastDailyUpdate', today);
-        
-        showNotification(`Новое ежедневное задание: ${randomAchievement.name}`);
+        if (data.items && data.items[0]) {
+            const channelId = data.items[0].snippet.channelId;
+            console.log('Найден Channel ID:', channelId);
+            return channelId;
+        }
+    } catch (error) {
+        console.error('Ошибка при поиске канала:', error);
+    }
+    return null;
+}
+
+function checkAuthAndCookies() {
+    const user = localStorage.getItem('telegramUser');
+    const cookiesAccepted = localStorage.getItem('cookiesAccepted');
+    const userAuth = localStorage.getItem('userAuth');
+
+    // Проверяем авторизацию
+    if (!userAuth || userAuth !== 'true') {
+        // Показываем окно авторизации с задержкой для лучшего UX
+        setTimeout(() => {
+            document.getElementById('authModal').style.display = 'block';
+        }, 500);
+    } else if (user) {
+        updateGreeting(JSON.parse(user));
+    }
+
+    // Проверяем принятие cookies
+    if (!cookiesAccepted && userAuth === 'true') {
+        setTimeout(() => {
+            document.getElementById('cookiesModal').style.display = 'block';
+        }, 1500);
+    }
+}
+
+function updateGreeting(userData) {
+    const user = typeof userData === 'string' ? JSON.parse(userData) : userData;
+    const greeting = document.getElementById('greeting');
+    const name = user.first_name || user.username || 'Гость';
+    
+    // Получаем текущий язык для приветствия
+    const language = localStorage.getItem('language') || 'ru';
+    const greetings = {
+        ru: 'Привет',
+        uk: 'Привіт',
+        be: 'Прывітанне',
+        en: 'Hello'
+    };
+    
+    const greetingText = greetings[language] || 'Привет';
+    greeting.textContent = `${greetingText} ${name}!`;
+    
+    // Анимация появления
+    greeting.style.opacity = '0';
+    greeting.style.transform = 'translateY(20px)';
+    setTimeout(() => {
+        greeting.style.transition = 'all 0.5s ease';
+        greeting.style.opacity = '1';
+        greeting.style.transform = 'translateY(0)';
+    }, 100);
+}
+
+function acceptCookiesHandler() {
+    localStorage.setItem('cookiesAccepted', 'true');
+    document.getElementById('cookiesModal').style.display = 'none';
+    showNotification('Cookies приняты!');
+}
+
+function declineCookiesHandler() {
+    // Очищаем только cookies-related данные, оставляя авторизацию
+    localStorage.removeItem('cookiesAccepted');
+    localStorage.removeItem('theme');
+    localStorage.removeItem('language');
+    localStorage.removeItem('colorScheme');
+    document.getElementById('cookiesModal').style.display = 'none';
+    showNotification('Cookies отклонены. Некоторые функции могут работать некорректно.');
+}
+
+function updateTheme() {
+    const themeSelect = document.getElementById('themeSelect');
+    const theme = themeSelect.value;
+    
+    if (theme === 'auto') {
+        // Определяем системную тему
+        const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
     } else {
-        // Загружаем сохранённые ежедневные достижения
-        const saved = localStorage.getItem('dailyAchievements');
-        dailyAchievements = saved ? JSON.parse(saved) : [];
+        document.documentElement.setAttribute('data-theme', theme);
     }
     
-    // Запускаем таймер обновления
-    startDailyTimer();
+    localStorage.setItem('theme', theme);
+    showNotification(`Тема изменена на: ${getTranslatedText('theme_' + theme)}`);
 }
 
-function startDailyTimer() {
-    function updateTimer() {
-        const now = new Date();
-        const tomorrow = new Date(now);
-        tomorrow.setDate(tomorrow.getDate() + 1);
-        tomorrow.setHours(0, 0, 0, 0);
-        
-        const diff = tomorrow - now;
-        const hours = Math.floor(diff / (1000 * 60 * 60));
-        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-        const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-        
-        const timerElement = document.getElementById('refreshTimer');
-        if (timerElement) {
-            timerElement.textContent = 
-                `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+function updateColorScheme() {
+    const colorSchemeSelect = document.getElementById('colorSchemeSelect');
+    const colorScheme = colorSchemeSelect.value;
+    
+    // Удаляем все классы цветовых схем и добавляем нужную
+    document.documentElement.removeAttribute('data-color-scheme');
+    document.documentElement.setAttribute('data-color-scheme', colorScheme);
+    
+    localStorage.setItem('colorScheme', colorScheme);
+    
+    const schemeNames = {
+        sunset: 'Закат',
+        ocean: 'Океан', 
+        forest: 'Лес',
+        berry: 'Ягоды',
+        neon: 'Неон'
+    };
+    
+    showNotification(`Цветовая схема изменена на: ${schemeNames[colorScheme]}`);
+}
+
+function updateLanguage() {
+    const languageSelect = document.getElementById('languageSelect');
+    const language = languageSelect.value;
+    
+    localStorage.setItem('language', language);
+    applyLanguage(language);
+    showNotification(`Язык изменен на: ${languageSelect.options[languageSelect.selectedIndex].text}`);
+}
+
+function applyLanguage(lang) {
+    const translations = {
+        ru: {
+            // Меню
+            navigation: 'Навигация',
+            home: 'Главная',
+            social: 'Соц. Сети',
+            news: 'Новости',
+            games: 'Мини-игры',
+            
+            // Настройки
+            settings: 'Настройки',
+            theme: 'Тема',
+            colorScheme: 'Цветовая схема',
+            language: 'Язык',
+            light: 'Светлая',
+            dark: 'Тёмная',
+            auto: 'Системная',
+            
+            // Авторизация
+            authTitle: 'Авторизация',
+            authText: 'Войдите через Telegram для персонализации',
+            
+            // Cookies
+            cookiesTitle: 'Файлы Cookies',
+            cookiesText: 'Мы используем cookies для сохранения ваших настроек и авторизации. Это помогает нам запомнить вас при повторном посещении.',
+            accept: 'Принять',
+            decline: 'Отклонить',
+            
+            // Приветствие
+            greeting: 'Привет',
+            
+            // Видео
+            lastVideo: 'Последний ролик',
+            
+            // Подписчики
+            subscribers: 'подписчиков'
+        },
+        uk: {
+            navigation: 'Навігація',
+            home: 'Головна',
+            social: 'Соц. Мережі',
+            news: 'Новини',
+            games: 'Міні-ігри',
+            settings: 'Налаштування',
+            theme: 'Тема',
+            colorScheme: 'Кольорова схема',
+            language: 'Мова',
+            light: 'Світла',
+            dark: 'Темна',
+            auto: 'Системна',
+            authTitle: 'Авторизація',
+            authText: 'Увійдіть через Telegram для персоналізації',
+            cookiesTitle: 'Файли Cookies',
+            cookiesText: 'Ми використовуємо cookies для збереження ваших налаштувань та авторизації. Це допомагає нам запам\'ятати вас при повторному відвідуванні.',
+            accept: 'Прийняти',
+            decline: 'Відхилити',
+            greeting: 'Привіт',
+            lastVideo: 'Останнє відео',
+            subscribers: 'підписників'
+        },
+        be: {
+            navigation: 'Навігацыя',
+            home: 'Галоўная',
+            social: 'Сац. Сеткі',
+            news: 'Навіны',
+            games: 'Міні-гульні',
+            settings: 'Налады',
+            theme: 'Тэма',
+            colorScheme: 'Каляровая схема',
+            language: 'Мова',
+            light: 'Светлая',
+            dark: 'Цёмная',
+            auto: 'Сістэмная',
+            authTitle: 'Аўтарызацыя',
+            authText: 'Увайдзіце праз Telegram для персаналізацыі',
+            cookiesTitle: 'Файлы Cookies',
+            cookiesText: 'Мы выкарыстоўваем cookies для захавання вашых наладаў і аўтарызацыі. Гэта дапамагае нам запомніць вас пры паўторным наведванні.',
+            accept: 'Прыняць',
+            decline: 'Адхіліць',
+            greeting: 'Прывітанне',
+            lastVideo: 'Апошняе відэа',
+            subscribers: 'падпісчыкаў'
+        },
+        en: {
+            navigation: 'Navigation',
+            home: 'Home',
+            social: 'Social Networks',
+            news: 'News',
+            games: 'Mini Games',
+            settings: 'Settings',
+            theme: 'Theme',
+            colorScheme: 'Color Scheme',
+            language: 'Language',
+            light: 'Light',
+            dark: 'Dark',
+            auto: 'System',
+            authTitle: 'Authorization',
+            authText: 'Log in via Telegram for personalization',
+            cookiesTitle: 'Cookies',
+            cookiesText: 'We use cookies to save your settings and authorization. This helps us remember you on repeat visits.',
+            accept: 'Accept',
+            decline: 'Decline',
+            greeting: 'Hello',
+            lastVideo: 'Last video',
+            subscribers: 'subscribers'
         }
-    }
-    
-    updateTimer();
-    setInterval(updateTimer, 1000);
-}
+    };
 
-function initializeTimeTracking() {
-    sessionStartTime = Date.now();
+    const t = translations[lang] || translations.ru;
     
-    // Обновляем общее время каждые 10 секунд
-    setInterval(() => {
-        const sessionTime = Date.now() - sessionStartTime;
-        totalTimeSpent += sessionTime;
-        localStorage.setItem('totalTimeSpent', totalTimeSpent.toString());
-        sessionStartTime = Date.now();
-        
-        // Проверяем достижение по времени
-        if (totalTimeSpent >= 10 * 60 * 1000) { // 10 минут
-            checkAchievement('time_10_min');
+    // Обновляем все элементы с data-i18n атрибутом
+    document.querySelectorAll('[data-i18n]').forEach(element => {
+        const key = element.getAttribute('data-i18n');
+        if (t[key]) {
+            element.textContent = t[key];
         }
-        
-        // Проверяем достижение скорости
-        checkSpeedrunnerAchievement();
-    }, 10000);
-}
-
-function checkAchievement(achievementId) {
-    if (!userAchievements[achievementId]) {
-        const achievement = ACHIEVEMENTS[achievementId];
-        userAchievements[achievementId] = {
-            unlocked: true,
-            unlockedAt: new Date().toISOString(),
-            points: achievement.points
-        };
-        
-        localStorage.setItem('userAchievements', JSON.stringify(userAchievements));
-        
-        // Показываем уведомление о новом достижении
-        showAchievementNotification(achievement);
-        
-        // Проверяем достижение "Коллекционер"
-        checkCollectorAchievement();
-        
-        return true;
+    });
+    
+    // Обновляем опции селектов
+    document.querySelectorAll('select option').forEach(option => {
+        const key = option.getAttribute('data-i18n');
+        if (key && t[key]) {
+            option.textContent = t[key];
+        }
+    });
+    
+    // Обновляем приветствие если пользователь авторизован
+    const user = localStorage.getItem('telegramUser');
+    if (user) {
+        const userData = JSON.parse(user);
+        const name = userData.first_name || userData.username || '';
+        document.getElementById('greeting').textContent = `${t.greeting} ${name}!`;
     }
-    return false;
 }
 
-function showAchievementNotification(achievement) {
+function getTranslatedText(key) {
+    const language = localStorage.getItem('language') || 'ru';
+    const translations = {
+        ru: {
+            theme_light: 'Светлая',
+            theme_dark: 'Тёмная',
+            theme_auto: 'Системная'
+        },
+        uk: {
+            theme_light: 'Світла',
+            theme_dark: 'Темна',
+            theme_auto: 'Системна'
+        },
+        be: {
+            theme_light: 'Светлая',
+            theme_dark: 'Цёмная',
+            theme_auto: 'Сістэмная'
+        },
+        en: {
+            theme_light: 'Light',
+            theme_dark: 'Dark',
+            theme_auto: 'System'
+        }
+    };
+    
+    return (translations[language] && translations[language][key]) || key;
+}
+
+function loadSettings() {
+    const savedTheme = localStorage.getItem('theme') || 'auto';
+    const savedColorScheme = localStorage.getItem('colorScheme') || 'sunset';
+    const savedLanguage = localStorage.getItem('language') || 'ru';
+    
+    document.getElementById('themeSelect').value = savedTheme;
+    document.getElementById('colorSchemeSelect').value = savedColorScheme;
+    document.getElementById('languageSelect').value = savedLanguage;
+    
+    updateTheme();
+    updateColorScheme();
+    applyLanguage(savedLanguage);
+}
+
+function initializeResponsive() {
+    // Обработчик изменения размера окна
+    window.addEventListener('resize', function() {
+        // Дополнительная логика адаптивности при необходимости
+    });
+}
+
+function showNotification(message) {
+    // Удаляем существующие уведомления
+    document.querySelectorAll('.notification').forEach(notification => {
+        notification.remove();
+    });
+    
+    // Создаем элемент уведомления
     const notification = document.createElement('div');
-    notification.className = 'notification achievement-notification';
+    notification.className = 'notification';
+    
     notification.innerHTML = `
-        <div class="achievement-unlocked">
-            <div class="achievement-icon">${achievement.icon}</div>
-            <div class="achievement-info">
-                <div class="achievement-name">${achievement.name}</div>
-                <div class="achievement-desc">${achievement.description}</div>
-                <div class="achievement-points">+${achievement.points} очков</div>
-            </div>
-        </div>
+        <div class="notification-content">${message}</div>
         <button class="notification-close">&times;</button>
     `;
     
@@ -447,156 +510,48 @@ function showAchievementNotification(achievement) {
         notification.style.transform = 'translateX(0)';
     }, 100);
     
+    // Обработчик закрытия уведомления
+    const closeBtn = notification.querySelector('.notification-close');
+    closeBtn.addEventListener('click', function() {
+        closeNotification(notification);
+    });
+    
     // Автоматическое скрытие через 5 секунд
-    setTimeout(() => {
-        notification.style.transform = 'translateX(100%)';
-        setTimeout(() => {
-            if (notification.parentNode) {
-                notification.parentNode.removeChild(notification);
-            }
-        }, 300);
+    const autoCloseTimeout = setTimeout(() => {
+        closeNotification(notification);
     }, 5000);
     
-    // Обработчик закрытия
-    notification.querySelector('.notification-close').addEventListener('click', () => {
-        notification.style.transform = 'translateX(100%)';
+    // Отмена авто-закрытия при наведении
+    notification.addEventListener('mouseenter', () => {
+        clearTimeout(autoCloseTimeout);
+    });
+    
+    notification.addEventListener('mouseleave', () => {
         setTimeout(() => {
-            if (notification.parentNode) {
-                notification.parentNode.removeChild(notification);
-            }
-        }, 300);
+            closeNotification(notification);
+        }, 3000);
     });
 }
 
-function checkExplorerAchievement() {
-    // Проверяем, посещены ли все разделы
-    const requiredPages = ['/index.html', '/social.html', '/news.html', '/mini-games.html', '/axel-ai.html'];
-    const hasAllPages = requiredPages.every(page => visitedPages.has(page));
-    
-    if (hasAllPages) {
-        checkAchievement('explorer');
-    }
+function closeNotification(notification) {
+    notification.style.transform = 'translateX(100%)';
+    setTimeout(() => {
+        if (notification.parentNode) {
+            notification.parentNode.removeChild(notification);
+        }
+    }, 300);
 }
 
-function checkCollectorAchievement() {
-    const unlockedCount = Object.values(userAchievements).filter(a => a.unlocked).length;
-    const totalCount = Object.keys(ACHIEVEMENTS).length;
-    
-    if (unlockedCount >= totalCount) {
-        checkAchievement('collector');
+// Обработчик системной темы
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+    const theme = localStorage.getItem('theme');
+    if (theme === 'auto') {
+        updateTheme();
     }
-}
+});
 
-function checkThemeMasterAchievement() {
-    const usedThemes = JSON.parse(localStorage.getItem('usedThemes') || '[]');
-    if (usedThemes.length >= 5) { // Все цветовые схемы
-        checkAchievement('theme_master');
-    }
-}
-
-function checkPolyglotAchievement() {
-    const usedLanguages = JSON.parse(localStorage.getItem('usedLanguages') || '[]');
-    if (usedLanguages.length >= 4) { // Все языки
-        checkAchievement('polyglot');
-    }
-}
-
-function checkSpeedrunnerAchievement() {
-    // Проверяем, сколько достижений получено за последние 24 часа
-    const now = new Date();
-    const recentAchievements = Object.values(userAchievements).filter(ach => {
-        const unlockedDate = new Date(ach.unlockedAt);
-        return (now - unlockedDate) <= 24 * 60 * 60 * 1000;
-    });
-    
-    if (recentAchievements.length >= 5) {
-        checkAchievement('speedrunner');
-    }
-}
-
-function updateAchievementsDisplay() {
-    const container = document.getElementById('achievementsList');
-    if (!container) return;
-    
-    container.innerHTML = '';
-    
-    // Отображаем все достижения
-    Object.entries(ACHIEVEMENTS).forEach(([id, achievement]) => {
-        const userAchievement = userAchievements[id];
-        const achievementElement = document.createElement('div');
-        achievementElement.className = `achievement ${userAchievement ? 'unlocked' : 'locked'} ${achievement.rarity}`;
-        
-        achievementElement.innerHTML = `
-            <div class="achievement-icon">${achievement.icon}</div>
-            <div class="achievement-info">
-                <div class="achievement-name">${achievement.name}</div>
-                <div class="achievement-desc">${achievement.description}</div>
-                <div class="achievement-meta">
-                    <span class="achievement-rarity">${getRarityText(achievement.rarity)}</span>
-                    <span class="achievement-points">${achievement.points} очков</span>
-                </div>
-            </div>
-            <div class="achievement-status">
-                ${userAchievement ? '✅' : '🔒'}
-            </div>
-        `;
-        
-        container.appendChild(achievementElement);
-    });
-    
-    // Отображаем ежедневное задание
-    const dailyChallenge = document.getElementById('dailyChallenge');
-    if (dailyChallenge && dailyAchievements.length > 0) {
-        const daily = dailyAchievements[0];
-        dailyChallenge.innerHTML = `
-            <div class="achievement daily unlocked">
-                <div class="achievement-icon">${daily.icon}</div>
-                <div class="achievement-info">
-                    <div class="achievement-name">${daily.name}</div>
-                    <div class="achievement-desc">${daily.description}</div>
-                    <div class="achievement-points">+${daily.points} очков</div>
-                </div>
-            </div>
-        `;
-    }
-}
-
-function getRarityText(rarity) {
-    const rarityTexts = {
-        common: 'Обычное',
-        rare: 'Редкое',
-        epic: 'Эпическое',
-        legendary: 'Легендарное',
-        daily: 'Ежедневное'
-    };
-    return rarityTexts[rarity] || rarity;
-}
-
-// YouTube Data API
-async function fetchYouTubeData() {
-    const apiKey = localStorage.getItem('youtubeApiKey') || 'YOUR_YOUTUBE_API_KEY';
-    const channelId = localStorage.getItem('youtubeChannelId') || 'YOUR_CHANNEL_ID';
-    
-    if (apiKey === 'YOUR_YOUTUBE_API_KEY') {
-        // Демо-данные
-        showDemoYouTubeData();
-        return;
-    }
-    
-    try {
-        // Получаем последнее видео
-        const searchUrl = `https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${channelId}&maxResults=1&order=date&type=video&key=${apiKey}`;
-        const searchResponse = await fetch(searchUrl);
-        const searchData = await searchResponse.json();
-        
-        if (searchData.items && searchData.items[0]) {
-            const videoId = searchData.items[0].id.videoId;
-            
-            // Обновляем видео
-            const youtubeVideo = document.getElementById('youtubeVideo');
-            if (youtubeVideo) {
-                youtubeVideo.src = `https://www.youtube.com/embed/${videoId}`;
-            }
-            
-            const videoTitle = document.getElementById('videoTitle');
-          
+// Функция для ручного обновления подписчиков (можно вызвать из консоли)
+window.updateSubscribers = function() {
+    fetchYouTubeSubscribers();
+    showNotification('Данные подписчиков обновляются...');
+};
