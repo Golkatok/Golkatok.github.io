@@ -1,65 +1,117 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="ru" data-theme="light" data-color-scheme="sunset">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Главная страница</title>
+    <title>Axel Hub</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="header-space"></div>
 
-    <!-- Кнопки меню и настроек -->
     <div class="buttons-container">
-        <button class="icon-btn" id="achievementsBtn">
-            <i class="fas fa-trophy"></i>
-        </button>
-        <button class="icon-btn" id="menuBtn">
-            <i class="fas fa-bars"></i>
-        </button>
-        <button class="icon-btn" id="settingsBtn">
-            <i class="fas fa-cog"></i>
-        </button>
+        <button class="icon-btn" id="btn-achievements"><i class="fas fa-trophy"></i></button>
+        <button class="icon-btn" id="btn-menu"><i class="fas fa-bars"></i></button>
+        <button class="icon-btn" id="btn-settings"><i class="fas fa-cog"></i></button>
     </div>
 
-    <!-- Модальное окно меню -->
-    <div id="menuModal" class="modal">
+    <main class="main-content container">
+        
+        <section id="section-home" class="active-section">
+            <div class="profile-card">
+                <div class="avatar-container">
+                    <img src="images/image1.png" alt="Avatar" class="avatar" onerror="this.src='https://cdn-icons-png.flaticon.com/512/149/149071.png'">
+                    <div class="avatar-glow"></div>
+                </div>
+                
+                <h1 id="greeting"><span data-i18n="greeting">Привет</span>, <span id="user-name">Гость</span>!</h1>
+                
+                <div class="youtube-stats">
+                    <div class="subscribers-counter">
+                        <i class="fab fa-youtube"></i>
+                        <div class="counter-content">
+                            <span class="counter-number" id="subscriberCount">---</span>
+                            <span class="counter-label" data-i18n="subscribers">подписчиков</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="video-section">
+                    <h3><i class="fas fa-play-circle"></i> <span data-i18n="lastVideo">Последний ролик</span></h3>
+                    <div class="video-container">
+                        <iframe id="youtubeVideo" src="" frameborder="0" allowfullscreen></iframe>
+                    </div>
+                    <div class="video-stats">
+                        <div class="stat"><i class="fas fa-eye"></i> <span id="viewCount">0</span></div>
+                        <div class="stat"><i class="fas fa-thumbs-up"></i> <span id="likeCount">0</span></div>
+                        <div class="stat"><i class="fas fa-calendar"></i> <span id="videoDate">-</span></div>
+                    </div>
+                    <p class="video-title" id="videoTitle">Загрузка...</p>
+                </div>
+
+                <div class="twitch-section" id="twitchSection" style="display: none;">
+                    <h3><i class="fab fa-twitch"></i> Twitch</h3>
+                    <div class="stream-offline"><i class="fas fa-circle"></i> Offline</div>
+                </div>
+            </div>
+        </section>
+
+        <section id="section-ai" class="hidden-section">
+            <div class="profile-card axel-ai-card">
+                <div class="ai-header">
+                    <div class="ai-avatar"><i class="fas fa-robot"></i></div>
+                    <h1>Axel AI</h1>
+                    <p class="ai-subtitle">Powered by Google Gemini API</p>
+                </div>
+
+                <div class="chat-container">
+                    <div class="chat-messages" id="chatMessages">
+                        <div class="message ai-message">
+                            <div class="message-avatar"><i class="fas fa-robot"></i></div>
+                            <div class="message-content">Привет! 👋 Я Axel AI. Добавь API ключ в настройках для начала общения!</div>
+                        </div>
+                    </div>
+                    
+                    <div class="chat-input-container">
+                        <input type="text" id="chatInput" placeholder="Введите сообщение...">
+                        <button id="sendMessage" class="btn-primary"><i class="fas fa-paper-plane"></i></button>
+                        <button id="clearChat" class="btn-secondary"><i class="fas fa-trash"></i></button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="section-social" class="hidden-section">
+            <div class="profile-card"><h2>Social (Coming Soon)</h2></div>
+        </section>
+        <section id="section-news" class="hidden-section">
+            <div class="profile-card"><h2>News (Coming Soon)</h2></div>
+        </section>
+        <section id="section-games" class="hidden-section">
+            <div class="profile-card"><h2>Games (Coming Soon)</h2></div>
+        </section>
+    </main>
+
+    <div id="modal-menu" class="modal">
         <div class="modal-content">
-            <span class="close">&times;</span>
+            <span class="close" data-close="modal-menu">&times;</span>
             <h2 data-i18n="navigation">Навигация</h2>
             <div class="menu-links">
-                <button class="menu-link" data-page="index.html">
-                    <i class="fas fa-home"></i>
-                    <span data-i18n="home">Главная</span>
-                </button>
-                <button class="menu-link" data-page="social.html">
-                    <i class="fas fa-share-alt"></i>
-                    <span data-i18n="social">Соц. Сети</span>
-                </button>
-                <button class="menu-link" data-page="news.html">
-                    <i class="fas fa-newspaper"></i>
-                    <span data-i18n="news">Новости</span>
-                </button>
-                <button class="menu-link" data-page="mini-games.html">
-                    <i class="fas fa-gamepad"></i>
-                    <span data-i18n="games">Мини-игры</span>
-                </button>
-                <button class="menu-link" data-page="axel-ai.html">
-                    <i class="fas fa-robot"></i>
-                    <span>Axel AI</span>
-                </button>
+                <button class="menu-link" data-target="section-home"><i class="fas fa-home"></i> <span data-i18n="home">Главная</span></button>
+                <button class="menu-link" data-target="section-social"><i class="fas fa-share-alt"></i> <span data-i18n="social">Соц. Сети</span></button>
+                <button class="menu-link" data-target="section-news"><i class="fas fa-newspaper"></i> <span data-i18n="news">Новости</span></button>
+                <button class="menu-link" data-target="section-games"><i class="fas fa-gamepad"></i> <span data-i18n="games">Мини-игры</span></button>
+                <button class="menu-link" data-target="section-ai"><i class="fas fa-robot"></i> <span>Axel AI</span></button>
             </div>
         </div>
     </div>
 
-    <!-- Модальное окно настроек -->
-    <div id="settingsModal" class="modal">
+    <div id="modal-settings" class="modal">
         <div class="modal-content">
-            <span class="close">&times;</span>
+            <span class="close" data-close="modal-settings">&times;</span>
             <h2 data-i18n="settings">Настройки</h2>
             <div class="setting-group">
-                <label><i class="fas fa-palette"></i> <span data-i18n="theme">Тема</span>:</label>
+                <label><i class="fas fa-palette"></i> <span data-i18n="theme">Тема</span></label>
                 <select id="themeSelect">
                     <option value="light" data-i18n="light">Светлая</option>
                     <option value="dark" data-i18n="dark">Тёмная</option>
@@ -67,7 +119,7 @@
                 </select>
             </div>
             <div class="setting-group">
-                <label><i class="fas fa-paint-brush"></i> <span data-i18n="colorScheme">Цветовая схема</span>:</label>
+                <label><i class="fas fa-paint-brush"></i> <span data-i18n="colorScheme">Схема</span></label>
                 <select id="colorSchemeSelect">
                     <option value="sunset">Закат</option>
                     <option value="ocean">Океан</option>
@@ -77,128 +129,60 @@
                 </select>
             </div>
             <div class="setting-group">
-                <label><i class="fas fa-language"></i> <span data-i18n="language">Язык</span>:</label>
+                <label><i class="fas fa-language"></i> <span data-i18n="language">Язык</span></label>
                 <select id="languageSelect">
                     <option value="ru">Русский</option>
-                    <option value="uk">Украинский</option>
-                    <option value="be">Беларуский</option>
-                    <option value="en">Английский</option>
+                    <option value="uk">Українська</option>
+                    <option value="be">Беларуская</option>
+                    <option value="en">English</option>
                 </select>
             </div>
+            <hr>
             <div class="setting-group">
-                <label><i class="fas fa-key"></i> Google AI Studio API ключ:</label>
-                <input type="password" id="googleAIKey" placeholder="AIza..." style="padding: 5px; border-radius: 5px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-color); width: 200px;">
+                <label><i class="fas fa-key"></i> Google AI Key</label>
+                <input type="password" id="googleAIKey" placeholder="AIza..." class="input-field">
             </div>
             <div class="setting-group">
-                <label><i class="fab fa-youtube"></i> YouTube API ключ:</label>
-                <input type="password" id="youtubeApiKey" placeholder="YouTube API ключ" style="padding: 5px; border-radius: 5px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-color); width: 200px;">
+                <label><i class="fab fa-youtube"></i> YouTube API Key</label>
+                <input type="password" id="youtubeApiKey" placeholder="API Key..." class="input-field">
             </div>
             <div class="setting-group">
-                <label><i class="fab fa-youtube"></i> YouTube Channel ID:</label>
-                <input type="text" id="youtubeChannelId" placeholder="UC..." style="padding: 5px; border-radius: 5px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-color); width: 200px;">
+                <label><i class="fab fa-youtube"></i> Channel ID</label>
+                <input type="text" id="youtubeChannelId" placeholder="UC..." class="input-field">
             </div>
         </div>
     </div>
 
-    <!-- Модальное окно достижений -->
-    <div id="achievementsModal" class="modal">
+    <div id="modal-achievements" class="modal">
         <div class="modal-content">
-            <span class="close">&times;</span>
+            <span class="close" data-close="modal-achievements">&times;</span>
             <h2><i class="fas fa-trophy"></i> <span data-i18n="achievements">Достижения</span></h2>
-            <div class="achievements-container">
-                <div class="achievements-list" id="achievementsList">
-                    <!-- Достижения будут здесь -->
+            <div id="achievementsList" class="achievements-list">
                 </div>
-                <div class="daily-achievement">
-                    <h3 data-i18n="dailyChallenge">Ежедневное задание</h3>
-                    <div id="dailyChallenge">-</div>
-                    <small data-i18n="refreshIn">Обновление через: <span id="refreshTimer">24:00:00</span></small>
-                </div>
-            </div>
         </div>
     </div>
 
-    <!-- Окно авторизации -->
-    <div id="authModal" class="modal auth-modal">
+    <div id="modal-auth" class="modal">
         <div class="modal-content">
             <h2 data-i18n="authTitle">Авторизация</h2>
             <p data-i18n="authText">Войдите через Telegram для персонализации</p>
             <div id="telegram-widget"></div>
+            <button id="mockAuthBtn" class="btn-secondary" style="margin-top:10px;">Войти как Гость (Тест)</button>
         </div>
     </div>
 
-    <!-- Окно cookies -->
-    <div id="cookiesModal" class="modal cookies-modal">
+    <div id="modal-cookies" class="modal">
         <div class="modal-content">
-            <h2><i class="fas fa-cookie-bite"></i> <span data-i18n="cookiesTitle">Файлы Cookies</span></h2>
-            <p data-i18n="cookiesText">Мы используем cookies для сохранения ваших настроек и авторизации. Это помогает нам запомнить вас при повторном посещении.</p>
+            <h2><i class="fas fa-cookie-bite"></i> Cookies</h2>
+            <p data-i18n="cookiesText">Мы используем cookies для сохранения настроек.</p>
             <div class="cookie-buttons">
-                <button id="acceptCookies" class="btn-primary">
-                    <i class="fas fa-check"></i> <span data-i18n="accept">Принять</span>
-                </button>
-                <button id="declineCookies" class="btn-secondary">
-                    <i class="fas fa-times"></i> <span data-i18n="decline">Отклонить</span>
-                </button>
+                <button id="acceptCookies" class="btn-primary" data-i18n="accept">Принять</button>
+                <button id="declineCookies" class="btn-secondary" data-i18n="decline">Отклонить</button>
             </div>
         </div>
     </div>
 
-    <!-- Основной контент -->
-    <main class="container main-content">
-        <div class="profile-card">
-            <div class="avatar-container">
-                <img src="images/image1.png" alt="Аватар" class="avatar" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwIiBoZWlnaHQ9IjEyMCIgdmlld0JveD0iMCAwIDEyMCAxMjAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMjAiIGhlaWdodD0iMTIwIiByeD0iNjAiIGZpbGw9IiM3NTc1NzUiLz4KPHBhdGggZD0iTTQ1IDQ1QzQ1IDM4LjkyNDkgNDkuOTI0OSAzNCA1NiAzNEg2NEM3MC4wNzUxIDM0IDc1IDM4LjkyNDkgNzUgNDVWNzVDNzUgODEuMDc1MSA3MC4wNzUxIDg2IDY0IDg2SDU2QzQ5LjkyNDkgODYgNDUgODEuMDc1MSA0NSA3NVY0NVoiIGZpbGw9IiM5OTk5OTkiLz4KPHBhdGggZD0iTTUyIDQ3QzUyIDQzLjEzODEgNTUuMTM4MSA0MCA1OSA0MEg2MUM2NC44NjE5IDQwIDY4IDQzLjEzODEgNjggNDdWNzFDNjggNzQuODYxOSA2NC44NjE5IDc4IDYxIDc4SDU5QzU1LjEzODEgNzggNTIgNzQuODYxOSA1MiA3MVY0N1oiIGZpbGw9IiNCOUI5QjkiLz4KPC9zdmc+'">
-                <div class="avatar-glow"></div>
-            </div>
-            <h1 id="greeting" data-i18n="greeting">Привет!</h1>
-            
-            <!-- Счетчик подписчиков YouTube -->
-            <div class="youtube-stats">
-                <div class="subscribers-counter">
-                    <i class="fab fa-youtube"></i>
-                    <div class="counter-content">
-                        <span class="counter-number" id="subscriberCount">0</span>
-                        <span class="counter-label" data-i18n="subscribers">подписчиков</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="video-section">
-                <h3><i class="fas fa-play-circle"></i> <span data-i18n="lastVideo">Последний ролик</span></h3>
-                <div class="video-container">
-                    <iframe id="youtubeVideo" src="" frameborder="0" allowfullscreen></iframe>
-                </div>
-                <div class="video-stats">
-                    <div class="stat">
-                        <i class="fas fa-eye"></i>
-                        <span id="viewCount">0</span>
-                    </div>
-                    <div class="stat">
-                        <i class="fas fa-thumbs-up"></i>
-                        <span id="likeCount">0</span>
-                    </div>
-                    <div class="stat">
-                        <i class="fas fa-calendar"></i>
-                        <span id="videoDate">-</span>
-                    </div>
-                </div>
-                <p class="video-title" id="videoTitle">LITTLE NIGHTMARES III – Jahvir</p>
-                <p class="video-tagline">ТИШИНА, В КОТОРОЙ ЖИВЁТ СТРАХ</p>
-            </div>
-
-            <!-- Twitch статус -->
-            <div class="twitch-section" id="twitchSection" style="display: none;">
-                <h3><i class="fab fa-twitch"></i> <span data-i18n="twitchStatus">Twitch Статус</span></h3>
-                <div class="twitch-status" id="twitchStatus">
-                    <div class="stream-offline">
-                        <i class="fas fa-circle"></i>
-                        <span data-i18n="offline">Оффлайн</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </main>
-
-    <script src="js/script.js"></script>
+    <script src="main.js"></script>
 </body>
-</html>
+    </html>
+                    
