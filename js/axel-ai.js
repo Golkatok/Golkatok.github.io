@@ -1,10 +1,7 @@
 class AxelAI {
     constructor() {
-        this.apiKey = localStorage.getItem('googleAIKey') || '';
         this.conversationHistory = [];
         this.isProcessing = false;
-        this.model = 'gemini-2.0-flash-exp'; // Используем быструю модель Gemini
-        
         this.init();
     }
     
@@ -54,11 +51,6 @@ class AxelAI {
         // Добавляем сообщение пользователя в чат
         this.addMessage(message, 'user');
         
-        // Проверяем достижение AI
-        if (window.checkAIAchievement) {
-            window.checkAIAchievement();
-        }
-        
         // Показываем индикатор набора
         this.showTypingIndicator();
         
@@ -71,7 +63,7 @@ class AxelAI {
             this.saveConversationHistory();
         } catch (error) {
             this.hideTypingIndicator();
-            this.addMessage(this.getErrorMessage(error), 'ai');
+            this.addMessage('Извините, произошла ошибка. Попробуйте еще раз.', 'ai');
             console.error('AI Error:', error);
         }
         
@@ -82,141 +74,52 @@ class AxelAI {
         // Добавляем сообщение в историю
         this.conversationHistory.push({ role: 'user', content: userMessage });
         
-        // Если API ключ не установлен, используем демо-режим
-        if (!this.apiKey || !this.apiKey.startsWith('AIza')) {
-            return this.getDemoResponse(userMessage);
-        }
-        
-        try {
-            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${this.model}:generateContent?key=${this.apiKey}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    contents: [{
-                        parts: [{
-                            text: this.buildPrompt(userMessage)
-                        }]
-                    }],
-                    generationConfig: {
-                        temperature: 0.7,
-                        maxOutputTokens: 1000,
-                        topP: 0.8,
-                        topK: 40
-                    },
-                    safetySettings: [
-                        {
-                            category: "HARM_CATEGORY_HARASSMENT",
-                            threshold: "BLOCK_MEDIUM_AND_ABOVE"
-                        },
-                        {
-                            category: "HARM_CATEGORY_HATE_SPEECH",
-                            threshold: "BLOCK_MEDIUM_AND_ABOVE"
-                        }
-                    ]
-                })
-            });
-            
-            if (!response.ok) {
-                const errorData = await response.json().catch(() => ({}));
-                throw new Error(errorData.error?.message || `HTTP error! status: ${response.status}`);
-            }
-            
-            const data = await response.json();
-            
-            if (!data.candidates || !data.candidates[0] || !data.candidates[0].content) {
-                throw new Error('Invalid response format from API');
-            }
-            
-            const aiMessage = data.candidates[0].content.parts[0].text;
-            
-            // Добавляем ответ AI в историю
-            this.conversationHistory.push({ role: 'assistant', content: aiMessage });
-            
-            return aiMessage;
-        } catch (error) {
-            console.error('Gemini API Error:', error);
-            throw error;
-        }
+        // Используем локальные ответы
+        return this.getLocalResponse(userMessage);
     }
     
-    buildPrompt(userMessage) {
-        // Строим промпт с контекстом истории
-        let prompt = `Ты - Axel AI, полезный и дружелюбный помощник. Отвечай на русском языке.
-Будь краток, но информативен. Используй эмодзи где это уместно.
-
-Текущая дата: ${new Date().toLocaleDateString('ru-RU')}
-
-Контекст предыдущих сообщений:\n`;
-
-        // Добавляем последние 4 сообщения для контекста
-        const recentHistory = this.conversationHistory.slice(-4);
-        recentHistory.forEach(msg => {
-            const role = msg.role === 'user' ? 'Пользователь' : 'Axel AI';
-            prompt += `${role}: ${msg.content}\n`;
-        });
-
-        prompt += `\nТекущий запрос пользователя: ${userMessage}`;
-        
-        return prompt;
-    }
-    
-    getDemoResponse(userMessage) {
+    getLocalResponse(userMessage) {
         const lowerMessage = userMessage.toLowerCase();
         
-        // Умные демо-ответы для разных типов запросов
+        // Умные локальные ответы
         if (lowerMessage.includes('привет') || lowerMessage.includes('hello') || lowerMessage.includes('hi')) {
-            return "Привет! 👋 Я Axel AI, твой умный помощник на базе Google Gemini. Чтобы использовать мои возможности, добавь Google AI Studio API ключ в настройках! 🚀";
+            return "Привет! 👋 Я Axel AI, твой умный помощник. Чем могу помочь сегодня?";
         } 
         else if (lowerMessage.includes('как дела') || lowerMessage.includes('как ты')) {
-            return "У меня всё отлично! Готов помогать тебе с любыми вопросами. Просто добавь API ключ Google AI Studio для полного доступа к моим способностям! 💫";
+            return "У меня всё отлично! Готов помогать тебе с любыми вопросами. 💫";
         }
         else if (lowerMessage.includes('помощь') || lowerMessage.includes('help') || lowerMessage.includes('что ты умееш')) {
             return `Я могу помочь тебе с:
 • Ответами на вопросы 📚
 • Решением проблем 💡
 • Креативными идеями 🎨
-• Кодом и технологиями 💻
-• Анализом текста 📊
+• Общими знаниями 🌟
 • И многим другим!
 
-Для начала работы:
-1. Открой настройки (иконка ⚙️)
-2. Введи свой Google AI Studio API ключ
-3. Начни общение! ✨`;
-        }
-        else if (lowerMessage.includes('api') || lowerMessage.includes('ключ') || lowerMessage.includes('google')) {
-            return `Чтобы получить API ключ:
-1. Перейди на aistudio.google.com
-2. Войди через Google аккаунт
-3. Нажми "Get API key" и создай новый ключ
-4. Скопируй его (начинается с AIza...) и вставь в настройках здесь
-
-После этого я смогу полноценно с тобой общаться! 🔑`;
+Просто задай вопрос и я постараюсь помочь! ✨`;
         }
         else if (lowerMessage.includes('погода')) {
-            return "🌤️ Я бы с радостью рассказал о погоде, но для доступа к актуальным данным мне нужен API ключ Google AI Studio. Добавь его в настройках!";
+            return "🌤️ К сожалению, я не могу получить актуальные данные о погоде в этом режиме. Но надеюсь, что сегодня хорошая погода!";
         }
         else if (lowerMessage.includes('код') || lowerMessage.includes('программир') || lowerMessage.includes('html') || lowerMessage.includes('css') || lowerMessage.includes('javascript')) {
-            return `💻 О, программирование! Я могу помочь с:
-• Написанием кода
-• Поиском ошибок
-• Оптимизацией
-• Объяснением концепций
+            return `💻 О, программирование! Я могу помочь с общими советами по коду.
 
-Пример (демо-режим):
-\`\`\`javascript
-// Приветствие на JavaScript
-function greet(name) {
-    return \`Привет, \${name}! 👋\`;
-}
-console.log(greet("Друг"));
+Пример (HTML структура):
+\`\`\`html
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Мой сайт</title>
+</head>
+<body>
+    <h1>Привет, мир!</h1>
+</body>
+</html>
 \`\`\`
-Добавь API ключ для более сложных задач! 🚀`;
+Нужна помощь с конкретным вопросом?`;
         }
         else if (lowerMessage.includes('совет') || lowerMessage.includes('идея') || lowerMessage.includes('рекомендац')) {
-            return "💡 У меня много интересных идей! Но чтобы дать персональный совет, мне нужен доступ к Google AI Studio API. Добавь ключ в настройках, и я помогу с креативными решениями!";
+            return "💡 Вот несколько идей:\n• Попробуй новый хобби\n• Почитай интересную книгу\n• Сделай небольшую прогулку\n• Изучи что-то новое\n\nНадеюсь, эти идеи будут полезны!";
         }
         else if (lowerMessage.includes('шутк') || lowerMessage.includes('юмор') || lowerMessage.includes('смех')) {
             const jokes = [
@@ -224,31 +127,21 @@ console.log(greet("Друг"));
                 "Как называют программиста, который боится женщин? SQL-инъекция! 💻",
                 "Сколько программистов нужно, чтобы поменять лампочку? Ни одного, это hardware проблема! 💡"
             ];
-            return jokes[Math.floor(Math.random() * jokes.length)] + "\n\nДобавь API ключ для большего количества шуток! 🎭";
+            return jokes[Math.floor(Math.random() * jokes.length)];
+        }
+        else if (lowerMessage.includes('время') || lowerMessage.includes('дата')) {
+            const now = new Date();
+            return `🕐 Сейчас: ${now.toLocaleString('ru-RU')}`;
         }
         else {
             const randomResponses = [
-                "Интересный вопрос! 🤔 В демо-режиме мои возможности ограничены. Добавь Google AI Studio API ключ в настройках для полноценного общения!",
-                "Отличный запрос! 🚀 Чтобы я мог дать качественный ответ, пожалуйста, настрой API ключ Google AI Studio.",
-                "Я бы с радостью помог, но для этого нужен доступ к Google AI Studio API. Ты можешь добавить ключ в настройках сайта! ⚙️",
-                "Отличная тема для обсуждения! 💫 В демо-режиме я не могу полноценно ответить. Добавь API ключ для умных бесед!",
-                "Интересно! 🎯 Чтобы я мог глубоко разобраться в этом вопросе, мне нужен Google AI Studio API ключ. Настрой его в разделе настроек!"
+                "Интересный вопрос! 🤔 Расскажи подробнее, что тебя интересует?",
+                "Хм, давай подумаем над этим вместе! 💭",
+                "Отличный вопрос! Давай разберем его подробнее. 🚀",
+                "Интересно! Могу предложить несколько мыслей по этому поводу. 💫",
+                "Давай обсудим это! Что именно тебя интересует? 🎯"
             ];
             return randomResponses[Math.floor(Math.random() * randomResponses.length)];
-        }
-    }
-    
-    getErrorMessage(error) {
-        if (error.message.includes('quota') || error.message.includes('limit')) {
-            return "⚠️ Достигнут лимит использования API. Проверь квоты в Google AI Studio.";
-        } else if (error.message.includes('invalid api key') || error.message.includes('authentication')) {
-            return "🔑 Неверный API ключ. Проверь его в настройках и попробуй снова.";
-        } else if (error.message.includes('network') || error.message.includes('fetch')) {
-            return "🌐 Проблемы с сетью. Проверь подключение к интернету.";
-        } else if (error.message.includes('safety')) {
-            return "🛡️ Запрос был заблокирован системой безопасности. Попробуй переформулировать вопрос.";
-        } else {
-            return `❌ Произошла ошибка: ${error.message}. Проверь настройки API ключа.`;
         }
     }
     
@@ -350,17 +243,11 @@ console.log(greet("Друг"));
                     <i class="fas fa-robot"></i>
                 </div>
                 <div class="message-content">
-                    Привет! 👋 Я Axel AI, твой интеллектуальный помощник на базе Google Gemini. 
-                    Чем могу помочь? Для полноценной работы добавь Google AI Studio API ключ в настройках! 🚀
+                    Привет! 👋 Я Axel AI, твой интеллектуальный помощник. 
+                    Чем могу помочь?
                 </div>
             </div>
         `;
-    }
-    
-    // Метод для обновления API ключа
-    updateApiKey(newKey) {
-        this.apiKey = newKey;
-        localStorage.setItem('googleAIKey', newKey);
     }
 }
 
@@ -368,38 +255,5 @@ console.log(greet("Друг"));
 document.addEventListener('DOMContentLoaded', function() {
     if (document.getElementById('chatMessages')) {
         window.axelAI = new AxelAI();
-        
-        // Обновляем API ключ при изменении в настройках
-        const googleAIKeyInput = document.getElementById('googleAIKey');
-        if (googleAIKeyInput && window.axelAI) {
-            googleAIKeyInput.addEventListener('change', function() {
-                window.axelAI.updateApiKey(this.value);
-            });
-        }
     }
 });
-
-// Глобальные функции для управления Axel AI
-window.AxelAI = {
-    clearHistory: function() {
-        if (window.axelAI) {
-            window.axelAI.clearConversation();
-        }
-    },
-    
-    setApiKey: function(key) {
-        if (window.axelAI) {
-            window.axelAI.updateApiKey(key);
-        }
-    },
-    
-    getStats: function() {
-        if (window.axelAI) {
-            return {
-                messageCount: window.axelAI.conversationHistory.length,
-                isConfigured: !!window.axelAI.apiKey && window.axelAI.apiKey.startsWith('AIza')
-            };
-        }
-        return null;
-    }
-};
