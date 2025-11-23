@@ -1,120 +1,184 @@
-/* --- Переменные и Темы --- */
+/* === VARIABLE SYSTEM === */
 :root {
-    --bg-color: #f0f2f5;
+    /* База */
+    --bg-color: #f4f6f8;
     --card-bg: #ffffff;
-    --text-color: #1c1e21;
-    --text-secondary: #65676b;
-    --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    --radius: 16px;
+    --text-main: #1a1a1a;
+    --text-muted: #666666;
+    --border-color: #e0e0e0;
+    --modal-overlay: rgba(0,0,0,0.4);
     
-    /* Дефолтная схема (Ocean) */
-    --primary-color: #0077cc;
-    --primary-gradient: linear-gradient(135deg, #00c6ff, #0072ff);
+    /* Эффекты */
+    --shadow-sm: 0 2px 8px rgba(0,0,0,0.05);
+    --shadow-lg: 0 10px 25px rgba(0,0,0,0.1);
+    --radius-card: 24px;
+    --radius-btn: 12px;
+    --header-top: 1cm; /* Точно по ТЗ */
+
+    /* Схема (Ocean - default) */
+    --primary: #0066ff;
+    --primary-grad: linear-gradient(135deg, #00c6ff, #0072ff);
+    --accent-text: #ffffff;
 }
 
-/* ТЕМНАЯ ТЕМА */
+/* DARK MODE */
 body.theme-dark {
-    --bg-color: #18191a;
-    --card-bg: #242526;
-    --text-color: #e4e6eb;
-    --text-secondary: #b0b3b8;
-    --shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    --bg-color: #0f1115;
+    --card-bg: #1e2126;
+    --text-main: #ffffff;
+    --text-muted: #a0a0a0;
+    --border-color: #2f333a;
+    --modal-overlay: rgba(0,0,0,0.7);
+    --shadow-sm: 0 2px 8px rgba(0,0,0,0.3);
+    --shadow-lg: 0 10px 30px rgba(0,0,0,0.5);
 }
 
-/* ЦВЕТОВЫЕ СХЕМЫ */
-body.scheme-sunset { --primary-gradient: linear-gradient(135deg, #ff9966, #ff5e62); --primary-color: #ff5e62; }
-body.scheme-forest { --primary-gradient: linear-gradient(135deg, #56ab2f, #a8e063); --primary-color: #56ab2f; }
-body.scheme-berry  { --primary-gradient: linear-gradient(135deg, #8e2de2, #4a00e0); --primary-color: #8e2de2; }
-body.scheme-neon   { --primary-gradient: linear-gradient(135deg, #f7ff00, #db36a4); --primary-color: #db36a4; body.theme-dark & { --bg-color: #0f0f0f; } }
+/* COLOR SCHEMES */
+body.scheme-sunset { --primary: #ff5e62; --primary-grad: linear-gradient(135deg, #ff9966, #ff5e62); }
+body.scheme-forest { --primary: #56ab2f; --primary-grad: linear-gradient(135deg, #56ab2f, #a8e063); }
+body.scheme-berry  { --primary: #8e2de2; --primary-grad: linear-gradient(135deg, #8e2de2, #4a00e0); }
+body.scheme-neon   { 
+    --primary: #f700ff; 
+    --primary-grad: linear-gradient(135deg, #00dbde, #fc00ff); 
+    body.theme-dark & { --bg-color: #050505; --card-bg: #111; }
+}
 
-/* --- Базовые стили --- */
-* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-body { background-color: var(--bg-color); color: var(--text-color); transition: background 0.3s, color 0.3s; min-height: 100vh; }
+/* === RESET & BASE === */
+* { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
+body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg-color); color: var(--text-main); transition: background 0.3s, color 0.3s; min-height: 100vh; overflow-x: hidden; }
 
-/* --- Шапка (Floating Header) --- */
+/* === HEADER === */
 .floating-header {
-    position: sticky;
-    top: 1cm; /* Требование: 1 см от верха */
-    margin: 0 auto;
-    width: 90%;
-    max-width: 600px;
-    z-index: 100;
-    display: flex;
-    justify-content: center;
+    position: fixed;
+    top: var(--header-top);
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+    width: auto;
 }
 
 .header-content {
-    background: var(--card-bg);
-    padding: 10px 20px;
-    border-radius: 50px;
-    box-shadow: var(--shadow);
     display: flex;
-    gap: 20px;
     align-items: center;
+    background: var(--card-bg);
+    padding: 8px 12px;
+    border-radius: 50px;
+    box-shadow: var(--shadow-lg);
+    border: 1px solid var(--border-color);
+    gap: 10px;
 }
 
-.btn-icon {
-    background: none; border: none; cursor: pointer;
-    color: var(--text-color); display: flex; align-items: center; gap: 8px;
-    font-weight: 600; font-size: 0.9rem; padding: 8px 16px; border-radius: 20px;
-    transition: background 0.2s;
+.btn-nav {
+    background: transparent; border: none;
+    color: var(--text-main); font-weight: 600;
+    padding: 10px 20px; border-radius: 30px;
+    cursor: pointer; display: flex; align-items: center; gap: 8px;
+    transition: all 0.2s;
 }
-.btn-icon:hover { background: rgba(128,128,128, 0.1); }
+.btn-nav:hover { background: rgba(128,128,128, 0.1); }
+.divider { width: 1px; height: 24px; background: var(--border-color); }
 
-/* --- Меню Dropdown --- */
+/* === DROPDOWN MENU === */
 .dropdown {
-    position: fixed; top: calc(1cm + 70px); left: 50%; transform: translateX(-50%);
-    background: var(--card-bg); padding: 10px; border-radius: var(--radius);
-    box-shadow: var(--shadow); display: flex; flex-direction: column; gap: 5px;
-    width: 200px; z-index: 99;
+    position: fixed;
+    top: calc(var(--header-top) + 70px);
+    left: 50%; transform: translateX(-50%);
+    width: 220px;
+    background: var(--card-bg);
+    border-radius: var(--radius-btn);
+    box-shadow: var(--shadow-lg);
+    border: 1px solid var(--border-color);
+    padding: 8px;
+    display: flex; flex-direction: column; gap: 4px;
+    z-index: 999;
+    transition: opacity 0.2s, transform 0.2s;
 }
-.dropdown a { text-decoration: none; color: var(--text-color); padding: 10px; border-radius: 8px; transition: 0.2s; }
-.dropdown a:hover { background: var(--primary-color); color: white; }
+.dropdown.hidden { opacity: 0; pointer-events: none; transform: translate(-50%, -10px); }
 
-/* --- Модальное окно (Настройки) --- */
+.dropdown a {
+    text-decoration: none; color: var(--text-main);
+    padding: 12px; border-radius: 8px;
+    display: flex; align-items: center; gap: 12px;
+    font-size: 0.95rem; transition: 0.2s;
+}
+.dropdown a:hover { background: var(--primary); color: var(--accent-text); }
+
+/* === SETTINGS MODAL === */
 .modal {
     position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0,0,0,0.5); backdrop-filter: blur(5px);
-    display: flex; justify-content: center; align-items: center; z-index: 1000;
+    z-index: 2000; display: flex; justify-content: center; align-items: center;
 }
+.modal.hidden { display: none; }
+.modal-overlay { position: absolute; width: 100%; height: 100%; background: var(--modal-overlay); backdrop-filter: blur(4px); }
 .modal-content {
-    background: var(--card-bg); padding: 30px; border-radius: var(--radius);
-    width: 90%; max-width: 400px; box-shadow: var(--shadow);
+    position: relative; background: var(--card-bg); width: 90%; max-width: 400px;
+    border-radius: var(--radius-card); padding: 25px;
+    box-shadow: var(--shadow-lg); animation: slideUp 0.3s ease;
 }
-.setting-group { margin-bottom: 15px; }
-.setting-group label { display: block; margin-bottom: 5px; font-size: 0.9rem; color: var(--text-secondary); }
-select, input { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ccc; background: var(--bg-color); color: var(--text-color); }
-.btn-primary { width: 100%; padding: 10px; background: var(--primary-gradient); color: white; border: none; border-radius: 8px; cursor: pointer; margin-top: 10px; }
+@keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
-/* --- Контент --- */
-main { margin-top: 60px; padding: 20px; display: flex; justify-content: center; }
-.card {
-    background: var(--card-bg); width: 100%; max-width: 500px;
-    padding: 30px; border-radius: var(--radius); box-shadow: var(--shadow);
-    text-align: center; animation: fadeIn 0.5s ease;
+.modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+.close-btn { background: none; border: none; font-size: 24px; color: var(--text-muted); cursor: pointer; }
+.setting-item { margin-bottom: 15px; }
+.setting-item label { display: block; margin-bottom: 6px; font-size: 0.9rem; color: var(--text-muted); }
+select, input {
+    width: 100%; padding: 12px; border-radius: 10px;
+    border: 1px solid var(--border-color);
+    background: var(--bg-color); color: var(--text-main);
+    font-size: 1rem;
+}
+.btn-save {
+    width: 100%; padding: 14px; margin-top: 10px;
+    background: var(--primary-grad); color: white;
+    border: none; border-radius: var(--radius-btn);
+    font-weight: bold; cursor: pointer;
 }
 
-/* Главная */
-.avatar { width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 4px solid var(--primary-color); margin-bottom: 15px; }
-.yt-stats { display: flex; flex-direction: column; gap: 15px; margin-top: 20px; text-align: left; }
-.stat-item { display: flex; align-items: center; gap: 15px; background: var(--bg-color); padding: 15px; border-radius: 12px; }
-.stat-info { display: flex; flex-direction: column; }
-.stat-info .label { font-size: 0.8rem; color: var(--text-secondary); }
-.stat-info .value { font-weight: bold; }
-
-/* Чат */
-.chat-messages { height: 300px; overflow-y: auto; border: 1px solid var(--bg-color); border-radius: 12px; padding: 10px; margin: 15px 0; display: flex; flex-direction: column; gap: 10px; }
-.message { max-width: 80%; padding: 10px 15px; border-radius: 12px; font-size: 0.9rem; word-wrap: break-word; text-align: left; }
-.message.bot { background: var(--bg-color); align-self: flex-start; border-bottom-left-radius: 2px; }
-.message.user { background: var(--primary-gradient); color: white; align-self: flex-end; border-bottom-right-radius: 2px; }
-.chat-input-area { display: flex; gap: 10px; }
-.btn-icon-send { background: var(--primary-gradient); border: none; color: white; width: 40px; border-radius: 8px; cursor: pointer; display: flex; justify-content: center; align-items: center; }
-
-/* Утилиты */
-.hidden { display: none !important; }
-.hidden-page { display: none; }
-.active-page { display: block; }
-.big-icon { font-size: 64px; color: var(--primary-color); margin-bottom: 20px; }
-
+/* === MAIN CONTENT === */
+main { padding-top: 140px; padding-bottom: 40px; display: flex; justify-content: center; }
+.page { width: 100%; max-width: 550px; padding: 0 20px; animation: fadeIn 0.4s ease; }
+.page.hidden-page { display: none; }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-                   
+
+.card {
+    background: var(--card-bg);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-sm);
+    padding: 30px;
+    border: 1px solid var(--border-color);
+}
+
+/* Profile Styles */
+.profile-header { text-align: center; margin-bottom: 30px; }
+.avatar-wrapper { position: relative; display: inline-block; margin-bottom: 15px; }
+.avatar { width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 4px solid var(--card-bg); box-shadow: var(--shadow-sm); }
+.status-indicator { position: absolute; bottom: 8px; right: 8px; width: 20px; height: 20px; background: #4caf50; border: 3px solid var(--card-bg); border-radius: 50%; }
+
+.stats-grid { display: grid; grid-template-columns: 1fr; gap: 15px; }
+.stat-box { background: var(--bg-color); padding: 15px; border-radius: 16px; display: flex; align-items: center; gap: 15px; }
+.stat-icon { width: 40px; height: 40px; border-radius: 10px; background: rgba(255, 0, 0, 0.1); color: red; display: flex; align-items: center; justify-content: center; }
+.stat-data { display: flex; flex-direction: column; }
+.stat-label { font-size: 0.8rem; color: var(--text-muted); }
+.stat-value { font-weight: bold; font-size: 1.1rem; }
+
+/* Chat Styles */
+.chat-card { padding: 0; overflow: hidden; height: 600px; display: flex; flex-direction: column; }
+.chat-top-bar { padding: 20px; background: var(--bg-color); border-bottom: 1px solid var(--border-color); }
+.bot-info { display: flex; align-items: center; gap: 15px; }
+.bot-info .material-icons-round { font-size: 2rem; color: var(--primary); }
+.status-text { font-size: 0.8rem; color: #4caf50; }
+
+.chat-area { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 15px; background: var(--card-bg); }
+.message { max-width: 80%; padding: 12px 16px; border-radius: 18px; line-height: 1.4; font-size: 0.95rem; }
+.message.bot { background: var(--bg-color); color: var(--text-main); align-self: flex-start; border-bottom-left-radius: 4px; }
+.message.user { background: var(--primary-grad); color: white; align-self: flex-end; border-bottom-right-radius: 4px; }
+
+.input-area { padding: 15px; border-top: 1px solid var(--border-color); display: flex; gap: 10px; background: var(--bg-color); }
+.input-area input { border: 1px solid transparent; background: var(--card-bg); box-shadow: var(--shadow-sm); }
+.send-btn { background: var(--primary-grad); color: white; border: none; width: 48px; border-radius: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+
+/* Placeholder */
+.placeholder-card { text-align: center; padding: 50px 20px; }
+.placeholder-icon { font-size: 4rem; color: var(--primary); margin-bottom: 20px; opacity: 0.5; }
+.btn-back { margin-top: 20px; padding: 10px 20px; border: 1px solid var(--border-color); background: transparent; border-radius: 20px; color: var(--text-muted); cursor: pointer; }
+       
