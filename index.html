@@ -3,17 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>jahvir</title>
-    
+    <title>JahvirChat Mini App</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    
     <link rel="stylesheet" href="css/style.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
 </head>
 <body class="theme-system scheme-ocean">
 
+    <div class="background-blob blob-1"></div>
+    <div class="background-blob blob-2"></div>
+
     <header class="floating-header">
-        <div class="header-content">
+        <div class="header-content glass">
             <button class="btn-nav" onclick="toggleMenu()">
                 <span class="material-icons-round">menu</span>
                 <span>Меню</span>
@@ -26,17 +27,17 @@
         </div>
     </header>
 
-    <nav id="menu-dropdown" class="dropdown hidden">
-        <a href="#" onclick="navigate('home')"><span class="material-icons-round">home</span> Главная</a>
-        <a href="#" onclick="navigate('socials')"><span class="material-icons-round">share</span> Соц. Сети</a>
-        <a href="#" onclick="navigate('news')"><span class="material-icons-round">article</span> Новости</a>
-        <a href="#" onclick="navigate('games')"><span class="material-icons-round">sports_esports</span> Мини Игры</a>
-        <a href="#" onclick="navigate('axel-ai')"><span class="material-icons-round">smart_toy</span> Аксель ИИ</a>
+    <nav id="menu-dropdown" class="dropdown glass hidden">
+        <button onclick="navigate('home')"><span class="material-icons-round">home</span> Главная</button>
+        <button onclick="navigate('socials')"><span class="material-icons-round">share</span> Соц. Сети</button>
+        <button onclick="navigate('news')"><span class="material-icons-round">article</span> Новости</button>
+        <button onclick="navigate('games')"><span class="material-icons-round">sports_esports</span> Мини Игры</button>
+        <button onclick="navigate('jahvir-ai')"><span class="material-icons-round">smart_toy</span> JahvirChat AI</button>
     </nav>
 
     <div id="settings-modal" class="modal hidden">
         <div class="modal-overlay" onclick="toggleSettings()"></div>
-        <div class="modal-content">
+        <div class="modal-content glass">
             <div class="modal-header">
                 <h3>Настройки</h3>
                 <button class="close-btn" onclick="toggleSettings()">×</button>
@@ -45,50 +46,62 @@
             <div class="settings-body">
                 <div class="setting-item">
                     <label>Тема</label>
-                    <select id="theme-select" onchange="changeTheme(this.value)">
-                        <option value="theme-system">Системная</option>
-                        <option value="theme-light">Светлая</option>
-                        <option value="theme-dark">Темная</option>
-                    </select>
+                    <div class="select-wrapper">
+                        <select id="theme-select" onchange="changeTheme(this.value)">
+                            <option value="theme-system">Системная</option>
+                            <option value="theme-light">Светлая</option>
+                            <option value="theme-dark">Темная</option>
+                        </select>
+                    </div>
                 </div>
 
                 <div class="setting-item">
                     <label>Цветовая схема</label>
-                    <select id="scheme-select" onchange="changeScheme(this.value)">
-                        <option value="scheme-sunset">Закат</option>
-                        <option value="scheme-ocean">Океан</option>
-                        <option value="scheme-forest">Лес</option>
-                        <option value="scheme-berry">Ягоды</option>
-                        <option value="scheme-neon">Неон</option>
-                    </select>
+                    <div class="select-wrapper">
+                        <select id="scheme-select" onchange="changeScheme(this.value)">
+                            <option value="scheme-sunset">Закат</option>
+                            <option value="scheme-ocean">Океан</option>
+                            <option value="scheme-forest">Лес</option>
+                            <option value="scheme-berry">Ягоды</option>
+                            <option value="scheme-neon">Неон</option>
+                        </select>
+                    </div>
                 </div>
 
-                <div class="setting-item">
-                    <label>Язык</label>
-                    <select id="lang-select">
-                        <option value="ru">Русский</option>
-                        <option value="ua">Українська</option>
-                        <option value="by">Беларуская</option>
-                    </select>
-                </div>
-
-                <hr>
+                <hr class="glass-divider">
 
                 <div class="setting-item">
-                    <label>Gemini API Key (для ИИ)</label>
+                    <label>Gemini API Key <button class="help-btn" onclick="toggleHelp()">?</button></label>
                     <input type="password" id="gemini-key-input" placeholder="Вставьте ключ здесь..." oninput="saveGeminiKey(this.value)">
-                    <p class="hint">Без ключа чат работать не будет</p>
+                    <p class="hint">Нажмите на <b>?</b> для инструкции</p>
                 </div>
             </div>
             
-            <button class="btn-save" onclick="toggleSettings()">Готово</button>
+            <button class="btn-glass-primary" onclick="toggleSettings()">Готово</button>
+        </div>
+    </div>
+
+    <div id="help-modal" class="modal hidden">
+        <div class="modal-overlay" onclick="toggleHelp()"></div>
+        <div class="modal-content glass">
+            <h3>Как получить ключ?</h3>
+            <p style="margin: 15px 0; font-size: 0.9rem; line-height: 1.5;">
+                1. Нажмите "Google AI Studio".<br>
+                2. Войдите в Google аккаунт.<br>
+                3. Нажмите "Get API key" -> "Create API key".<br>
+                4. Скопируйте ключ и вставьте сюда.
+            </p>
+            <div class="help-actions">
+                <button class="btn-glass-secondary" onclick="openAiStudio()">Google AI Studio</button>
+                <button class="btn-glass-primary" onclick="toggleHelp()">Готово</button>
+            </div>
         </div>
     </div>
 
     <main id="app-container">
         
         <section id="page-home" class="page active-page">
-            <div class="card profile-card">
+            <div class="card glass profile-card">
                 <div class="profile-header">
                     <div class="avatar-wrapper">
                         <img src="" id="user-avatar" alt="Avatar" class="avatar">
@@ -97,14 +110,14 @@
                 </div>
                 
                 <div class="stats-grid">
-                    <div class="stat-box">
+                    <div class="stat-box glass-inner">
                         <div class="stat-icon yt-color"><span class="material-icons-round">subscriptions</span></div>
                         <div class="stat-data">
                             <span class="stat-label">Подписчики</span>
                             <span class="stat-value" id="yt-subs">---</span>
                         </div>
                     </div>
-                    <div class="stat-box wide">
+                    <div class="stat-box glass-inner wide">
                         <div class="stat-icon yt-color"><span class="material-icons-round">play_circle</span></div>
                         <div class="stat-data">
                             <span class="stat-label">Последнее видео</span>
@@ -115,13 +128,13 @@
             </div>
         </section>
 
-        <section id="page-axel-ai" class="page hidden-page">
-            <div class="card chat-card">
-                <div class="chat-top-bar">
+        <section id="page-jahvir-ai" class="page hidden-page">
+            <div class="card glass chat-card">
+                <div class="chat-top-bar glass-inner-header">
                     <div class="bot-info">
                         <span class="material-icons-round">smart_toy</span>
                         <div>
-                            <h3>Axel AI</h3>
+                            <h3>JahvirChat AI</h3>
                             <span class="status-text" id="ai-status">Checking...</span>
                         </div>
                     </div>
@@ -129,11 +142,11 @@
                 
                 <div class="chat-area" id="chat-output">
                     <div class="message bot">
-                        Привет! Если ключ введен — я готов к работе.
+                        Привет! Я JahvirChat AI. Готов к общению (но не к кодингу, хех).
                     </div>
                 </div>
                 
-                <div class="input-area">
+                <div class="input-area glass-inner-footer">
                     <input type="text" id="chat-input" placeholder="Введите сообщение..." disabled>
                     <button class="send-btn" onclick="sendMessage()" id="send-btn" disabled>
                         <span class="material-icons-round">send</span>
@@ -143,11 +156,11 @@
         </section>
 
         <section id="page-placeholder" class="page hidden-page">
-            <div class="card placeholder-card">
+            <div class="card glass placeholder-card">
                 <span class="material-icons-round big-icon">hourglass_top</span>
                 <h2>Скоро</h2>
                 <p>Раздел в разработке</p>
-                <button class="btn-back" onclick="navigate('home')">Назад</button>
+                <button class="btn-glass-primary btn-wide" onclick="navigate('home')">Назад</button>
             </div>
         </section>
 
@@ -155,5 +168,5 @@
 
     <script src="js/script.js"></script>
 </body>
-                    </html>
-                    
+                                </html>
+                                
