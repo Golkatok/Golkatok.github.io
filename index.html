@@ -22,7 +22,7 @@
             
             <button class="btn-nav" onclick="toggleSettings()">
                 <span class="material-icons-round">settings</span>
-                <span>Настройки</span>
+                <span>Настр.</span>
             </button>
         </div>
     </header>
@@ -31,13 +31,13 @@
         <button onclick="navigate('home')"><span class="material-icons-round">home</span> Главная</button>
         <button onclick="navigate('socials')"><span class="material-icons-round">share</span> Соц. Сети</button>
         <button onclick="navigate('news')"><span class="material-icons-round">article</span> Новости</button>
-        <button onclick="navigate('games')"><span class="material-icons-round">sports_esports</span> Мини Игры</button>
+        <button onclick="navigate('games')"><span class="material-icons-round">sports_esports</span> Игры</button>
         <button onclick="navigate('jahvir-ai')"><span class="material-icons-round">smart_toy</span> JahvirChat AI</button>
     </nav>
 
     <div id="settings-modal" class="modal hidden">
         <div class="modal-overlay" onclick="toggleSettings()"></div>
-        <div class="modal-content glass">
+        <div class="modal-content glass compact-modal">
             <div class="modal-header">
                 <h3>Настройки</h3>
                 <button class="close-btn" onclick="toggleSettings()">×</button>
@@ -56,45 +56,22 @@
                 </div>
 
                 <div class="setting-item">
-                    <label>Цветовая схема</label>
+                    <label>Схема</label>
                     <div class="select-wrapper">
                         <select id="scheme-select" onchange="changeScheme(this.value)">
-                            <option value="scheme-sunset">Закат</option>
                             <option value="scheme-ocean">Океан</option>
+                            <option value="scheme-sunset">Закат</option>
                             <option value="scheme-forest">Лес</option>
                             <option value="scheme-berry">Ягоды</option>
                             <option value="scheme-neon">Неон</option>
-                        </select>
+                            <option value="scheme-stone">Монохром</option> </select>
                     </div>
                 </div>
-
-                <hr class="glass-divider">
-
-                <div class="setting-item">
-                    <label>Gemini API Key <button class="help-btn" onclick="toggleHelp()">?</button></label>
-                    <input type="password" id="gemini-key-input" placeholder="Вставьте ключ здесь..." oninput="saveGeminiKey(this.value)">
-                    <p class="hint">Нажмите на <b>?</b> для инструкции</p>
-                </div>
+                
+                <p class="hint center-hint">API Key встроен в систему</p>
             </div>
             
             <button class="btn-glass-primary" onclick="toggleSettings()">Готово</button>
-        </div>
-    </div>
-
-    <div id="help-modal" class="modal hidden">
-        <div class="modal-overlay" onclick="toggleHelp()"></div>
-        <div class="modal-content glass">
-            <h3>Как получить ключ?</h3>
-            <p style="margin: 15px 0; font-size: 0.9rem; line-height: 1.5;">
-                1. Нажмите "Google AI Studio".<br>
-                2. Войдите в Google аккаунт.<br>
-                3. Нажмите "Get API key" -> "Create API key".<br>
-                4. Скопируйте ключ и вставьте сюда.
-            </p>
-            <div class="help-actions">
-                <button class="btn-glass-secondary" onclick="openAiStudio()">Google AI Studio</button>
-                <button class="btn-glass-primary" onclick="toggleHelp()">Готово</button>
-            </div>
         </div>
     </div>
 
@@ -111,15 +88,17 @@
                 
                 <div class="stats-grid">
                     <div class="stat-box glass-inner">
-                        <div class="stat-icon yt-color"><span class="material-icons-round">subscriptions</span></div>
+                        <div class="stat-icon yt-color"><span class="material-icons-round">groups</span></div>
                         <div class="stat-data">
-                            <span class="stat-label">Подписчики</span>
+                            <span class="stat-label">Подписчики Jahvir</span>
                             <span class="stat-value" id="yt-subs">---</span>
                         </div>
                     </div>
-                    <div class="stat-box glass-inner wide">
-                        <div class="stat-icon yt-color"><span class="material-icons-round">play_circle</span></div>
-                        <div class="stat-data">
+                    <div class="stat-box glass-inner wide video-box">
+                        <div id="video-preview-container">
+                            <div class="video-placeholder"><span class="material-icons-round">play_circle</span></div>
+                        </div>
+                        <div class="stat-data video-info">
                             <span class="stat-label">Последнее видео</span>
                             <span class="stat-value video-title" id="yt-video">Загрузка...</span>
                         </div>
@@ -135,20 +114,23 @@
                         <span class="material-icons-round">smart_toy</span>
                         <div>
                             <h3>JahvirChat AI</h3>
-                            <span class="status-text" id="ai-status">Checking...</span>
+                            <span class="status-text online">Online</span>
                         </div>
                     </div>
+                    <button class="clear-btn" onclick="clearHistory()" title="Очистить память">
+                        <span class="material-icons-round">delete_sweep</span>
+                    </button>
                 </div>
                 
                 <div class="chat-area" id="chat-output">
                     <div class="message bot">
-                        Привет! Я JahvirChat AI. Готов к общению (но не к кодингу, хех).
+                        Йо! Я помощник Jahvir'а. Чем помочь?
                     </div>
                 </div>
                 
                 <div class="input-area glass-inner-footer">
-                    <input type="text" id="chat-input" placeholder="Введите сообщение..." disabled>
-                    <button class="send-btn" onclick="sendMessage()" id="send-btn" disabled>
+                    <input type="text" id="chat-input" placeholder="Сообщение...">
+                    <button class="send-btn" onclick="sendMessage()" id="send-btn">
                         <span class="material-icons-round">send</span>
                     </button>
                 </div>
@@ -157,9 +139,8 @@
 
         <section id="page-placeholder" class="page hidden-page">
             <div class="card glass placeholder-card">
-                <span class="material-icons-round big-icon">hourglass_top</span>
-                <h2>Скоро</h2>
-                <p>Раздел в разработке</p>
+                <span class="material-icons-round big-icon">construction</span>
+                <h2>В работе</h2>
                 <button class="btn-glass-primary btn-wide" onclick="navigate('home')">Назад</button>
             </div>
         </section>
@@ -168,5 +149,4 @@
 
     <script src="js/script.js"></script>
 </body>
-                                </html>
-                                
+</html>
