@@ -4,132 +4,171 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Axel Portal</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="css/style.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
 </head>
 <body class="theme-system scheme-ocean">
 
     <header class="floating-header">
+        <div class="header-bg"></div>
         <div class="header-content">
-            <button class="btn-icon" onclick="toggleMenu()">
+            <button class="btn-nav" onclick="toggleMenu()">
                 <span class="material-icons-round">menu</span>
                 <span>Меню</span>
             </button>
-            <button class="btn-icon" onclick="toggleSettings()">
+            <div class="divider"></div>
+            <button class="btn-nav" onclick="toggleSettings()">
                 <span class="material-icons-round">settings</span>
                 <span>Настройки</span>
             </button>
         </div>
     </header>
 
-    <div id="menu-dropdown" class="dropdown hidden">
-        <a href="#" onclick="navigate('home')">Главная</a>
-        <a href="#" onclick="navigate('socials')">Соц. Сети</a>
-        <a href="#" onclick="navigate('news')">Новости</a>
-        <a href="#" onclick="navigate('games')">Мини Игры</a>
-        <a href="#" onclick="navigate('axel-ai')">Аксель ИИ</a>
-    </div>
+    <nav id="menu-dropdown" class="dropdown hidden">
+        <a href="#" onclick="navigate('home')"><span class="material-icons-round">home</span> Главная</a>
+        <a href="#" onclick="navigate('socials')"><span class="material-icons-round">share</span> Соц. Сети</a>
+        <a href="#" onclick="navigate('news')"><span class="material-icons-round">article</span> Новости</a>
+        <a href="#" onclick="navigate('games')"><span class="material-icons-round">sports_esports</span> Мини Игры</a>
+        <a href="#" onclick="navigate('axel-ai')"><span class="material-icons-round">smart_toy</span> Аксель ИИ</a>
+    </nav>
 
     <div id="settings-modal" class="modal hidden">
+        <div class="modal-overlay" onclick="toggleSettings()"></div>
         <div class="modal-content">
-            <h3>Настройки</h3>
+            <div class="modal-header">
+                <h3>Настройки</h3>
+                <button class="close-btn" onclick="toggleSettings()">×</button>
+            </div>
             
-            <div class="setting-group">
-                <label>Тема:</label>
-                <select id="theme-select" onchange="changeTheme(this.value)">
-                    <option value="theme-light">Светлая</option>
-                    <option value="theme-dark">Темная</option>
-                    <option value="theme-system">Системная</option>
-                </select>
+            <div class="settings-body">
+                <div class="setting-item">
+                    <label>Тема оформления</label>
+                    <div class="select-wrapper">
+                        <select id="theme-select" onchange="changeTheme(this.value)">
+                            <option value="theme-light">Светлая</option>
+                            <option value="theme-dark">Темная</option>
+                            <option value="theme-system">Системная</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="setting-item">
+                    <label>Цветовая схема</label>
+                    <div class="select-wrapper">
+                        <select id="scheme-select" onchange="changeScheme(this.value)">
+                            <option value="scheme-sunset">Закат (Оранжевый)</option>
+                            <option value="scheme-ocean">Океан (Синий)</option>
+                            <option value="scheme-forest">Лес (Зеленый)</option>
+                            <option value="scheme-berry">Ягоды (Фиолетовый)</option>
+                            <option value="scheme-neon">Неон (Киберпанк)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="setting-item">
+                    <label>Язык интерфейса</label>
+                    <div class="select-wrapper">
+                        <select id="lang-select">
+                            <option value="ru">Русский</option>
+                            <option value="ua">Українська</option>
+                            <option value="by">Беларуская</option>
+                        </select>
+                    </div>
+                </div>
+
+                <hr>
+
+                <div class="setting-item">
+                    <label>Google Gemini API Key</label>
+                    <input type="password" id="gemini-key-input" placeholder="Вставьте ключ AI Studio...">
+                </div>
+                
+                <div class="setting-item">
+                    <label>YouTube API Key (для статистики)</label>
+                    <input type="password" id="yt-key-input" placeholder="Вставьте ключ YouTube API...">
+                </div>
+                
+                <div class="setting-item">
+                    <label>YouTube Channel ID</label>
+                    <input type="text" id="yt-channel-input" placeholder="UCxxxxxxxxxxxx...">
+                </div>
             </div>
 
-            <div class="setting-group">
-                <label>Цветовая схема:</label>
-                <select id="scheme-select" onchange="changeScheme(this.value)">
-                    <option value="scheme-sunset">Закат</option>
-                    <option value="scheme-ocean">Океан</option>
-                    <option value="scheme-forest">Лес</option>
-                    <option value="scheme-berry">Ягоды</option>
-                    <option value="scheme-neon">Неон</option>
-                </select>
-            </div>
-
-            <div class="setting-group">
-                <label>Язык:</label>
-                <select id="lang-select">
-                    <option value="ru">Русский</option>
-                    <option value="ua">Українська</option>
-                    <option value="by">Беларуская</option>
-                </select>
-            </div>
-
-            <div class="setting-group">
-                <label>Gemini API Key:</label>
-                <input type="password" id="api-key-input" placeholder="Вставьте ключ здесь...">
-            </div>
-
-            <button class="btn-primary" onclick="toggleSettings()">Закрыть</button>
+            <button class="btn-save" onclick="saveSettingsAndClose()">Сохранить</button>
         </div>
     </div>
 
     <main id="app-container">
         
-        <section id="page-home" class="active-page">
+        <section id="page-home" class="page active-page">
             <div class="card profile-card">
-                <div class="avatar-container">
-                    <img src="https://via.placeholder.com/150" alt="Avatar" class="avatar" id="user-avatar">
+                <div class="profile-header">
+                    <div class="avatar-wrapper">
+                        <img src="image/image1.png" onerror="this.src='https://via.placeholder.com/150'" alt="Avatar" class="avatar">
+                        <div class="status-indicator"></div>
+                    </div>
+                    <h2 class="username">Привет, <span id="user-name">Axel</span>!</h2>
                 </div>
-                <h2 id="greeting-text">Привет, User!</h2>
                 
-                <div class="yt-stats">
-                    <div class="stat-item">
-                        <span class="material-icons-round" style="color: #ff0000;">subscriptions</span>
-                        <div class="stat-info">
-                            <span class="label">Подписчики</span>
-                            <span class="value" id="yt-subs">Загрузка...</span>
+                <div class="stats-grid">
+                    <div class="stat-box">
+                        <div class="stat-icon yt-color"><span class="material-icons-round">subscriptions</span></div>
+                        <div class="stat-data">
+                            <span class="stat-label">Подписчики</span>
+                            <span class="stat-value" id="yt-subs">---</span>
                         </div>
                     </div>
-                    <div class="stat-item">
-                        <span class="material-icons-round" style="color: #ff0000;">play_circle</span>
-                        <div class="stat-info">
-                            <span class="label">Последнее видео</span>
-                            <span class="value video-title" id="yt-video">Загрузка...</span>
+                    <div class="stat-box wide">
+                        <div class="stat-icon yt-color"><span class="material-icons-round">play_circle</span></div>
+                        <div class="stat-data">
+                            <span class="stat-label">Последнее видео</span>
+                            <span class="stat-value video-title" id="yt-video">Загрузка...</span>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <section id="page-axel-ai" class="hidden-page">
+        <section id="page-axel-ai" class="page hidden-page">
             <div class="card chat-card">
-                <div class="chat-header">
-                    <h3>Axel AI (Gemini)</h3>
-                </div>
-                <div class="chat-messages" id="chat-output">
-                    <div class="message bot">
-                        Привет! Я Аксель ИИ. Чем могу помочь?
+                <div class="chat-top-bar">
+                    <div class="bot-info">
+                        <span class="material-icons-round">smart_toy</span>
+                        <div>
+                            <h3>Axel AI</h3>
+                            <span class="status-text">Online | Gemini Pro</span>
+                        </div>
                     </div>
                 </div>
-                <div class="chat-input-area">
-                    <input type="text" id="chat-input" placeholder="Напиши сообщение...">
-                    <button class="btn-icon-send" onclick="sendMessage()">
+                
+                <div class="chat-area" id="chat-output">
+                    <div class="message bot">
+                        Йо! Я Аксель. Че как? Пиши промпт, пообщаемся.
+                    </div>
+                </div>
+                
+                <div class="input-area">
+                    <input type="text" id="chat-input" placeholder="Введите сообщение...">
+                    <button class="send-btn" onclick="sendMessage()">
                         <span class="material-icons-round">send</span>
                     </button>
                 </div>
             </div>
         </section>
 
-        <section id="page-placeholder" class="hidden-page">
+        <section id="page-placeholder" class="page hidden-page">
             <div class="card placeholder-card">
-                <span class="material-icons-round big-icon">hourglass_empty</span>
+                <div class="placeholder-icon">
+                    <span class="material-icons-round">construction</span>
+                </div>
                 <h2>Скоро</h2>
-                <p>Этот раздел находится в разработке.</p>
+                <p>Раздел находится в разработке. Загляните позже!</p>
+                <button class="btn-back" onclick="navigate('home')">На главную</button>
             </div>
         </section>
 
     </main>
 
-    <script src="script.js"></script>
+    <script src="js/script.js"></script>
 </body>
-            </html>
-    
+</html>
