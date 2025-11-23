@@ -150,7 +150,7 @@ async function sendMessage() {
     input.disabled = true;
 
     // Формируем запрос
-    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${state.geminiKey}`;
+    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${state.geminiKey}`;
     const payload = {
         contents: [{
             parts: [{ text: `${SYSTEM_PROMPT}\nUser message: ${text}` }]
