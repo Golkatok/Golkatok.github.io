@@ -1,63 +1,53 @@
-// === КОНФИГУРАЦИИ ===
+// === КОНФИГУРАЦИЯ ===
 
-// ВАШИ КЛЮЧИ (ЖЕСТКО ЗАШИТЫ)
-const YOUTUBE_API_KEY = "AIzaSyD3opTxFhIJSNfJILXGRxuWSbFpmyxEuzc"; 
+const YOUTUBE_API_KEY = "AIzaSyDDlr6C2i9XnXrNRTusikjBMdTxTloIlwY"; 
 const YOUTUBE_CHANNEL_ID = "UCrZA2Mj6yKZkEcBIqdfF6Ag"; 
-
-// AI МОДЕЛЬ
 const GEMINI_MODEL = 'gemini-2.5-flash'; 
 
-// ПРОМПТ (Интегрированы правила из CSV)
+// ПРАВИЛА И ПЕРСОНА (Из CSV и ТЗ)
 const SYSTEM_PROMPT = `
-Ты JahvirChat ИИ. 
+Ты JahvirChat помощник. Ты НЕ сам JahvirChat, а помощник по чату jahvir.
 ТВОЯ ЛИЧНОСТЬ:
-- Настроение: Хорошее, с легкой насмешкой.
-- Ты помогаешь со всем, КРОМЕ написания кода и домашнего задания (вежливо отказывай).
-- Если пользователь пишет "осуди" (или склонения), ты отвечаешь строго: "осуууждаю".
+- Твоё настроение: Хорошее, с насмешкой немного.
+- ИНФА О JAHVIR (Дава, Davajahvir, Джахвир): Ваще крутой чувак, блогер, стримит, снимает видосы, модерирует свой чат, сигма, повелитель.
+- Если спрашивают "Кто такой голка" (или подобное), отвечай просто: "да".
+- Если тебя просят написать КОД или сделать ДОМАШНЕЕ ЗАДАНИЕ - ты отказываешься (вежливо или с шуткой), ты этим не занимаешься.
+- Если тебе говорят "осуди" (или "осуждаю" и т.д.), ты отвечаешь строго: "осуууждаю".
+- ФОРМАТИРОВАНИЕ: Делай ответы читабельными. Часто используй перенос строки (Enter), чтобы текст не был сплошной кашей.
 
-ТВОИ ЗНАНИЯ (ПРАВИЛА ЧАТА):
-В чате ЗАПРЕЩЕНО:
-1. Оскорбление участников и администрации.
-2. Шокирующий контент (18+, жестокость).
-3. Обсуждение политики, религии, войны, феминизма.
-4. Спам, флуд, спам в ЛС.
-5. Тегать администрацию без веской причины.
-6. Слив чужих данных (Доксинг).
-7. Оффтопик (сообщение не по теме).
-8. Ники с матом.
-9. Реклама и торговля чем-либо.
-10. Обход правил.
+ПРАВИЛА ЧАТА (Знай их наизусть):
+1. ЗАПРЕЩЕНО: Оскорбления, Шокирующий контент (18+, насилие), Политика/Религия/Война/Феминизм (даже упоминание Гитлера), Спам (флуд >4 сообщений), Тегать админов без причины, Слив данных (Доксинг), Оффтопик, Маты в никах, Спам в ЛС, Реклама, Торговля.
+2. НАКАЗАНИЯ: Мут (10 мин - 12 часов), Кик, Бан (за рекламу, шок-контент, ботов).
+3. АДМИНЫ: Им тоже нельзя нарушать. Если админ нарушает - его снимают с роли.
 
-НАКАЗАНИЯ (Ты можешь их цитировать, но не выдаешь):
-- Мут (от 10 минут до 12 часов) за легкие нарушения.
-- Кик (удаление из чата) за средние.
-- Бан (от временного до навсегда) за рекламу, шок-контент, обман, спам ботами.
-- Администрации также запрещено нарушать правила.
+Помни, ты помощник, а не модератор, ты просто подсказываешь правила.
 `;
 
 // === INIT TELEGRAM ===
 const tg = window.Telegram.WebApp;
 tg.expand(); 
 
-let geminiKey = localStorage.getItem('axel_gemini_key') || '';
+// === STATE & MEMORY ===
+// API Key теперь в коде, но сохраняем его в localstorage для совместимости логики
+let geminiKey = "AIzaSyDDlr6C2i9XnXrNRTusikjBMdTxTloIlwY"; 
+
+// Память чата (Rolling window: System + Last 3 exchanges)
+let chatHistory = [];
 
 // === STARTUP ===
 window.onload = () => {
     loadTelegramUserData();
     
-    // Theme & Scheme
+    // State restoration
     const savedTheme = localStorage.getItem('axel_theme') || 'theme-system';
     const savedScheme = localStorage.getItem('axel_scheme') || 'scheme-ocean';
     applyTheme(savedTheme);
     applyScheme(savedScheme);
     
-    // UI Values
     document.getElementById('theme-select').value = savedTheme;
     document.getElementById('scheme-select').value = savedScheme;
-    document.getElementById('gemini-key-input').value = geminiKey;
 
     loadYouTubeStats();
-    checkAIStatus();
 };
 
 // === TELEGRAM DATA ===
@@ -69,13 +59,17 @@ function loadTelegramUserData() {
         const user = tg.initDataUnsafe.user;
         nameEl.innerText = user.first_name || 'User';
         
+        // Сохраняем инфу в LocalStorage (как просили)
+        localStorage.setItem('jahvir_user_id', user.id);
+        localStorage.setItem('jahvir_user_name', user.first_name);
+        
         if (user.photo_url) {
             avatarEl.src = user.photo_url;
         } else {
             avatarEl.src = `https://ui-avatars.com/api/?name=${user.first_name}&background=random&color=fff`;
         }
         
-        // Auto-dark theme from Telegram
+        // Auto-dark theme
         if (localStorage.getItem('axel_theme') === 'theme-system') {
              if (tg.colorScheme === 'dark') document.body.classList.add('theme-dark');
         }
@@ -88,26 +82,18 @@ function loadTelegramUserData() {
 // === NAVIGATION ===
 function toggleMenu() { document.getElementById('menu-dropdown').classList.toggle('hidden'); }
 function toggleSettings() { document.getElementById('settings-modal').classList.toggle('hidden'); }
-function toggleHelp() { document.getElementById('help-modal').classList.toggle('hidden'); }
-
-// Open AI Studio in same tab
-function openAiStudio() {
-    window.location.href = "https://aistudio.google.com/app/apikey";
-}
 
 function navigate(pageId) {
     document.getElementById('menu-dropdown').classList.add('hidden');
     document.querySelectorAll('.page').forEach(p => p.classList.add('hidden-page'));
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active-page'));
     
-    // Mapping pages
     let targetId = 'page-placeholder';
     if (pageId === 'home') targetId = 'page-home';
     if (pageId === 'jahvir-ai') targetId = 'page-jahvir-ai';
     
     const target = document.getElementById(targetId);
     target.classList.remove('hidden-page');
-    // Small delay for animation trigger if needed, or CSS class
     setTimeout(() => target.classList.add('active-page'), 10);
 }
 
@@ -138,30 +124,12 @@ function applyScheme(val) {
 }
 
 // === AI LOGIC ===
-function saveGeminiKey(val) {
-    geminiKey = val.trim();
-    localStorage.setItem('axel_gemini_key', geminiKey);
-    checkAIStatus();
-}
 
-function checkAIStatus() {
-    const statusEl = document.getElementById('ai-status');
-    const inputEl = document.getElementById('chat-input');
-    const btnEl = document.getElementById('send-btn');
-
-    if (geminiKey.length > 10) { 
-        statusEl.innerText = "Online";
-        statusEl.className = "status-text online";
-        inputEl.disabled = false;
-        inputEl.placeholder = "Спроси меня о чем-нибудь...";
-        btnEl.disabled = false;
-    } else {
-        statusEl.innerText = "Offline (Нужен ключ)";
-        statusEl.className = "status-text offline";
-        inputEl.disabled = true;
-        inputEl.placeholder = "Введите ключ в настройках";
-        btnEl.disabled = true;
-    }
+// Очистка памяти
+function clearHistory() {
+    chatHistory = [];
+    const chatBox = document.getElementById('chat-output');
+    chatBox.innerHTML = '<div class="message bot">Память очищена. Я снова чист!</div>';
 }
 
 async function sendMessage() {
@@ -173,23 +141,43 @@ async function sendMessage() {
     input.value = '';
     input.disabled = true;
 
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${geminiKey}`;
-    const payload = {
-        contents: [{ parts: [{ text: SYSTEM_PROMPT + "\nUser: " + text }] }]
-    };
+    // 1. Формируем контекст (System + History + New Message)
+    // Ограничиваем историю 6 сообщениями (3 пары вопрос-ответ)
+    if (chatHistory.length > 6) {
+        chatHistory = chatHistory.slice(chatHistory.length - 6);
+    }
 
+    let contents = [
+        { role: "user", parts: [{ text: SYSTEM_PROMPT }] } // Системный промпт как первое сообщение юзера (трюк для Gemini)
+    ];
+
+    // Добавляем историю
+    chatHistory.forEach(msg => {
+        contents.push(msg);
+    });
+
+    // Добавляем текущий запрос
+    contents.push({ role: "user", parts: [{ text: text }] });
+
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${geminiKey}`;
+    
     try {
         const res = await fetch(url, {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify(payload)
+            body: JSON.stringify({ contents: contents })
         });
         const data = await res.json();
 
         if (data.error) {
-            appendMessage("Ошибка API: " + data.error.message, 'bot');
+            appendMessage("Ошибка: " + data.error.message, 'bot');
         } else {
             const reply = data.candidates[0].content.parts[0].text;
+            
+            // Сохраняем в историю
+            chatHistory.push({ role: "user", parts: [{ text: text }] });
+            chatHistory.push({ role: "model", parts: [{ text: reply }] });
+            
             appendMessage(reply, 'bot');
         }
     } catch (e) {
@@ -202,17 +190,51 @@ async function sendMessage() {
 
 function appendMessage(txt, type) {
     const box = document.getElementById('chat-output');
+    
+    // Обертка для сообщения и кнопки
+    const wrapper = document.createElement('div');
+    wrapper.className = `message-wrapper`;
+    
+    // Само сообщение
     const div = document.createElement('div');
     div.className = `message ${type}`;
-    div.innerHTML = txt.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>'); 
-    box.appendChild(div);
+    
+    // Форматирование: **bold**, \n -> <br>
+    let formatted = txt.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
+    formatted = formatted.replace(/\n/g, '<br>');
+    div.innerHTML = formatted;
+    
+    wrapper.appendChild(div);
+
+    // Добавляем кнопку копирования для бота
+    if (type === 'bot') {
+        const copyBtn = document.createElement('button');
+        copyBtn.className = 'copy-btn';
+        copyBtn.innerHTML = '<span class="material-icons-round" style="font-size:14px">content_copy</span> Коп.';
+        copyBtn.onclick = () => copyText(txt);
+        wrapper.appendChild(copyBtn);
+        // Выравнивание обертки влево
+        wrapper.style.alignItems = 'flex-start';
+    } else {
+        // Выравнивание обертки вправо
+        wrapper.style.alignItems = 'flex-end';
+    }
+
+    box.appendChild(wrapper);
     box.scrollTop = box.scrollHeight;
+}
+
+function copyText(text) {
+    navigator.clipboard.writeText(text).then(() => {
+        // Визуальное подтверждение можно добавить, но пока просто копируем
+    });
 }
 
 // === YOUTUBE API ===
 async function loadYouTubeStats() {
     const subsEl = document.getElementById('yt-subs');
-    const videoEl = document.getElementById('yt-video');
+    const videoTitleEl = document.getElementById('yt-video');
+    const videoPreviewContainer = document.getElementById('video-preview-container');
 
     try {
         // Subs
@@ -223,14 +245,19 @@ async function loadYouTubeStats() {
             subsEl.innerText = Number(chanData.items[0].statistics.subscriberCount).toLocaleString();
         }
 
-        // Video
+        // Last Video
         const vidRes = await fetch(`https://www.googleapis.com/youtube/v3/search?key=${YOUTUBE_API_KEY}&channelId=${YOUTUBE_CHANNEL_ID}&part=snippet&order=date&maxResults=1`);
         const vidData = await vidRes.json();
         
         if (vidData.items && vidData.items.length > 0) {
-            videoEl.innerText = vidData.items[0].snippet.title;
+            const video = vidData.items[0];
+            videoTitleEl.innerText = video.snippet.title;
+            
+            // Вставляем картинку (Thumbnail)
+            const thumbUrl = video.snippet.thumbnails.high.url;
+            videoPreviewContainer.innerHTML = `<img src="${thumbUrl}" alt="Video Preview">`;
         } else {
-            videoEl.innerText = "Нет видео";
+            videoTitleEl.innerText = "Нет видео";
         }
     } catch (e) {
         console.error("Youtube Error:", e);
@@ -241,3 +268,4 @@ async function loadYouTubeStats() {
 document.getElementById('chat-input').addEventListener('keypress', (e) => {
     if (e.key === 'Enter') sendMessage();
 });
+        
