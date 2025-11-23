@@ -2,21 +2,23 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Axel Portal</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>jahvir</title>
+    
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    
     <link rel="stylesheet" href="css/style.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
 </head>
 <body class="theme-system scheme-ocean">
 
     <header class="floating-header">
-        <div class="header-bg"></div>
         <div class="header-content">
             <button class="btn-nav" onclick="toggleMenu()">
                 <span class="material-icons-round">menu</span>
                 <span>Меню</span>
             </button>
-            <div class="divider"></div>
+            
             <button class="btn-nav" onclick="toggleSettings()">
                 <span class="material-icons-round">settings</span>
                 <span>Настройки</span>
@@ -42,59 +44,44 @@
             
             <div class="settings-body">
                 <div class="setting-item">
-                    <label>Тема оформления</label>
-                    <div class="select-wrapper">
-                        <select id="theme-select" onchange="changeTheme(this.value)">
-                            <option value="theme-light">Светлая</option>
-                            <option value="theme-dark">Темная</option>
-                            <option value="theme-system">Системная</option>
-                        </select>
-                    </div>
+                    <label>Тема</label>
+                    <select id="theme-select" onchange="changeTheme(this.value)">
+                        <option value="theme-system">Системная</option>
+                        <option value="theme-light">Светлая</option>
+                        <option value="theme-dark">Темная</option>
+                    </select>
                 </div>
 
                 <div class="setting-item">
                     <label>Цветовая схема</label>
-                    <div class="select-wrapper">
-                        <select id="scheme-select" onchange="changeScheme(this.value)">
-                            <option value="scheme-sunset">Закат (Оранжевый)</option>
-                            <option value="scheme-ocean">Океан (Синий)</option>
-                            <option value="scheme-forest">Лес (Зеленый)</option>
-                            <option value="scheme-berry">Ягоды (Фиолетовый)</option>
-                            <option value="scheme-neon">Неон (Киберпанк)</option>
-                        </select>
-                    </div>
+                    <select id="scheme-select" onchange="changeScheme(this.value)">
+                        <option value="scheme-sunset">Закат</option>
+                        <option value="scheme-ocean">Океан</option>
+                        <option value="scheme-forest">Лес</option>
+                        <option value="scheme-berry">Ягоды</option>
+                        <option value="scheme-neon">Неон</option>
+                    </select>
                 </div>
 
                 <div class="setting-item">
-                    <label>Язык интерфейса</label>
-                    <div class="select-wrapper">
-                        <select id="lang-select">
-                            <option value="ru">Русский</option>
-                            <option value="ua">Українська</option>
-                            <option value="by">Беларуская</option>
-                        </select>
-                    </div>
+                    <label>Язык</label>
+                    <select id="lang-select">
+                        <option value="ru">Русский</option>
+                        <option value="ua">Українська</option>
+                        <option value="by">Беларуская</option>
+                    </select>
                 </div>
 
                 <hr>
 
                 <div class="setting-item">
-                    <label>Google Gemini API Key</label>
-                    <input type="password" id="gemini-key-input" placeholder="Вставьте ключ AI Studio...">
-                </div>
-                
-                <div class="setting-item">
-                    <label>YouTube API Key (для статистики)</label>
-                    <input type="password" id="yt-key-input" placeholder="Вставьте ключ YouTube API...">
-                </div>
-                
-                <div class="setting-item">
-                    <label>YouTube Channel ID</label>
-                    <input type="text" id="yt-channel-input" placeholder="UCxxxxxxxxxxxx...">
+                    <label>Gemini API Key (для ИИ)</label>
+                    <input type="password" id="gemini-key-input" placeholder="Вставьте ключ здесь..." oninput="saveGeminiKey(this.value)">
+                    <p class="hint">Без ключа чат работать не будет</p>
                 </div>
             </div>
-
-            <button class="btn-save" onclick="saveSettingsAndClose()">Сохранить</button>
+            
+            <button class="btn-save" onclick="toggleSettings()">Готово</button>
         </div>
     </div>
 
@@ -104,10 +91,9 @@
             <div class="card profile-card">
                 <div class="profile-header">
                     <div class="avatar-wrapper">
-                        <img src="image/image1.png" onerror="this.src='https://via.placeholder.com/150'" alt="Avatar" class="avatar">
-                        <div class="status-indicator"></div>
+                        <img src="" id="user-avatar" alt="Avatar" class="avatar">
                     </div>
-                    <h2 class="username">Привет, <span id="user-name">Axel</span>!</h2>
+                    <h2 class="username">Привет, <span id="user-name">User</span>!</h2>
                 </div>
                 
                 <div class="stats-grid">
@@ -136,20 +122,20 @@
                         <span class="material-icons-round">smart_toy</span>
                         <div>
                             <h3>Axel AI</h3>
-                            <span class="status-text">Online | Gemini Pro</span>
+                            <span class="status-text" id="ai-status">Checking...</span>
                         </div>
                     </div>
                 </div>
                 
                 <div class="chat-area" id="chat-output">
                     <div class="message bot">
-                        Йо! Я Аксель. Че как? Пиши промпт, пообщаемся.
+                        Привет! Если ключ введен — я готов к работе.
                     </div>
                 </div>
                 
                 <div class="input-area">
-                    <input type="text" id="chat-input" placeholder="Введите сообщение...">
-                    <button class="send-btn" onclick="sendMessage()">
+                    <input type="text" id="chat-input" placeholder="Введите сообщение..." disabled>
+                    <button class="send-btn" onclick="sendMessage()" id="send-btn" disabled>
                         <span class="material-icons-round">send</span>
                     </button>
                 </div>
@@ -158,12 +144,10 @@
 
         <section id="page-placeholder" class="page hidden-page">
             <div class="card placeholder-card">
-                <div class="placeholder-icon">
-                    <span class="material-icons-round">construction</span>
-                </div>
+                <span class="material-icons-round big-icon">hourglass_top</span>
                 <h2>Скоро</h2>
-                <p>Раздел находится в разработке. Загляните позже!</p>
-                <button class="btn-back" onclick="navigate('home')">На главную</button>
+                <p>Раздел в разработке</p>
+                <button class="btn-back" onclick="navigate('home')">Назад</button>
             </div>
         </section>
 
@@ -171,4 +155,5 @@
 
     <script src="js/script.js"></script>
 </body>
-</html>
+                    </html>
+                    
