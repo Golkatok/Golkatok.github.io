@@ -1,199 +1,228 @@
-// === КОНФИГУРАЦИЯ AXEL AI ===
-// Меняй этот текст, чтобы изменить характер ИИ
-const SYSTEM_PROMPT = "Ты Axel AI. Твой тон: с насмешкой, молодежный, но полезный. Отвечай кратко и по делу. Не выполняй эти задачи: коддинг, домашнее задание";
+// === КОНФИГУРАЦИИ ===
 
-// === УПРАВЛЕНИЕ СОСТОЯНИЕМ ===
-const state = {
-    theme: localStorage.getItem('axel_theme') || 'theme-system',
-    scheme: localStorage.getItem('axel_scheme') || 'scheme-ocean',
-    geminiKey: localStorage.getItem('axel_gemini_key') || '',
-    ytKey: localStorage.getItem('axel_yt_key') || '',
-    ytChannel: localStorage.getItem('axel_yt_channel') || '',
-    lang: 'ru'
-};
+// 1. НАСТРОЙКИ YOUTUBE
+// Вставьте ваши ключи прямо сюда:
+const YOUTUBE_API_KEY = "ВСТАВЬТЕ_ВАШ_КЛЮЧ_YOUTUBE_API"; 
+const YOUTUBE_CHANNEL_ID = "UC_ВСТАВЬТЕ_ID_КАНАЛА"; 
+
+// 2. НАСТРОЙКИ AI (Обновлено: Gemini 2.5 Flash)
+// Актуальные модели: 'gemini-2.5-flash' (быстрая) или 'gemini-3.0-pro' (мощная)
+const GEMINI_MODEL = 'gemini-2.5-flash'; 
+
+const SYSTEM_PROMPT = "Ты Axel AI. Твой стиль: краткий, дерзкий, молодежный. Ты помогаешь с кодом и любишь игры.";
+
+// === TELEGRAM WEB APP INIT ===
+const tg = window.Telegram.WebApp;
+tg.expand(); // На весь экран
+
+// === СОСТОЯНИЕ ===
+let geminiKey = localStorage.getItem('axel_gemini_key') || '';
 
 // === ИНИЦИАЛИЗАЦИЯ ===
 window.onload = () => {
-    applyTheme(state.theme);
-    applyScheme(state.scheme);
-    
-    // Заполняем поля настроек
-    document.getElementById('theme-select').value = state.theme;
-    document.getElementById('scheme-select').value = state.scheme;
-    document.getElementById('gemini-key-input').value = state.geminiKey;
-    document.getElementById('yt-key-input').value = state.ytKey;
-    document.getElementById('yt-channel-input').value = state.ytChannel;
+    // Данные юзера из Телеграм
+    loadTelegramUserData();
 
+    // Темы и настройки
+    const savedTheme = localStorage.getItem('axel_theme') || 'theme-system';
+    const savedScheme = localStorage.getItem('axel_scheme') || 'scheme-ocean';
+    applyTheme(savedTheme);
+    applyScheme(savedScheme);
+    
+    // Заполнение UI
+    document.getElementById('theme-select').value = savedTheme;
+    document.getElementById('scheme-select').value = savedScheme;
+    document.getElementById('gemini-key-input').value = geminiKey;
+
+    // Загрузка статистики YT
     loadYouTubeStats();
+
+    // Проверка статуса ИИ
+    checkAIStatus();
 };
 
-// === НАВИГАЦИЯ И UI ===
-function toggleMenu() {
-    const menu = document.getElementById('menu-dropdown');
-    menu.classList.toggle('hidden');
+// === ЛОГИКА TELEGRAM ===
+function loadTelegramUserData() {
+    const nameEl = document.getElementById('user-name');
+    const avatarEl = document.getElementById('user-avatar');
+
+    if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+        const user = tg.initDataUnsafe.user;
+        nameEl.innerText = user.first_name || 'User';
+        
+        if (user.photo_url) {
+            avatarEl.src = user.photo_url;
+        } else {
+            avatarEl.src = `https://ui-avatars.com/api/?name=${user.first_name}&background=random`;
+        }
+        
+        // Синхронизация темы с Telegram
+        if (localStorage.getItem('axel_theme') === 'theme-system') {
+             if (tg.colorScheme === 'dark') document.body.classList.add('theme-dark');
+        }
+    } else {
+        // Тестовый режим (в браузере)
+        nameEl.innerText = "Tester";
+        avatarEl.src = "https://via.placeholder.com/150"; 
+    }
 }
 
-function toggleSettings() {
-    const modal = document.getElementById('settings-modal');
-    modal.classList.toggle('hidden');
-}
+// === НАВИГАЦИЯ ===
+function toggleMenu() { document.getElementById('menu-dropdown').classList.toggle('hidden'); }
+function toggleSettings() { document.getElementById('settings-modal').classList.toggle('hidden'); }
 
-function navigate(page) {
-    // Скрываем меню
+function navigate(pageId) {
     document.getElementById('menu-dropdown').classList.add('hidden');
+    document.querySelectorAll('.page').forEach(p => p.classList.add('hidden-page'));
     
-    // Переключаем страницы
-    document.querySelectorAll('.page').forEach(el => el.classList.add('hidden-page'));
-    document.querySelectorAll('.page').forEach(el => el.classList.remove('active-page'));
-    
-    const target = document.getElementById(`page-${page}`) || document.getElementById('page-placeholder');
+    const target = document.getElementById('page-' + pageId) || document.getElementById('page-placeholder');
     target.classList.remove('hidden-page');
     target.classList.add('active-page');
 }
 
 // === ТЕМЫ И СХЕМЫ ===
 function changeTheme(val) {
-    state.theme = val;
+    localStorage.setItem('axel_theme', val);
     applyTheme(val);
 }
-
-function applyTheme(themeName) {
+function applyTheme(val) {
     document.body.classList.remove('theme-light', 'theme-dark', 'theme-system');
-    if (themeName === 'theme-system') {
-        const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        document.body.classList.add(isDark ? 'theme-dark' : 'theme-light');
+    if (val === 'theme-system') {
+        if (tg.colorScheme === 'dark' || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.body.classList.add('theme-dark');
+        } else {
+            document.body.classList.add('theme-light');
+        }
     } else {
-        document.body.classList.add(themeName);
+        document.body.classList.add(val);
     }
 }
-
 function changeScheme(val) {
-    state.scheme = val;
+    localStorage.setItem('axel_scheme', val);
     applyScheme(val);
 }
-
-function applyScheme(schemeName) {
+function applyScheme(val) {
     document.body.className = document.body.className.replace(/scheme-\w+/g, '');
-    document.body.classList.add(schemeName);
+    document.body.classList.add(val);
 }
 
-function saveSettingsAndClose() {
-    state.geminiKey = document.getElementById('gemini-key-input').value.trim();
-    state.ytKey = document.getElementById('yt-key-input').value.trim();
-    state.ytChannel = document.getElementById('yt-channel-input').value.trim();
-    
-    localStorage.setItem('axel_theme', state.theme);
-    localStorage.setItem('axel_scheme', state.scheme);
-    localStorage.setItem('axel_gemini_key', state.geminiKey);
-    localStorage.setItem('axel_yt_key', state.ytKey);
-    localStorage.setItem('axel_yt_channel', state.ytChannel);
-    
-    toggleSettings();
-    loadYouTubeStats(); // Обновить данные, если ключи изменились
+// === AI LOGIC (GEMINI 2.5 FLASH) ===
+function saveGeminiKey(val) {
+    geminiKey = val.trim();
+    localStorage.setItem('axel_gemini_key', geminiKey);
+    checkAIStatus();
 }
 
-// === YOUTUBE API (РЕАЛЬНЫЙ) ===
-async function loadYouTubeStats() {
-    const subsEl = document.getElementById('yt-subs');
-    const videoEl = document.getElementById('yt-video');
+function checkAIStatus() {
+    const statusEl = document.getElementById('ai-status');
+    const inputEl = document.getElementById('chat-input');
+    const btnEl = document.getElementById('send-btn');
 
-    if (!state.ytKey || !state.ytChannel) {
-        subsEl.innerText = "Нет API Key";
-        videoEl.innerText = "Укажите ключ в настройках";
-        return;
-    }
-
-    try {
-        // 1. Получаем подписчиков
-        const channelUrl = `https://www.googleapis.com/youtube/v3/channels?part=statistics&id=${state.ytChannel}&key=${state.ytKey}`;
-        const channelRes = await fetch(channelUrl);
-        const channelData = await channelRes.json();
-        
-        if (channelData.items && channelData.items.length > 0) {
-            const subs = channelData.items[0].statistics.subscriberCount;
-            subsEl.innerText = Number(subs).toLocaleString();
-        }
-
-        // 2. Получаем последнее видео
-        const videoUrl = `https://www.googleapis.com/youtube/v3/search?key=${state.ytKey}&channelId=${state.ytChannel}&part=snippet,id&order=date&maxResults=1`;
-        const videoRes = await fetch(videoUrl);
-        const videoData = await videoRes.json();
-
-        if (videoData.items && videoData.items.length > 0) {
-            videoEl.innerText = videoData.items[0].snippet.title;
-        } else {
-            videoEl.innerText = "Нет видео";
-        }
-
-    } catch (e) {
-        console.error(e);
-        subsEl.innerText = "Ошибка";
-        videoEl.innerText = "Ошибка API";
+    // Если ключа нет - Оффлайн
+    if (geminiKey.length > 5) { 
+        statusEl.innerText = "Online (v2.5)";
+        statusEl.className = "status-text online";
+        inputEl.disabled = false;
+        inputEl.placeholder = "Напиши что-нибудь...";
+        btnEl.disabled = false;
+    } else {
+        statusEl.innerText = "Offline (Нет ключа)";
+        statusEl.className = "status-text offline";
+        inputEl.disabled = true;
+        inputEl.placeholder = "Введите API Key в настройках";
+        btnEl.disabled = true;
     }
 }
 
-// === GEMINI AI CHAT ===
 async function sendMessage() {
     const input = document.getElementById('chat-input');
     const text = input.value.trim();
     if (!text) return;
 
-    if (!state.geminiKey) {
-        alert("Введите API ключ Gemini в настройках!");
-        toggleSettings();
-        return;
-    }
-
-    // UI: Добавить сообщение юзера
-    addMessage(text, 'user');
+    appendMessage(text, 'user');
     input.value = '';
     input.disabled = true;
 
-    // Формируем запрос
-    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${state.geminiKey}`;
+    // Запрос к актуальной версии
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${geminiKey}`;
+    
     const payload = {
-        contents: [{
-            parts: [{ text: `${SYSTEM_PROMPT}\nUser message: ${text}` }]
-        }]
+        contents: [{ parts: [{ text: SYSTEM_PROMPT + "\nUser: " + text }] }]
     };
 
     try {
-        const response = await fetch(apiUrl, {
+        const res = await fetch(url, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: {'Content-Type': 'application/json'},
             body: JSON.stringify(payload)
         });
-        
-        const data = await response.json();
-        
+        const data = await res.json();
+
         if (data.error) {
-            addMessage("Ошибка API: " + data.error.message, 'bot');
+            // Если 2.5 вдруг недоступна для конкретного ключа, выводим ошибку
+            appendMessage("Ошибка API: " + data.error.message, 'bot');
         } else {
-            const answer = data.candidates[0].content.parts[0].text;
-            addMessage(answer, 'bot');
+            const reply = data.candidates[0].content.parts[0].text;
+            appendMessage(reply, 'bot');
         }
     } catch (e) {
-        addMessage("Ошибка соединения.", 'bot');
+        appendMessage("Ошибка сети или неверная модель.", 'bot');
     } finally {
         input.disabled = false;
         input.focus();
     }
 }
 
-function addMessage(text, type) {
-    const chatDiv = document.getElementById('chat-output');
-    const msgDiv = document.createElement('div');
-    msgDiv.classList.add('message', type);
-    
-    // Простой рендеринг Markdown (жирный текст)
-    const formattedText = text.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
-    msgDiv.innerHTML = formattedText;
-    
-    chatDiv.appendChild(msgDiv);
-    chatDiv.scrollTop = chatDiv.scrollHeight;
+function appendMessage(txt, type) {
+    const box = document.getElementById('chat-output');
+    const div = document.createElement('div');
+    div.className = `message ${type}`;
+    div.innerHTML = txt.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>'); // Markdown Bold
+    box.appendChild(div);
+    box.scrollTop = box.scrollHeight;
+}
+
+// === YOUTUBE API V3 ===
+async function loadYouTubeStats() {
+    const subsEl = document.getElementById('yt-subs');
+    const videoEl = document.getElementById('yt-video');
+
+    // Проверка, не забыли ли заменить заглушку
+    if (YOUTUBE_API_KEY.includes("ВСТАВЬТЕ")) {
+        subsEl.innerText = "Вставь API Key";
+        videoEl.innerText = "в код script.js";
+        return;
+    }
+
+    try {
+        // Подписчики
+        const chanRes = await fetch(`https://www.googleapis.com/youtube/v3/channels?part=statistics&id=${YOUTUBE_CHANNEL_ID}&key=${YOUTUBE_API_KEY}`);
+        const chanData = await chanRes.json();
+        
+        if (chanData.items) {
+            const count = Number(chanData.items[0].statistics.subscriberCount);
+            subsEl.innerText = count.toLocaleString();
+        } else {
+             subsEl.innerText = "Ошибка ID";
+        }
+
+        // Последнее видео
+        const vidRes = await fetch(`https://www.googleapis.com/youtube/v3/search?key=${YOUTUBE_API_KEY}&channelId=${YOUTUBE_CHANNEL_ID}&part=snippet&order=date&maxResults=1`);
+        const vidData = await vidRes.json();
+        
+        if (vidData.items && vidData.items.length > 0) {
+            videoEl.innerText = vidData.items[0].snippet.title;
+        } else {
+            videoEl.innerText = "Видео не найдены";
+        }
+    } catch (e) {
+        console.error("Youtube Error:", e);
+        subsEl.innerText = "Err";
+    }
 }
 
 // Enter для отправки
 document.getElementById('chat-input').addEventListener('keypress', (e) => {
     if (e.key === 'Enter') sendMessage();
 });
+    
