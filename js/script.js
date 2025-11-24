@@ -1,6 +1,6 @@
 // === КОНФИГУРАЦИЯ ===
 
-const YOUTUBE_API_KEY = "AIzaSyDDlr6C2i9XnXrNRTusikjBMdTxTloIlwY"; 
+const YOUTUBE_API_KEY = "AIzaSyASL1_rgK9P9-J2FK6uFwjObuwA8m1Cihg"; 
 const YOUTUBE_CHANNEL_ID = "UCrZA2Mj6yKZkEcBIqdfF6Ag"; 
 const GEMINI_MODEL = 'gemini-2.5-flash'; 
 
