@@ -104,14 +104,29 @@ main { padding-top: 150px; padding-bottom: 50px; width: 100%; max-width: 500px; 
 .stat-value { font-weight: 700; font-size: 1.1rem; }
 
 /* VIDEO CARD (NEW STYLE) */
-.video-card { padding: 15px; display: flex; flex-direction: column; gap: 12px; }
-.video-header-text { display: flex; flex-direction: column; gap: 4px; padding-bottom: 5px; }
+.video-card { 
+    padding: 15px; 
+    display: flex; 
+    flex-direction: column; /* ЭТОТ ПАРАМЕТР СТАВИТ ВИДЕО ПОД ТЕКСТ */
+    gap: 12px; 
+    width: 100%;
+}
+
+.video-header-text { 
+    display: flex; 
+    flex-direction: column; 
+    gap: 4px; 
+    padding-bottom: 5px; 
+    width: 100%;
+    text-align: left; /* Текст слева */
+}
+
 .v-label { font-size: 0.85rem; color: var(--text-muted); }
 .v-title { font-weight: 700; font-size: 1.05rem; line-height: 1.3; }
 
 #video-player-container { 
     width: 100%; 
-    aspect-ratio: 16 / 9; /* АВТОМАТИЧЕСКИЙ РАЗМЕР ПОД ФОРМАТ */
+    aspect-ratio: 16 / 9; 
     background: #000; 
     border-radius: 12px; 
     overflow: hidden; 
@@ -119,6 +134,7 @@ main { padding-top: 150px; padding-bottom: 50px; width: 100%; max-width: 500px; 
 }
 #video-player-container iframe { width: 100%; height: 100%; }
 .video-placeholder { font-size: 3rem; color: #fff; opacity: 0.5; }
+
 
 /* CHAT */
 .chat-card { padding: 0; height: 70vh; display: flex; flex-direction: column; overflow: hidden; } 
