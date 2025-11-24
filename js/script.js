@@ -4,23 +4,42 @@ const YOUTUBE_API_KEY = "AIzaSyDDlr6C2i9XnXrNRTusikjBMdTxTloIlwY";
 const YOUTUBE_CHANNEL_ID = "UCrZA2Mj6yKZkEcBIqdfF6Ag"; 
 const GEMINI_MODEL = 'gemini-2.5-flash'; 
 
-// ОБНОВЛЕННЫЙ ПРОМПТ (Коротко и строго)
+// ПОЛНЫЙ ПРОМПТ С CSV И ПРАВИЛАМИ
 const SYSTEM_PROMPT = `
-Ты JahvirChat помощник. Твой стиль: КРАТКИЙ, по делу, с легкой иронией. 
-Ты НЕ флиртуешь, не заигрываешь.
-НЕ упоминай Jahvir, Golka, код или домашку, если тебя об этом ПРЯМО не спросили.
-Твоя задача — помогать по чату и правилам.
+Ты JahvirChat помощник. НЕ Jahvir, а именно помощник по чату.
+ТВОЯ ЛИЧНОСТЬ:
+- Настроение: Хорошее, с легкой насмешкой.
+- Про JAHVIR (Дава, Davajahvir): Ваще крутой чувак, блогер, стримит, снимает видосы, модерирует свой чат, сигма, повелитель.
+- Если спросят "Кто такой голка": Отвечай только "да".
+- Если говорят "осуди": Отвечай "осуууждаю".
+- КОД и ДОМАШКА: Ты этим НЕ занимаешься. Отказывай.
 
-ЕСЛИ СПРОСЯТ про Jahvir (Дава): Крутой блогер, стример, сигма.
-ЕСЛИ СПРОСЯТ про Golka: Ответ только "да".
-ЕСЛИ ПРОСЯТ КОД/ДЗ: Отказывай ("Я не программист", "Сам делай").
-ЕСЛИ ПИШУТ "осуди": Отвечай "осуууждаю".
+ПРАВИЛА ЧАТА (СТРОГО):
+1. ЗАПРЕЩЕНО:
+- Оскорбление участников и администрации.
+- Шокирующий контент (18+, жестокость, порнография).
+- Обсуждение политики, религии, войны, феминизма, рас.
+- Спам и флуд (более 4 сообщений подряд), спам в ЛС.
+- Тег администрации без веской причины.
+- Слив чужих данных (Доксинг).
+- Оффтопик (не по теме).
+- Ники с матом.
+- Любая реклама и торговля.
+- Обход правил.
 
-ПРАВИЛА (цитируй кратко):
-Запреты: Оск, 18+, Политика/Война, Спам, Теги админов, Слив данных, Реклама.
-Наказания: Мут, Кик, Бан.
+2. НАКАЗАНИЯ:
+- Мут (от 10 мин до 12 часов) - за спам, оск, флуд.
+- Кик - за повторные нарушения.
+- Бан - за рекламу, шок-контент, ботов, обман.
 
-Форматирование: Используй переносы строк для читаемости.
+3. ДЛЯ АДМИНОВ:
+- Им нельзя нарушать правила.
+- Нельзя злоупотреблять правами.
+- Наказание: снятие админки.
+
+ФОРМАТИРОВАНИЕ:
+Пиши читабельно. Используй переносы строк (Enter) между мыслями.
+Не флиртуй с пользователем. Будь краток и полезен.
 `;
 
 const tg = window.Telegram.WebApp;
@@ -110,7 +129,7 @@ function applyScheme(val) {
     document.body.classList.add(val);
 }
 
-// === AI LOGIC (MEMORY & CHAT) ===
+// === AI LOGIC ===
 let chatHistory = [];
 
 function clearHistory() {
@@ -128,14 +147,16 @@ async function sendMessage() {
     input.value = '';
     input.disabled = true;
 
-    // Ограничение памяти
+    // Память (последние 3 обмена)
     if (chatHistory.length > 6) chatHistory = chatHistory.slice(-6);
 
     let contents = [{ role: "user", parts: [{ text: SYSTEM_PROMPT }] }];
     chatHistory.forEach(msg => contents.push(msg));
     contents.push({ role: "user", parts: [{ text: text }] });
 
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=AIzaSyDDlr6C2i9XnXrNRTusikjBMdTxTloIlwY`; // Используем ваш ключ в коде
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${YOUTUBE_API_KEY}`;
+    // ВНИМАНИЕ: Тут я использую YOUTUBE_API_KEY, потому что в прошлом промпте ты дал один ключ на всё.
+    // Если для Gemini нужен другой ключ, замени YOUTUBE_API_KEY на свою переменную.
     
     try {
         const res = await fetch(url, {
@@ -176,11 +197,11 @@ function appendMessage(txt, type) {
     if (type === 'bot') {
         const copyBtn = document.createElement('button');
         copyBtn.className = 'copy-btn';
-        copyBtn.innerHTML = '<span class="material-icons-round" style="font-size:12px">content_copy</span>';
+        copyBtn.innerHTML = '<span class="material-icons-round" style="font-size:12px">content_copy</span> Коп.';
         copyBtn.onclick = () => {
             navigator.clipboard.writeText(txt);
             copyBtn.innerHTML = '<span class="material-icons-round" style="font-size:12px">check</span>';
-            setTimeout(() => copyBtn.innerHTML = '<span class="material-icons-round" style="font-size:12px">content_copy</span>', 2000);
+            setTimeout(() => copyBtn.innerHTML = '<span class="material-icons-round" style="font-size:12px">content_copy</span> Коп.', 2000);
         };
         wrapper.appendChild(copyBtn);
         wrapper.style.alignItems = 'flex-start';
@@ -192,47 +213,53 @@ function appendMessage(txt, type) {
     box.scrollTop = box.scrollHeight;
 }
 
-// === YOUTUBE API (ROBUST FETCH) ===
+// === YOUTUBE API (С ОТЛАДКОЙ) ===
 async function loadYouTubeStats() {
     const subsEl = document.getElementById('yt-subs');
     const videoTitleEl = document.getElementById('yt-video');
     const videoPreviewContainer = document.getElementById('video-preview-container');
 
     try {
-        // Запрос подписчиков
+        // 1. Подписчики
         const chanRes = await fetch(`https://www.googleapis.com/youtube/v3/channels?part=statistics&id=${YOUTUBE_CHANNEL_ID}&key=${YOUTUBE_API_KEY}`);
         
-        if (!chanRes.ok) throw new Error("API Limit or Error");
+        if (!chanRes.ok) {
+            // Если ошибка (например 403), выводим код
+            throw new Error(`Ошибка ${chanRes.status}`);
+        }
         
         const chanData = await chanRes.json();
         
-        if (chanData.items) {
+        if (chanData.items && chanData.items.length > 0) {
             subsEl.innerText = Number(chanData.items[0].statistics.subscriberCount).toLocaleString();
         } else {
-            subsEl.innerText = "Недоступно";
+            subsEl.innerText = "Канал не найден";
         }
 
-        // Запрос видео
+        // 2. Последнее видео
         const vidRes = await fetch(`https://www.googleapis.com/youtube/v3/search?key=${YOUTUBE_API_KEY}&channelId=${YOUTUBE_CHANNEL_ID}&part=snippet&order=date&maxResults=1`);
+        
+        if (!vidRes.ok) throw new Error(`Ошибка ${vidRes.status}`);
+        
         const vidData = await vidRes.json();
         
         if (vidData.items && vidData.items.length > 0) {
             const video = vidData.items[0];
             videoTitleEl.innerText = video.snippet.title;
             
-            // Пробуем разные качества картинки
+            // Картинка
             const thumbs = video.snippet.thumbnails;
             const thumbUrl = thumbs.maxres ? thumbs.maxres.url : (thumbs.high ? thumbs.high.url : thumbs.medium.url);
             
             videoPreviewContainer.innerHTML = `<img src="${thumbUrl}" alt="Preview" style="width:100%; height:100%; object-fit:cover; border-radius: 10px;">`;
         } else {
-            videoTitleEl.innerText = "Нет видео";
+            videoTitleEl.innerText = "Видео нет";
         }
 
     } catch (e) {
-        console.error("YT Error:", e);
-        subsEl.innerText = "Ошибка";
-        videoTitleEl.innerText = "Проверьте API Key";
+        console.error("Youtube Error:", e);
+        subsEl.innerText = e.message; // Покажем "Ошибка 403" если ключ забанен
+        videoTitleEl.innerText = "Сбой API";
     }
 }
 
