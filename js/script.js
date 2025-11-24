@@ -259,4 +259,4 @@ async function loadYouTubeStats() {
 document.getElementById('chat-input').addEventListener('keypress', (e) => {
     if (e.key === 'Enter') sendMessage();
 });
-                
+    
