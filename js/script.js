@@ -5,6 +5,7 @@ const YOUTUBE_CHANNEL_ID = "UCrZA2Mj6yKZkEcBIqdfF6Ag";
 const GEMINI_MODEL = 'gemini-2.5-flash'; 
 
 // ПОЛНЫЙ ПРОМПТ С CSV И ПРАВИЛАМИ
+[span_0](start_span)// Используем информацию из предоставленного файла правил[span_0](end_span)
 const SYSTEM_PROMPT = `
 Ты JahvirChat помощник. НЕ Jahvir, а именно помощник по чату.
 ТВОЯ ЛИЧНОСТЬ:
@@ -14,28 +15,28 @@ const SYSTEM_PROMPT = `
 - Если говорят "осуди": Отвечай "осуууждаю".
 - КОД и ДОМАШКА: Ты этим НЕ занимаешься. Отказывай.
 
-ПРАВИЛА ЧАТА (СТРОГО):
+ПРАВИЛА ЧАТА (СТРОГО СОБЛЮДАЙ И ЦИТИРУЙ):
 1. ЗАПРЕЩЕНО:
-- Оскорбление участников и администрации.
-- Шокирующий контент (18+, жестокость, порнография).
-- Обсуждение политики, религии, войны, феминизма, рас.
-- Спам и флуд (более 4 сообщений подряд), спам в ЛС.
-- Тег администрации без веской причины.
-- Слив чужих данных (Доксинг).
-- Оффтопик (не по теме).
-- Ники с матом.
-- Любая реклама и торговля.
-- Обход правил.
+- [span_1](start_span)Оскорбление участников и администрации[span_1](end_span).
+- [span_2](start_span)Шокирующий контент (18+, жестокость, порнография)[span_2](end_span).
+- [span_3](start_span)Обсуждение политики, религии, войны, феминизма, рас[span_3](end_span).
+- [span_4](start_span)[span_5](start_span)Спам и флуд (более 4 сообщений подряд), спам в ЛС[span_4](end_span)[span_5](end_span).
+- [span_6](start_span)Тег администрации без веской причины[span_6](end_span).
+- [span_7](start_span)Слив чужих данных (Доксинг)[span_7](end_span).
+- [span_8](start_span)Оффтопик (не по теме)[span_8](end_span).
+- [span_9](start_span)Ники с матом[span_9](end_span).
+- [span_10](start_span)Любая реклама и торговля[span_10](end_span).
+- [span_11](start_span)Обход правил[span_11](end_span).
 
 2. НАКАЗАНИЯ:
-- Мут (от 10 мин до 12 часов) - за спам, оск, флуд.
-- Кик - за повторные нарушения.
-- Бан - за рекламу, шок-контент, ботов, обман.
+- [span_12](start_span)Мут (от 10 мин до 12 часов) - за спам, оск, флуд[span_12](end_span).
+- [span_13](start_span)Кик - за повторные нарушения[span_13](end_span).
+- [span_14](start_span)Бан - за рекламу, шок-контент, ботов, обман[span_14](end_span).
 
 3. ДЛЯ АДМИНОВ:
-- Им нельзя нарушать правила.
-- Нельзя злоупотреблять правами.
-- Наказание: снятие админки.
+- [span_15](start_span)Им нельзя нарушать правила[span_15](end_span).
+- [span_16](start_span)Нельзя злоупотреблять правами[span_16](end_span).
+- [span_17](start_span)Наказание: снятие админки[span_17](end_span).
 
 ФОРМАТИРОВАНИЕ:
 Пиши читабельно. Используй переносы строк (Enter) между мыслями.
@@ -155,8 +156,6 @@ async function sendMessage() {
     contents.push({ role: "user", parts: [{ text: text }] });
 
     const url = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${YOUTUBE_API_KEY}`;
-    // ВНИМАНИЕ: Тут я использую YOUTUBE_API_KEY, потому что в прошлом промпте ты дал один ключ на всё.
-    // Если для Gemini нужен другой ключ, замени YOUTUBE_API_KEY на свою переменную.
     
     try {
         const res = await fetch(url, {
@@ -213,31 +212,30 @@ function appendMessage(txt, type) {
     box.scrollTop = box.scrollHeight;
 }
 
-// === YOUTUBE API (С ОТЛАДКОЙ) ===
+// === YOUTUBE API (С ПЛЕЕРОМ И ОШИБКАМИ) ===
 async function loadYouTubeStats() {
     const subsEl = document.getElementById('yt-subs');
     const videoTitleEl = document.getElementById('yt-video');
-    const videoPreviewContainer = document.getElementById('video-preview-container');
+    const videoContainer = document.getElementById('video-player-container');
 
     try {
         // 1. Подписчики
         const chanRes = await fetch(`https://www.googleapis.com/youtube/v3/channels?part=statistics&id=${YOUTUBE_CHANNEL_ID}&key=${YOUTUBE_API_KEY}`);
         
-        if (!chanRes.ok) {
-            // Если ошибка (например 403), выводим код
-            throw new Error(`Ошибка ${chanRes.status}`);
-        }
+        if (!chanRes.ok) throw new Error(`Ошибка ${chanRes.status}`);
         
         const chanData = await chanRes.json();
         
         if (chanData.items && chanData.items.length > 0) {
-            subsEl.innerText = Number(chanData.items[0].statistics.subscriberCount).toLocaleString();
+            const count = Number(chanData.items[0].statistics.subscriberCount);
+            subsEl.innerText = count.toLocaleString(); // Формат 13,400
         } else {
             subsEl.innerText = "Канал не найден";
         }
 
-        // 2. Последнее видео
-        const vidRes = await fetch(`https://www.googleapis.com/youtube/v3/search?key=${YOUTUBE_API_KEY}&channelId=${YOUTUBE_CHANNEL_ID}&part=snippet&order=date&maxResults=1`);
+        // 2. Последнее видео (ПОИСК VIDEO ID)
+        // Добавляем type=video, чтобы получить видео, которое можно встроить
+        const vidRes = await fetch(`https://www.googleapis.com/youtube/v3/search?key=${YOUTUBE_API_KEY}&channelId=${YOUTUBE_CHANNEL_ID}&part=snippet&order=date&maxResults=1&type=video`);
         
         if (!vidRes.ok) throw new Error(`Ошибка ${vidRes.status}`);
         
@@ -247,18 +245,16 @@ async function loadYouTubeStats() {
             const video = vidData.items[0];
             videoTitleEl.innerText = video.snippet.title;
             
-            // Картинка
-            const thumbs = video.snippet.thumbnails;
-            const thumbUrl = thumbs.maxres ? thumbs.maxres.url : (thumbs.high ? thumbs.high.url : thumbs.medium.url);
-            
-            videoPreviewContainer.innerHTML = `<img src="${thumbUrl}" alt="Preview" style="width:100%; height:100%; object-fit:cover; border-radius: 10px;">`;
+            // ВСТАВЛЯЕМ IFRAME
+            const videoId = video.id.videoId;
+            videoContainer.innerHTML = `<iframe width="100%" height="100%" src="https://www.youtube.com/embed/${videoId}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
         } else {
             videoTitleEl.innerText = "Видео нет";
         }
 
     } catch (e) {
         console.error("Youtube Error:", e);
-        subsEl.innerText = e.message; // Покажем "Ошибка 403" если ключ забанен
+        subsEl.innerText = e.message; 
         videoTitleEl.innerText = "Сбой API";
     }
 }
@@ -266,4 +262,4 @@ async function loadYouTubeStats() {
 document.getElementById('chat-input').addEventListener('keypress', (e) => {
     if (e.key === 'Enter') sendMessage();
 });
-        
+                                            
