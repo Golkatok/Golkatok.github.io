@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>JahvirChat Mini App</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    
     <link rel="stylesheet" href="css/style.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
 </head>
@@ -14,7 +15,7 @@
     <div class="background-blob blob-2"></div>
 
     <header class="floating-header">
-        <div class="header-content glass">
+        <div class="header-content surface">
             <button class="btn-nav" onclick="toggleMenu()">
                 <span class="material-icons-round">menu</span>
                 <span>Меню</span>
@@ -27,7 +28,7 @@
         </div>
     </header>
 
-    <nav id="menu-dropdown" class="dropdown glass hidden">
+    <nav id="menu-dropdown" class="dropdown surface hidden">
         <button onclick="navigate('home')"><span class="material-icons-round">home</span> Главная</button>
         <button onclick="navigate('socials')"><span class="material-icons-round">share</span> Соц. Сети</button>
         <button onclick="navigate('news')"><span class="material-icons-round">article</span> Новости</button>
@@ -37,13 +38,21 @@
 
     <div id="settings-modal" class="modal hidden">
         <div class="modal-overlay" onclick="toggleSettings()"></div>
-        <div class="modal-content glass compact-modal">
+        <div class="modal-content surface compact-modal">
             <div class="modal-header">
                 <h3>Настройки</h3>
                 <button class="close-btn" onclick="toggleSettings()">×</button>
             </div>
             
             <div class="settings-body">
+                <div class="setting-item toggle-item">
+                    <label for="style-toggle">Жидкое стекло</label>
+                    <label class="switch">
+                        <input type="checkbox" id="style-toggle" onchange="toggleGlassMode(this.checked)">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+
                 <div class="setting-item">
                     <label>Тема</label>
                     <div class="select-wrapper">
@@ -56,28 +65,28 @@
                 </div>
 
                 <div class="setting-item">
-                    <label>Схема</label>
+                    <label>Цвет акцента</label>
                     <div class="select-wrapper">
                         <select id="scheme-select" onchange="changeScheme(this.value)">
-                            <option value="scheme-ocean">Океан</option>
-                            <option value="scheme-sunset">Закат</option>
-                            <option value="scheme-forest">Лес</option>
-                            <option value="scheme-berry">Ягоды</option>
-                            <option value="scheme-neon">Неон</option>
-                            <option value="scheme-stone">Монохром</option>
+                            <option value="scheme-ocean">Океан (Синий)</option>
+                            <option value="scheme-sunset">Закат (Оранжевый)</option>
+                            <option value="scheme-forest">Лес (Зеленый)</option>
+                            <option value="scheme-berry">Ягоды (Фиолетовый)</option>
+                            <option value="scheme-neon">Неон (Розовый)</option>
+                            <option value="scheme-stone">Монохром (Серый)</option>
                         </select>
                     </div>
                 </div>
             </div>
             
-            <button class="btn-glass-primary" onclick="toggleSettings()">Готово</button>
+            <button class="btn-primary" onclick="toggleSettings()">Готово</button>
         </div>
     </div>
 
     <main id="app-container">
         
         <section id="page-home" class="page active-page">
-            <div class="card glass profile-card">
+            <div class="card surface profile-card">
                 <div class="profile-header">
                     <div class="avatar-wrapper">
                         <img src="" id="user-avatar" alt="Avatar" class="avatar">
@@ -86,7 +95,7 @@
                 </div>
                 
                 <div class="stats-grid">
-                    <div class="stat-box glass-inner">
+                    <div class="stat-box surface-inner">
                         <div class="stat-icon yt-color"><span class="material-icons-round">groups</span></div>
                         <div class="stat-data">
                             <span class="stat-label">Подписчики Jahvir</span>
@@ -94,7 +103,7 @@
                         </div>
                     </div>
                     
-                    <div class="video-card glass-inner">
+                    <div class="video-card surface-inner">
                         <div class="video-header-text">
                             <span class="v-label">Последнее видео:</span>
                             <span class="v-title" id="yt-video">Загрузка...</span>
@@ -109,8 +118,8 @@
         </section>
 
         <section id="page-jahvir-ai" class="page hidden-page">
-            <div class="card glass chat-card">
-                <div class="chat-top-bar glass-inner-header">
+            <div class="card surface chat-card">
+                <div class="chat-top-bar surface-header">
                     <div class="bot-info">
                         <span class="material-icons-round">smart_toy</span>
                         <div>
@@ -129,7 +138,7 @@
                     </div>
                 </div>
                 
-                <div class="input-area glass-inner-footer">
+                <div class="input-area surface-footer">
                     <input type="text" id="chat-input" placeholder="Сообщение...">
                     <button class="send-btn" onclick="sendMessage()" id="send-btn">
                         <span class="material-icons-round">send</span>
@@ -139,15 +148,16 @@
         </section>
 
         <section id="page-placeholder" class="page hidden-page">
-            <div class="card glass placeholder-card">
+            <div class="card surface placeholder-card">
                 <span class="material-icons-round big-icon">construction</span>
                 <h2>В работе</h2>
-                <button class="btn-glass-primary btn-wide" onclick="navigate('home')">Назад</button>
+                <button class="btn-primary btn-wide" onclick="navigate('home')">Назад</button>
             </div>
         </section>
 
     </main>
 
+    <script src="js/config.js"></script>
     <script src="js/script.js"></script>
 </body>
 </html>
