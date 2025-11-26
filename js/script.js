@@ -1,75 +1,89 @@
-// === КОНФИГУРАЦИЯ ===
+// === ПОДКЛЮЧЕНИЕ КОНФИГУРАЦИИ ===
+// Берем ключи из глобального объекта CONFIG (из файла config.js)
+// Если файла нет, будет ошибка, но код не упадет с try/catch
+let KEYS = { YOUTUBE_KEY: "", YOUTUBE_ID: "", GEMINI_KEY: "" };
 
-// Ключи
-const YOUTUBE_API_KEY = "AIzaSyASL1_rgK9P9-J2FK6uFwjObuwA8m1Cihg"; 
-const YOUTUBE_CHANNEL_ID = "UCrZA2Mj6yKZkEcBIqdfF6Ag"; 
+try {
+    if (typeof CONFIG !== 'undefined') {
+        KEYS.YOUTUBE_KEY = CONFIG.YOUTUBE_API_KEY;
+        KEYS.YOUTUBE_ID = CONFIG.YOUTUBE_CHANNEL_ID;
+        KEYS.GEMINI_KEY = CONFIG.GEMINI_API_KEY;
+    } else {
+        console.warn("Файл config.js не найден или не загружен.");
+    }
+} catch (e) {
+    console.error("Ошибка конфига:", e);
+}
 
-// Ключ для GEMINI (Если старый работает - оставляем, если нет - нужен новый)
-const GEMINI_API_KEY = "AIzaSyDDlr6C2i9XnXrNRTusikjBMdTxTloIlwY";
 const GEMINI_MODEL = 'gemini-2.5-flash'; 
 
-// === ПОЛНЫЙ СИСТЕМНЫЙ ПРОМПТ (ИЗ CSV) ===
+// ПРОМПТ (ТОТ ЖЕ, ПОЛНЫЙ)
+// === ПОЛНЫЙ, ДЕТАЛЬНЫЙ ПРОМПТ (СТРОГО ПО CSV) ===
 const SYSTEM_PROMPT = `
-Ты JahvirChat помощник. НЕ Jahvir, а именно помощник по чату.
+Ты JahvirChat помощник. Твоя роль — помогать по чату, но ты НЕ сам Jahvir.
 ТВОЯ ЛИЧНОСТЬ:
 - Настроение: Хорошее, с легкой насмешкой.
-- Про JAHVIR (Дава, Davajahvir): Ваще крутой чувак, блогер, стримит, снимает видосы, модерирует свой чат, сигма, повелитель.
+- Про JAHVIR (Дава, Davajahvir, Джахвир): Ваще крутой чувак, блогер, стримит, снимает видосы, модерирует свой чат, сигма, повелитель.
 - Если спросят "Кто такой голка": Отвечай только "да".
-- Если говорят "осуди": Отвечай "осуууждаю".
-- КОД и ДОМАШКА: Ты этим НЕ занимаешься. Вежливо отказывай.
+- Если говорят "осуди" (или склонения): Отвечай "осуууждаю".
+- КОД и ДОМАШКА: Ты этим НЕ занимаешься. Вежливо или с шуткой отказывай.
 
-=== ПОЛНЫЙ СВОД ПРАВИЛ ЧАТА (ЗНАЙ ИХ ИДЕАЛЬНО) ===
+=== ПРАВИЛА ЧАТА (НЕЗНАНИЕ НЕ ОСВОБОЖДАЕТ ОТ ОТВЕТСТВЕННОСТИ) ===
 
-1. ЗАПРЕЩЕНО (ВСЕМ, ВКЛЮЧАЯ АДМИНОВ):
-- Оскорбление участников и администрации (унижение по полу, расе, религии, внешности).
-- Шокирующий контент (18+, NSFW, порнография, насилие, ранения).
-- Обсуждение политики, религии, войны, феминизма, расизма (Гитлер тоже запрещен).
-- Спам и флуд (более 4-х сообщений/стикеров/эмодзи подряд).
+1. ЗАПРЕЩЕНО (Нарушения):
+- Оскорбление участников и администрации (унижение по расе, религии, внешности, полу).
+- Шокирующий контент (18+, порнография/NSFW, насилие, ранения).
+- Обсуждение войны, расы, религии, феминизма и политики (Гитлер тоже запрещен).
+- Спам и флуд (более 4-х сообщений, стикеров, эмодзи подряд).
 - Тег администрации без весомой причины.
 - Слив чужих данных (Доксинг).
-- Оффтопик (сообщения не по теме, кроме комментов к постам).
-- Ники с матом.
+- Оффтопик (сообщения не по теме чата/поста).
+- Ники с содержанием нецензурного текста.
 - Спам в ЛС.
-- Любая реклама и Торговля чем-либо в чате.
+- Многие типы рекламы и Торговля чем-либо в чате.
 - Обход правил чата.
 
-2. НАКАЗАНИЯ ДЛЯ ОБЫЧНЫХ УЧАСТНИКОВ:
-- Оскорбления: Мут 10 мин.
-- Шокирующий контент: Мут 30 мин + Кик (рецидив = Мут 1 час).
-- Политика/Религия/Война: Кик (рецидив = Мут 1 час).
-- Спам/Флуд: Варны (менее 10 = мут 40 мин, более 11 = бан).
-- Тег админов: Мут 10-20 мин.
-- Слив данных: От мута 20 мин до БАНА НАВСЕГДА (по ситуации).
-- Оффтопик: Мут 1 час.
-- Ники с матом: Мгновенный бан (разбан только через апелляцию).
-- Спам в ЛС: Мут 12 часов + меры от пострадавшего.
-- Реклама/Торговля: Мут от 1 часа до Навсегда (или Бан).
-- Обход правил: Мут 1 час.
+2. НАКАЗАНИЯ ДЛЯ УЧАСТНИКОВ:
+- Оскорбления: Мут на 10 минут.
+- Шокирующий контент: Мут на 30 минут + Кик (рецидив — Мут на 1 час).
+- Политика/Война/Религия: Кик (рецидив — Мут на 1 час).
+- Спам/Флуд: Менее 10 сообщений — Мут на 40 мин. Более 11 — Бан.
+- Тег администрации: Мут на 10-20 минут.
+- Слив данных: От мута на 20 минут до Бана навсегда (зависит от тяжести).
+- Оффтопик: Мут на 1 час.
+- Ники с матом: Мгновенный бан (разбан только по апелляции).
+- Спам в ЛС: Мут на 12 часов в чате + меры от пострадавшего.
+- Реклама/Торговля: Мут от 1 часа до навсегда (или Бан).
+- Обход правил: Мут на 1 час.
 
 3. ПРАВИЛА ДЛЯ АДМИНИСТРАЦИИ:
-- Соблюдать все правила выше.
+- Запрещено всё то же самое (Оск, Шок-контент, Политика, Спам, Слив данных и т.д.).
 - Не злоупотреблять полномочиями.
 - Уважать обычных участников.
-- Наказывать ИСКЛЮЧИТЕЛЬНО опираясь на правила.
+- Наказывать исключительно опираясь на правила.
 
 4. НАКАЗАНИЯ ДЛЯ АДМИНИСТРАТОРОВ (За нарушения):
-- За оскорбления/спам/политику: Те же муты/кики, что и для участников.
-- За слив данных: Снятие админки + Мут 24 часа.
-- За рекламу/торговлю: Снятие админки + Мут/Бан.
-- За злоупотребление полномочиями / неуважение / неверные наказания (СЧЕТЧИК):
-  * 1 раз: Снятие админки на 1 день.
-  * 2 раз: Снятие админки на 3 дня.
-  * 3 раз: Урезание прав на 7 дней.
-  * 4 раз: Оставляется только роль (без прав) на 30 дней.
-  * 5 раз: Полное снятие админки на 60 дней + сброс счетчика нарушений.
+- За Оскорбления: Мут 10 мин.
+- За Шок-контент: Мут 30 мин + Кик.
+- За Политику: Кик (рецидив — Мут 1 час).
+- За Спам: <10 — Мут 40 мин, >11 — Бан.
+- За Слив данных: Снятие админки + Мут на 24 часа.
+- За Обход правил: Мут на 1 час.
+- ЗА ЗЛОУПОТРЕБЛЕНИЕ / НЕУВАЖЕНИЕ / НЕВЕРНЫЕ НАКАЗАНИЯ (Лестница):
+  * 1-й раз: Снятие админки на 1 день.
+  * 2-й раз: Снятие админки на 3 дня.
+  * 3-й раз: Меньше админ прав на 7 дней.
+  * 4-й раз: Остается только роль (без прав) на 30 дней.
+  * 5-й раз: Полное снятие админки на 60 дней + сброс счетчика нарушений.
 
 ПОЯСНЕНИЯ:
-- NSFW (18+) запрещен строго.
-- Тебя (бота) и Админов с особым званием забанить нельзя.
+- NSFW (18+) запрещен.
+- Если у участника особое звание — админы его забанить не могут.
 
-ФОРМАТИРОВАНИЕ ОТВЕТА:
-Пиши читабельно. Обязательно используй Enter (перенос строки) между пунктами. Не лепи текст в кучу.
+ФОРМАТИРОВАНИЕ:
+Пиши ответы читабельно, ставь переносы строк (Enter) между пунктами. Не выдавай сплошную стену текста.
 `;
+
 
 const tg = window.Telegram.WebApp;
 tg.expand(); 
@@ -81,14 +95,31 @@ window.onload = () => {
     // Восстановление настроек
     const savedTheme = localStorage.getItem('axel_theme') || 'theme-system';
     const savedScheme = localStorage.getItem('axel_scheme') || 'scheme-ocean';
+    const savedStyle = localStorage.getItem('axel_style_glass') === 'true'; // false по умолчанию
+    
     applyTheme(savedTheme);
     applyScheme(savedScheme);
+    toggleGlassMode(savedStyle);
     
+    // Установка значений в UI
     document.getElementById('theme-select').value = savedTheme;
     document.getElementById('scheme-select').value = savedScheme;
+    document.getElementById('style-toggle').checked = savedStyle;
 
-    loadYouTubeStats();
+    if (KEYS.YOUTUBE_KEY) {
+        loadYouTubeStats();
+    }
 };
+
+// === STYLE SWITCHER LOGIC ===
+function toggleGlassMode(isGlass) {
+    if (isGlass) {
+        document.body.classList.add('glass-mode');
+    } else {
+        document.body.classList.remove('glass-mode');
+    }
+    localStorage.setItem('axel_style_glass', isGlass);
+}
 
 // === TELEGRAM USER DATA ===
 function loadTelegramUserData() {
@@ -98,13 +129,12 @@ function loadTelegramUserData() {
     if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
         const user = tg.initDataUnsafe.user;
         nameEl.innerText = user.first_name || 'User';
-        
         if (user.photo_url) {
             avatarEl.src = user.photo_url;
         } else {
             avatarEl.src = `https://ui-avatars.com/api/?name=${user.first_name}&background=random&color=fff&bold=true`;
         }
-        
+        // Auto-theme
         if (localStorage.getItem('axel_theme') === 'theme-system') {
              if (tg.colorScheme === 'dark') document.body.classList.add('theme-dark');
         }
@@ -160,7 +190,6 @@ function applyScheme(val) {
 
 // === AI LOGIC ===
 let chatHistory = [];
-
 function clearHistory() {
     chatHistory = [];
     document.getElementById('chat-output').innerHTML = '<div class="message bot">Память очищена.</div>';
@@ -170,24 +199,18 @@ async function sendMessage() {
     const input = document.getElementById('chat-input');
     const text = input.value.trim();
     if (!text) return;
+    if (!KEYS.GEMINI_KEY) { alert("Ключ API не найден в config.js"); return; }
 
     appendMessage(text, 'user');
     input.value = '';
     input.disabled = true;
 
-    // Ограничиваем историю (последние 6 сообщений)
     if (chatHistory.length > 6) chatHistory = chatHistory.slice(-6);
-
-    // Сначала идет Системный промпт
     let contents = [{ role: "user", parts: [{ text: SYSTEM_PROMPT }] }];
-    
-    // Потом история переписки
     chatHistory.forEach(msg => contents.push(msg));
-    
-    // Потом новый вопрос
     contents.push({ role: "user", parts: [{ text: text }] });
 
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_API_KEY}`;
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${KEYS.GEMINI_KEY}`;
     
     try {
         const res = await fetch(url, {
@@ -217,33 +240,39 @@ async function sendMessage() {
 
 function appendMessage(txt, type) {
     const box = document.getElementById('chat-output');
-    const wrapper = document.createElement('div');
-    wrapper.className = `message-wrapper`;
-    
     const div = document.createElement('div');
     div.className = `message ${type}`;
-    // Markdown bold + переносы строк
     let formatted = txt.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>').replace(/\n/g, '<br>');
     div.innerHTML = formatted;
     
-    wrapper.appendChild(div);
-
+    // Копирование (только для бота)
     if (type === 'bot') {
+        const wrapper = document.createElement('div');
+        wrapper.style.display = 'flex';
+        wrapper.style.flexDirection = 'column';
+        wrapper.style.width = '100%';
+        wrapper.style.alignItems = 'flex-start';
+        
+        wrapper.appendChild(div);
+        
         const copyBtn = document.createElement('button');
         copyBtn.className = 'copy-btn';
-        copyBtn.innerHTML = '<span class="material-icons-round" style="font-size:12px">content_copy</span> Коп.';
+        copyBtn.innerText = 'Копировать';
         copyBtn.onclick = () => {
-            navigator.clipboard.writeText(txt);
-            copyBtn.innerHTML = '<span class="material-icons-round" style="font-size:12px">check</span>';
-            setTimeout(() => copyBtn.innerHTML = '<span class="material-icons-round" style="font-size:12px">content_copy</span> Коп.', 2000);
+             navigator.clipboard.writeText(txt);
+             copyBtn.innerText = 'Скопировано';
+             setTimeout(()=>copyBtn.innerText='Копировать', 1500);
         };
         wrapper.appendChild(copyBtn);
-        wrapper.style.alignItems = 'flex-start';
+        box.appendChild(wrapper);
     } else {
-        wrapper.style.alignItems = 'flex-end';
+        // Юзер
+        const wrapper = document.createElement('div');
+        wrapper.style.display = 'flex'; 
+        wrapper.style.justifyContent = 'flex-end';
+        wrapper.appendChild(div);
+        box.appendChild(wrapper);
     }
-
-    box.appendChild(wrapper);
     box.scrollTop = box.scrollHeight;
 }
 
@@ -255,10 +284,8 @@ async function loadYouTubeStats() {
 
     try {
         // 1. Подписчики
-        const chanRes = await fetch(`https://www.googleapis.com/youtube/v3/channels?part=statistics&id=${YOUTUBE_CHANNEL_ID}&key=${YOUTUBE_API_KEY}`);
-        
+        const chanRes = await fetch(`https://www.googleapis.com/youtube/v3/channels?part=statistics&id=${KEYS.YOUTUBE_ID}&key=${KEYS.YOUTUBE_KEY}`);
         if (!chanRes.ok) throw new Error(`Err ${chanRes.status}`);
-        
         const chanData = await chanRes.json();
         
         if (chanData.items && chanData.items.length > 0) {
@@ -268,11 +295,9 @@ async function loadYouTubeStats() {
             subsEl.innerText = "Недоступно";
         }
 
-        // 2. Видео (Плеер)
-        const vidRes = await fetch(`https://www.googleapis.com/youtube/v3/search?key=${YOUTUBE_API_KEY}&channelId=${YOUTUBE_CHANNEL_ID}&part=snippet&order=date&maxResults=1&type=video`);
-        
+        // 2. Видео
+        const vidRes = await fetch(`https://www.googleapis.com/youtube/v3/search?key=${KEYS.YOUTUBE_KEY}&channelId=${KEYS.YOUTUBE_ID}&part=snippet&order=date&maxResults=1&type=video`);
         if (!vidRes.ok) throw new Error(`Err ${vidRes.status}`);
-        
         const vidData = await vidRes.json();
         
         if (vidData.items && vidData.items.length > 0) {
@@ -294,4 +319,4 @@ async function loadYouTubeStats() {
 document.getElementById('chat-input').addEventListener('keypress', (e) => {
     if (e.key === 'Enter') sendMessage();
 });
-            
+              
