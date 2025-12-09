@@ -1,104 +1,65 @@
 /* === ПЕРЕМЕННЫЕ === */
 :root {
-    /* Базовые цвета фона (Светлая тема) */
     --bg-base: #f0f2f5;
     --bg-gradient: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
     
-    /* СТЕКЛО (Единый стиль) */
-    --glass-bg: rgba(255, 255, 255, 0.75); /* Полупрозрачный белый */
-    --glass-border: rgba(255, 255, 255, 0.8);
+    /* СТЕКЛО */
+    --glass-bg: rgba(255, 255, 255, 0.75); 
+    --glass-border: rgba(255, 255, 255, 0.6); /* Легкая белая граница */
     --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.05);
-    --glass-blur: 16px; /* Оптимальный блюр */
+    --glass-blur: 16px;
     
-    /* Текст */
     --text-main: #1c1e21;
     --text-muted: #65676b;
     
-    /* Акцент (по умолчанию Ocean) */
     --accent: #0088cc;
     --accent-grad: linear-gradient(135deg, #2aabee, #229ed9);
     
     --header-top: 50px;
 }
 
-/* ТЕМНАЯ ТЕМА */
 body.theme-dark {
     --bg-base: #18191a;
     --bg-gradient: linear-gradient(135deg, #232526 0%, #414345 100%);
-    
-    --glass-bg: rgba(36, 37, 38, 0.8); /* Полупрозрачный темный */
+    --glass-bg: rgba(36, 37, 38, 0.85);
     --glass-border: rgba(255, 255, 255, 0.1);
     --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-    
     --text-main: #e4e6eb;
     --text-muted: #b0b3b8;
 }
 
-/* ЦВЕТОВЫЕ СХЕМЫ (Влияют на фон, кнопки и иконки) */
-/* Ocean */
-body.scheme-ocean { 
-    --accent: #0088cc; 
-    --accent-grad: linear-gradient(135deg, #00c6ff, #0072ff);
-    --bg-gradient: linear-gradient(135deg, #E0EAFC, #CFDEF3);
-}
+/* СХЕМЫ (Без изменений, они работают хорошо) */
+body.scheme-ocean { --accent: #0088cc; --accent-grad: linear-gradient(135deg, #00c6ff, #0072ff); --bg-gradient: linear-gradient(135deg, #E0EAFC, #CFDEF3); }
+body.scheme-sunset { --accent: #ff5e62; --accent-grad: linear-gradient(135deg, #ff9966, #ff5e62); --bg-gradient: linear-gradient(135deg, #fff1eb, #ace0f9); }
+body.scheme-forest { --accent: #56ab2f; --accent-grad: linear-gradient(135deg, #56ab2f, #a8e063); --bg-gradient: linear-gradient(135deg, #d4fc79, #96e6a1); }
+body.scheme-berry { --accent: #8e2de2; --accent-grad: linear-gradient(135deg, #8e2de2, #4a00e0); --bg-gradient: linear-gradient(135deg, #e0c3fc, #8ec5fc); }
+body.scheme-neon { --accent: #ff00cc; --accent-grad: linear-gradient(135deg, #33ccff, #ff00cc); --bg-gradient: linear-gradient(135deg, #ff9a9e, #fecfef); }
+body.scheme-stone { --accent: #607d8b; --accent-grad: linear-gradient(135deg, #607d8b, #37474f); --bg-gradient: linear-gradient(135deg, #bdc3c7, #2c3e50); }
+
+/* ДЛЯ DARK THEME OVERRIDES (Фоны схем) */
 body.theme-dark.scheme-ocean { --bg-gradient: linear-gradient(135deg, #0f2027, #203a43, #2c5364); }
-
-/* Sunset */
-body.scheme-sunset { 
-    --accent: #ff5e62; 
-    --accent-grad: linear-gradient(135deg, #ff9966, #ff5e62);
-    --bg-gradient: linear-gradient(135deg, #fff1eb, #ace0f9);
-}
 body.theme-dark.scheme-sunset { --bg-gradient: linear-gradient(135deg, #4b1208, #2e0905); }
-
-/* Forest */
-body.scheme-forest { 
-    --accent: #56ab2f; 
-    --accent-grad: linear-gradient(135deg, #56ab2f, #a8e063);
-    --bg-gradient: linear-gradient(135deg, #d4fc79, #96e6a1);
-}
 body.theme-dark.scheme-forest { --bg-gradient: linear-gradient(135deg, #0a1f0a, #112911); }
-
-/* Berry */
-body.scheme-berry { 
-    --accent: #8e2de2; 
-    --accent-grad: linear-gradient(135deg, #8e2de2, #4a00e0);
-    --bg-gradient: linear-gradient(135deg, #e0c3fc, #8ec5fc);
-}
 body.theme-dark.scheme-berry { --bg-gradient: linear-gradient(135deg, #240b36, #14051f); }
-
-/* Neon */
-body.scheme-neon { 
-    --accent: #ff00cc; 
-    --accent-grad: linear-gradient(135deg, #33ccff, #ff00cc);
-    --bg-gradient: linear-gradient(135deg, #ff9a9e, #fecfef);
-}
 body.theme-dark.scheme-neon { --bg-gradient: linear-gradient(135deg, #35002a, #1a0014); }
-
-/* Stone */
-body.scheme-stone { 
-    --accent: #607d8b; 
-    --accent-grad: linear-gradient(135deg, #607d8b, #37474f);
-    --bg-gradient: linear-gradient(135deg, #bdc3c7, #2c3e50);
-}
 body.theme-dark.scheme-stone { --bg-gradient: linear-gradient(135deg, #232526, #414345); }
-
 
 /* === БАЗА === */
 * { box-sizing: border-box; margin: 0; padding: 0; outline: none; -webkit-tap-highlight-color: transparent; user-select: none; }
 
 body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, sans-serif;
+    /* НОВЫЙ ШРИФТ */
+    font-family: 'Nunito', sans-serif;
     color: var(--text-main);
     background: var(--bg-gradient);
-    background-attachment: fixed; /* Чтобы фон не дергался */
+    background-attachment: fixed;
     background-size: cover;
     min-height: 100vh;
     transition: background 0.5s ease, color 0.3s ease;
     overflow-x: hidden;
 }
 
-/* === GLASS PANEL (ЕДИНЫЙ СТИЛЬ) === */
+/* === GLASS PANEL === */
 .glass-panel {
     background: var(--glass-bg);
     backdrop-filter: blur(var(--glass-blur));
@@ -121,30 +82,29 @@ body.theme-dark .glass-inner { background: rgba(0,0,0, 0.2); border-color: rgba(
     position: fixed; top: var(--header-top); left: 0; right: 0;
     display: flex; justify-content: center; z-index: 1000; pointer-events: none;
 }
-
 .header-content {
-    pointer-events: auto;
-    padding: 8px 24px;
-    display: flex; gap: 50px; /* Отступ кнопок */
-    border-radius: 50px;
+    pointer-events: auto; padding: 8px 24px; display: flex; gap: 50px; border-radius: 50px;
 }
-
-/* МОБИЛЬНАЯ ПРАВКА (Сдвиг на 3px вправо) */
 @media (max-width: 480px) {
-    .header-content {
-        margin-left: 3px;
-        transform: translateX(3px); /* Дублируем для надежности */
-    }
+    .header-content { margin-left: 3px; transform: translateX(3px); }
 }
 
+/* Кнопки навигации (HOVER) */
 .btn-nav {
     background: none; border: none; cursor: pointer;
     color: var(--text-main);
     display: flex; flex-direction: column; align-items: center; gap: 4px;
-    font-size: 0.75rem; font-weight: 600;
-    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.8rem; font-weight: 700;
+    transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 .btn-nav .material-icons-round { font-size: 1.5rem; color: var(--accent); transition: color 0.3s; }
+
+/* ЭФФЕКТ ПРИ НАВЕДЕНИИ */
+.btn-nav:hover {
+    transform: translateY(-2px); /* Приподнимаем */
+    opacity: 0.8;
+}
 .btn-nav:active { transform: scale(0.9); }
 
 /* === MENU === */
@@ -153,25 +113,24 @@ body.theme-dark .glass-inner { background: rgba(0,0,0, 0.2); border-color: rgba(
     left: 50%; transform: translateX(-50%);
     width: 220px; padding: 8px; z-index: 999;
     display: flex; flex-direction: column; gap: 6px;
-    /* Плавное появление */
     opacity: 0; pointer-events: none; transform: translate(-50%, -10px);
     transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
-/* Сдвиг меню на мобиле тоже, если нужно, но обычно центрируют. 
-   Если нужно и меню сдвинуть, раскомментируй:
-   @media (max-width: 480px) { .dropdown { margin-left: 3px; } } 
-*/
-
 .dropdown:not(.hidden) { opacity: 1; pointer-events: auto; transform: translate(-50%, 0); }
-.dropdown.hidden { display: flex; /* Чтобы transition работал, не display:none */ } 
+.dropdown.hidden { display: flex; } 
 
 .dropdown button {
     background: none; border: none; width: 100%;
     display: flex; align-items: center; gap: 12px; padding: 12px;
-    text-align: left; color: var(--text-main); font-size: 0.95rem; font-weight: 500;
-    border-radius: 12px; cursor: pointer; transition: background 0.2s;
+    text-align: left; color: var(--text-main); 
+    font-family: 'Nunito', sans-serif; font-size: 0.95rem; font-weight: 600;
+    border-radius: 12px; cursor: pointer; transition: all 0.2s;
 }
-.dropdown button:active { background: rgba(128,128,128, 0.1); }
+/* Hover для меню */
+.dropdown button:hover {
+    background: rgba(128,128,128, 0.1);
+    transform: translateX(3px);
+}
 .dropdown button span { color: var(--accent); }
 
 /* === SETTINGS === */
@@ -181,51 +140,48 @@ body.theme-dark .glass-inner { background: rgba(0,0,0, 0.2); border-color: rgba(
     opacity: 0; pointer-events: none; transition: opacity 0.3s;
 }
 .modal:not(.hidden) { opacity: 1; pointer-events: auto; }
-
 .modal-overlay { position: absolute; width: 100%; height: 100%; background: rgba(0,0,0,0.4); backdrop-filter: blur(5px); }
 .modal-content.compact-modal {
     width: 90%; max-width: 340px; padding: 25px;
     transform: scale(0.9); transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 .modal:not(.hidden) .modal-content { transform: scale(1); }
-
 .modal-header { display: flex; justify-content: space-between; margin-bottom: 20px; align-items: center; }
-.close-btn { background: none; border: none; font-size: 1.6rem; color: var(--text-muted); cursor: pointer; }
+.close-btn { background: none; border: none; font-size: 1.6rem; color: var(--text-muted); cursor: pointer; transition: 0.2s; }
+.close-btn:hover { transform: rotate(90deg); color: var(--accent); }
 
-.setting-item label { display: block; font-size: 0.9rem; color: var(--text-muted); margin-bottom: 8px; font-weight: 500; }
+.setting-item label { display: block; font-size: 0.9rem; color: var(--text-muted); margin-bottom: 8px; font-weight: 600; }
 select {
     width: 100%; padding: 12px; border-radius: 12px;
     border: 1px solid rgba(128,128,128, 0.2);
     background: rgba(255,255,255, 0.5);
-    color: var(--text-main); font-size: 1rem;
+    color: var(--text-main); font-family: 'Nunito', sans-serif; font-size: 1rem;
+    cursor: pointer;
 }
+select:hover { border-color: var(--accent); }
 
 .btn-primary {
     width: 100%; padding: 14px; margin-top: 15px;
     background: var(--accent-grad); color: white;
-    border: none; border-radius: 14px; font-weight: 600; cursor: pointer;
+    border: none; border-radius: 14px; 
+    font-family: 'Nunito', sans-serif; font-weight: 700; cursor: pointer;
     box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-    transition: transform 0.2s;
+    transition: all 0.2s;
 }
+.btn-primary:hover { filter: brightness(1.1); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.15); }
 .btn-primary:active { transform: scale(0.97); }
 
 /* === CONTENT === */
 main { padding-top: 140px; padding-bottom: 40px; width: 100%; max-width: 500px; margin: 0 auto; padding-left: 20px; padding-right: 20px; }
-
-/* Плавная смена страниц */
-.page { 
-    opacity: 0; transform: translateY(10px); display: none; 
-    transition: opacity 0.4s ease, transform 0.4s ease; 
-}
+.page { opacity: 0; transform: translateY(10px); display: none; transition: opacity 0.4s ease, transform 0.4s ease; }
 .page.active-page { display: block; }
-/* Класс для анимации запускаем через JS таймер */
 .page.fade-in { opacity: 1; transform: translateY(0); }
-
 .card { padding: 25px; text-align: center; }
 
 /* Profile */
 .avatar { width: 100px; height: 100px; border-radius: 50%; border: 4px solid var(--glass-bg); margin-bottom: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
-.username { font-size: 1.6rem; font-weight: 700; }
+.username { font-size: 1.6rem; font-weight: 800; }
+
 .stats-grid { display: grid; gap: 15px; margin-top: 25px; text-align: left; }
 .stat-box { padding: 15px; display: flex; align-items: center; gap: 15px; }
 .stat-icon { color: var(--accent); font-size: 1.5rem; }
@@ -243,58 +199,68 @@ main { padding-top: 140px; padding-bottom: 40px; width: 100%; max-width: 500px; 
 /* Chat */
 .chat-card { padding: 0; height: 70vh; display: flex; flex-direction: column; overflow: hidden; }
 .chat-top-bar { padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; }
-.clear-btn { background: none; border: none; color: var(--text-muted); cursor: pointer; }
-.chat-area { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
+.clear-btn { background: none; border: none; color: var(--text-muted); cursor: pointer; transition: 0.2s; }
+.clear-btn:hover { color: #ff4b4b; transform: rotate(15deg); }
 
+.chat-area { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
 .message { max-width: 85%; padding: 12px 16px; border-radius: 18px; font-size: 0.95rem; line-height: 1.4; text-align: left; }
 .message.bot { background: var(--glass-bg); color: var(--text-main); align-self: flex-start; border-bottom-left-radius: 4px; }
 .message.user { background: var(--accent-grad); color: white; align-self: flex-end; border-bottom-right-radius: 4px; }
 
 .input-area { padding: 15px; display: flex; gap: 10px; border-top: 1px solid rgba(128,128,128,0.1); }
-.input-area input { flex: 1; border: none; background: rgba(128,128,128, 0.1); padding: 12px 15px; border-radius: 25px; font-size: 1rem; color: var(--text-main); }
-.send-btn { background: var(--accent-grad); border: none; color: white; width: 48px; height: 48px; border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; }
+.input-area input { flex: 1; border: none; background: rgba(128,128,128, 0.1); padding: 12px 15px; border-radius: 25px; font-size: 1rem; color: var(--text-main); font-family: 'Nunito', sans-serif; }
+.send-btn { background: var(--accent-grad); border: none; color: white; width: 48px; height: 48px; border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: 0.2s; }
+.send-btn:hover { transform: scale(1.1); box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
 
-/* === НОВЫЕ ОШИБКИ (TOASTS) === */
-/* 1. Нижний тост */
+/* === НОВЫЕ СТИЛИ ДЛЯ ТОСТОВ (ЧИСТОЕ СТЕКЛО) === */
+/* Нижний тост */
 .toast-bottom {
     position: fixed; bottom: 20px; left: 50%; transform: translate(-50%, 100%);
-    background: var(--glass-bg); backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 75, 75, 0.5);
+    background: var(--glass-bg); backdrop-filter: blur(16px);
+    /* УБРАЛИ ЦВЕТНУЮ ОБВОДКУ, оставили еле заметную для контраста */
+    border: 1px solid rgba(255,255,255, 0.3);
     color: var(--text-main);
-    padding: 12px 20px; border-radius: 12px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    padding: 12px 20px; border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
     display: flex; align-items: center; gap: 10px;
-    z-index: 3000;
-    width: 90%; max-width: 400px;
-    font-size: 0.9rem; font-weight: 500;
+    z-index: 3000; width: 90%; max-width: 400px;
+    font-size: 0.9rem; font-weight: 600;
     opacity: 0; transition: all 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
 }
 .toast-bottom.show { transform: translate(-50%, 0); opacity: 1; }
 
-/* 2. Боковой тост */
+/* Боковой тост */
 .toast-side {
-    position: fixed; top: 80px; right: -300px; /* Спрятан справа */
-    width: 260px;
-    background: var(--glass-bg); backdrop-filter: blur(16px);
-    border: 1px solid var(--accent); /* Цвет схемы */
-    border-radius: 16px;
-    padding: 15px;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+    position: fixed; top: 80px; right: -320px;
+    width: 280px;
+    background: var(--glass-bg); backdrop-filter: blur(20px);
+    /* ЧИСТОЕ СТЕКЛО БЕЗ ГРАДИЕНТА/АКЦЕНТА */
+    border: 1px solid rgba(255,255,255, 0.4);
+    border-radius: 18px;
+    padding: 20px;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.15);
     z-index: 2900;
     transition: right 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
     display: flex; flex-direction: column; gap: 10px;
 }
-.toast-side.show { right: 10px; }
+.toast-side.show { right: 15px; }
 
-.toast-content h4 { margin: 0 0 5px 0; color: var(--accent); }
-.toast-content p { font-size: 0.85rem; color: var(--text-muted); margin: 0 0 10px 0; line-height: 1.3; }
+.toast-content h4 { margin: 0 0 5px 0; color: var(--text-main); font-weight: 800; font-size: 1.1rem; }
+.toast-content p { font-size: 0.9rem; color: var(--text-muted); margin: 0 0 15px 0; line-height: 1.4; }
+.toast-link { color: var(--accent); text-decoration: none; font-weight: 700; border-bottom: 1px dashed var(--accent); }
+.toast-link:hover { border-bottom-style: solid; }
+
 .copy-err-btn {
     background: var(--accent-grad); color: white; border: none;
-    padding: 8px 12px; border-radius: 8px; font-size: 0.8rem; font-weight: 600;
-    cursor: pointer; display: flex; align-items: center; gap: 5px; width: 100%; justify-content: center;
+    padding: 10px 12px; border-radius: 10px; font-size: 0.85rem; font-weight: 700;
+    cursor: pointer; display: flex; align-items: center; gap: 6px; width: 100%; justify-content: center;
+    font-family: 'Nunito', sans-serif; transition: 0.2s;
 }
+.copy-err-btn:hover { filter: brightness(1.1); transform: translateY(-1px); }
+
 .close-toast {
-    position: absolute; top: 5px; right: 10px;
-    background: none; border: none; font-size: 1.5rem; color: var(--text-muted); cursor: pointer;
-    }
+    position: absolute; top: 10px; right: 10px;
+    background: none; border: none; font-size: 1.5rem; color: var(--text-muted); cursor: pointer; transition: 0.2s;
+}
+.close-toast:hover { color: var(--text-main); }
     
