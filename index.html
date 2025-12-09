@@ -11,11 +11,8 @@
 </head>
 <body class="theme-system scheme-ocean">
 
-    <div class="background-blob blob-1"></div>
-    <div class="background-blob blob-2"></div>
-
     <header class="floating-header">
-        <div class="header-content surface">
+        <div class="header-content glass-panel">
             <button class="btn-nav" onclick="toggleMenu()">
                 <span class="material-icons-round">menu</span>
                 <span>Меню</span>
@@ -28,7 +25,7 @@
         </div>
     </header>
 
-    <nav id="menu-dropdown" class="dropdown surface hidden">
+    <nav id="menu-dropdown" class="dropdown glass-panel hidden">
         <button onclick="navigate('home')"><span class="material-icons-round">home</span> Главная</button>
         <button onclick="navigate('socials')"><span class="material-icons-round">share</span> Соц. Сети</button>
         <button onclick="navigate('news')"><span class="material-icons-round">article</span> Новости</button>
@@ -38,21 +35,13 @@
 
     <div id="settings-modal" class="modal hidden">
         <div class="modal-overlay" onclick="toggleSettings()"></div>
-        <div class="modal-content surface compact-modal">
+        <div class="modal-content glass-panel compact-modal">
             <div class="modal-header">
                 <h3>Настройки</h3>
                 <button class="close-btn" onclick="toggleSettings()">×</button>
             </div>
             
             <div class="settings-body">
-                <div class="setting-item toggle-item">
-                    <label for="style-toggle">Жидкое стекло</label>
-                    <label class="switch">
-                        <input type="checkbox" id="style-toggle" onchange="toggleGlassMode(this.checked)">
-                        <span class="slider round"></span>
-                    </label>
-                </div>
-
                 <div class="setting-item">
                     <label>Тема</label>
                     <div class="select-wrapper">
@@ -65,15 +54,15 @@
                 </div>
 
                 <div class="setting-item">
-                    <label>Цвет акцента</label>
+                    <label>Цветовая схема</label>
                     <div class="select-wrapper">
                         <select id="scheme-select" onchange="changeScheme(this.value)">
-                            <option value="scheme-ocean">Океан (Синий)</option>
-                            <option value="scheme-sunset">Закат (Оранжевый)</option>
-                            <option value="scheme-forest">Лес (Зеленый)</option>
-                            <option value="scheme-berry">Ягоды (Фиолетовый)</option>
-                            <option value="scheme-neon">Неон (Розовый)</option>
-                            <option value="scheme-stone">Монохром (Серый)</option>
+                            <option value="scheme-ocean">Океан</option>
+                            <option value="scheme-sunset">Закат</option>
+                            <option value="scheme-forest">Лес</option>
+                            <option value="scheme-berry">Ягоды</option>
+                            <option value="scheme-neon">Неон</option>
+                            <option value="scheme-stone">Монохром</option>
                         </select>
                     </div>
                 </div>
@@ -83,10 +72,26 @@
         </div>
     </div>
 
+    <div id="toast-bottom" class="toast-bottom hidden">
+        <span class="material-icons-round" style="color: #ff4b4b;">error_outline</span>
+        <span>О нет! Произошла ошибка. Скорее всего мы над ней уже работаем!</span>
+    </div>
+
+    <div id="toast-side" class="toast-side hidden">
+        <div class="toast-content">
+            <h4>Нашёл ошибку?</h4>
+            <p>Сообщи нам! Скопируй ошибку и пришли <b>@golka_tok</b>.</p>
+            <button class="copy-err-btn" onclick="copyLastError()">
+                <span class="material-icons-round">content_copy</span> Скопировать ошибку
+            </button>
+        </div>
+        <button class="close-toast" onclick="hideSideToast()">×</button>
+    </div>
+
     <main id="app-container">
         
         <section id="page-home" class="page active-page">
-            <div class="card surface profile-card">
+            <div class="card glass-panel profile-card">
                 <div class="profile-header">
                     <div class="avatar-wrapper">
                         <img src="" id="user-avatar" alt="Avatar" class="avatar">
@@ -95,15 +100,15 @@
                 </div>
                 
                 <div class="stats-grid">
-                    <div class="stat-box surface-inner">
-                        <div class="stat-icon yt-color"><span class="material-icons-round">groups</span></div>
+                    <div class="stat-box glass-inner">
+                        <div class="stat-icon"><span class="material-icons-round">groups</span></div>
                         <div class="stat-data">
                             <span class="stat-label">Подписчики Jahvir</span>
                             <span class="stat-value" id="yt-subs">Загрузка...</span>
                         </div>
                     </div>
                     
-                    <div class="video-card surface-inner">
+                    <div class="video-card glass-inner">
                         <div class="video-header-text">
                             <span class="v-label">Последнее видео:</span>
                             <span class="v-title" id="yt-video">Загрузка...</span>
@@ -118,8 +123,8 @@
         </section>
 
         <section id="page-jahvir-ai" class="page hidden-page">
-            <div class="card surface chat-card">
-                <div class="chat-top-bar surface-header">
+            <div class="card glass-panel chat-card">
+                <div class="chat-top-bar glass-inner-header">
                     <div class="bot-info">
                         <span class="material-icons-round">smart_toy</span>
                         <div>
@@ -138,7 +143,7 @@
                     </div>
                 </div>
                 
-                <div class="input-area surface-footer">
+                <div class="input-area glass-inner-footer">
                     <input type="text" id="chat-input" placeholder="Сообщение...">
                     <button class="send-btn" onclick="sendMessage()" id="send-btn">
                         <span class="material-icons-round">send</span>
@@ -148,7 +153,7 @@
         </section>
 
         <section id="page-placeholder" class="page hidden-page">
-            <div class="card surface placeholder-card">
+            <div class="card glass-panel placeholder-card">
                 <span class="material-icons-round big-icon">construction</span>
                 <h2>В работе</h2>
                 <button class="btn-primary btn-wide" onclick="navigate('home')">Назад</button>
@@ -160,4 +165,5 @@
     <script src="js/config.js"></script>
     <script src="js/script.js"></script>
 </body>
-</html>
+                        </html>
+    
