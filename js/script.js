@@ -1,165 +1,133 @@
-// === ПОДКЛЮЧЕНИЕ КОНФИГУРАЦИИ ===
-// Берем ключи из глобального объекта CONFIG (из файла config.js)
-// Если файла нет, будет ошибка, но код не упадет с try/catch
+// === КОНФИГУРАЦИЯ ===
+// Берем ключи из config.js
 let KEYS = { YOUTUBE_KEY: "", YOUTUBE_ID: "", GEMINI_KEY: "" };
-
 try {
     if (typeof CONFIG !== 'undefined') {
-        KEYS.YOUTUBE_KEY = CONFIG.YOUTUBE_API_KEY;
-        KEYS.YOUTUBE_ID = CONFIG.YOUTUBE_CHANNEL_ID;
-        KEYS.GEMINI_KEY = CONFIG.GEMINI_API_KEY;
-    } else {
-        console.warn("Файл config.js не найден или не загружен.");
+        KEYS = { YOUTUBE_KEY: CONFIG.YOUTUBE_API_KEY, YOUTUBE_ID: CONFIG.YOUTUBE_CHANNEL_ID, GEMINI_KEY: CONFIG.GEMINI_API_KEY };
     }
-} catch (e) {
-    console.error("Ошибка конфига:", e);
-}
+} catch (e) { console.error("Config missing"); }
 
 const GEMINI_MODEL = 'gemini-2.5-flash'; 
 
-// ПРОМПТ (ТОТ ЖЕ, ПОЛНЫЙ)
-// === ПОЛНЫЙ, ДЕТАЛЬНЫЙ ПРОМПТ (СТРОГО ПО CSV) ===
+// ПРОМПТ (Тот самый, полный)
 const SYSTEM_PROMPT = `
-Ты JahvirChat помощник. Твоя роль — помогать по чату, но ты НЕ сам Jahvir.
-ТВОЯ ЛИЧНОСТЬ:
-- Настроение: Хорошее, с легкой насмешкой.
-- Про JAHVIR (Дава, Davajahvir, Джахвир): Ваще крутой чувак, блогер, стримит, снимает видосы, модерирует свой чат, сигма, повелитель.
-- Если спросят "Кто такой голка": Отвечай только "да".
-- Если говорят "осуди" (или склонения): Отвечай "осуууждаю".
-- КОД и ДОМАШКА: Ты этим НЕ занимаешься. Вежливо или с шуткой отказывай.
-
-=== ПРАВИЛА ЧАТА (НЕЗНАНИЕ НЕ ОСВОБОЖДАЕТ ОТ ОТВЕТСТВЕННОСТИ) ===
-
-1. ЗАПРЕЩЕНО (Нарушения):
-- Оскорбление участников и администрации (унижение по расе, религии, внешности, полу).
-- Шокирующий контент (18+, порнография/NSFW, насилие, ранения).
-- Обсуждение войны, расы, религии, феминизма и политики (Гитлер тоже запрещен).
-- Спам и флуд (более 4-х сообщений, стикеров, эмодзи подряд).
-- Тег администрации без весомой причины.
-- Слив чужих данных (Доксинг).
-- Оффтопик (сообщения не по теме чата/поста).
-- Ники с содержанием нецензурного текста.
-- Спам в ЛС.
-- Многие типы рекламы и Торговля чем-либо в чате.
-- Обход правил чата.
-
-2. НАКАЗАНИЯ ДЛЯ УЧАСТНИКОВ:
-- Оскорбления: Мут на 10 минут.
-- Шокирующий контент: Мут на 30 минут + Кик (рецидив — Мут на 1 час).
-- Политика/Война/Религия: Кик (рецидив — Мут на 1 час).
-- Спам/Флуд: Менее 10 сообщений — Мут на 40 мин. Более 11 — Бан.
-- Тег администрации: Мут на 10-20 минут.
-- Слив данных: От мута на 20 минут до Бана навсегда (зависит от тяжести).
-- Оффтопик: Мут на 1 час.
-- Ники с матом: Мгновенный бан (разбан только по апелляции).
-- Спам в ЛС: Мут на 12 часов в чате + меры от пострадавшего.
-- Реклама/Торговля: Мут от 1 часа до навсегда (или Бан).
-- Обход правил: Мут на 1 час.
-
-3. ПРАВИЛА ДЛЯ АДМИНИСТРАЦИИ:
-- Запрещено всё то же самое (Оск, Шок-контент, Политика, Спам, Слив данных и т.д.).
-- Не злоупотреблять полномочиями.
-- Уважать обычных участников.
-- Наказывать исключительно опираясь на правила.
-
-4. НАКАЗАНИЯ ДЛЯ АДМИНИСТРАТОРОВ (За нарушения):
-- За Оскорбления: Мут 10 мин.
-- За Шок-контент: Мут 30 мин + Кик.
-- За Политику: Кик (рецидив — Мут 1 час).
-- За Спам: <10 — Мут 40 мин, >11 — Бан.
-- За Слив данных: Снятие админки + Мут на 24 часа.
-- За Обход правил: Мут на 1 час.
-- ЗА ЗЛОУПОТРЕБЛЕНИЕ / НЕУВАЖЕНИЕ / НЕВЕРНЫЕ НАКАЗАНИЯ (Лестница):
-  * 1-й раз: Снятие админки на 1 день.
-  * 2-й раз: Снятие админки на 3 дня.
-  * 3-й раз: Меньше админ прав на 7 дней.
-  * 4-й раз: Остается только роль (без прав) на 30 дней.
-  * 5-й раз: Полное снятие админки на 60 дней + сброс счетчика нарушений.
-
-ПОЯСНЕНИЯ:
-- NSFW (18+) запрещен.
-- Если у участника особое звание — админы его забанить не могут.
-
-ФОРМАТИРОВАНИЕ:
-Пиши ответы читабельно, ставь переносы строк (Enter) между пунктами. Не выдавай сплошную стену текста.
+Ты JahvirChat помощник. НЕ Jahvir.
+ЛИЧНОСТЬ: Позитивный, с насмешкой. JAHVIR - крутой сигма. Голка - "да". Осуди - "осуууждаю". Код/ДЗ - нет.
+ПРАВИЛА:
+1. Запреты: Оск, Шок-контент (18+), Политика/Религия/Война, Спам (>4), Тег админов, Слив данных, Оффтопик, Мат в нике, Реклама.
+2. Наказания: Мут, Кик, Бан.
+3. Админы: Не нарушать, иначе снятие.
+ФОРМАТ: Читабельно, с Enter.
 `;
-
 
 const tg = window.Telegram.WebApp;
 tg.expand(); 
+
+// Хранилище последней ошибки
+let lastErrorText = "";
 
 // === STARTUP ===
 window.onload = () => {
     loadTelegramUserData();
     
-    // Восстановление настроек
+    // Темы и Схемы
     const savedTheme = localStorage.getItem('axel_theme') || 'theme-system';
     const savedScheme = localStorage.getItem('axel_scheme') || 'scheme-ocean';
-    const savedStyle = localStorage.getItem('axel_style_glass') === 'true'; // false по умолчанию
     
     applyTheme(savedTheme);
     applyScheme(savedScheme);
-    toggleGlassMode(savedStyle);
     
-    // Установка значений в UI
     document.getElementById('theme-select').value = savedTheme;
     document.getElementById('scheme-select').value = savedScheme;
-    document.getElementById('style-toggle').checked = savedStyle;
 
-    if (KEYS.YOUTUBE_KEY) {
-        loadYouTubeStats();
-    }
+    if (KEYS.YOUTUBE_KEY) loadYouTubeStats();
+    
+    // Анимация входа
+    document.getElementById('page-home').classList.add('fade-in');
 };
 
-// === STYLE SWITCHER LOGIC ===
-function toggleGlassMode(isGlass) {
-    if (isGlass) {
-        document.body.classList.add('glass-mode');
-    } else {
-        document.body.classList.remove('glass-mode');
-    }
-    localStorage.setItem('axel_style_glass', isGlass);
+// === ОШИБКИ (НОВАЯ СИСТЕМА) ===
+function showError(technicalMessage) {
+    lastErrorText = technicalMessage || "Неизвестная ошибка";
+    
+    // 1. Показываем нижний тост "О нет!"
+    const bottomToast = document.getElementById('toast-bottom');
+    bottomToast.classList.remove('hidden');
+    // Небольшая задержка для CSS анимации
+    setTimeout(() => bottomToast.classList.add('show'), 10);
+    
+    // Скрываем нижний тост через 5 сек
+    setTimeout(() => {
+        bottomToast.classList.remove('show');
+        setTimeout(() => bottomToast.classList.add('hidden'), 500);
+    }, 5000);
+
+    // 2. Показываем боковой тост "Сообщи нам"
+    const sideToast = document.getElementById('toast-side');
+    sideToast.classList.remove('hidden');
+    setTimeout(() => sideToast.classList.add('show'), 10);
 }
 
-// === TELEGRAM USER DATA ===
-function loadTelegramUserData() {
-    const nameEl = document.getElementById('user-name');
-    const avatarEl = document.getElementById('user-avatar');
+function hideSideToast() {
+    const sideToast = document.getElementById('toast-side');
+    sideToast.classList.remove('show');
+    setTimeout(() => sideToast.classList.add('hidden'), 400);
+}
 
-    if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
-        const user = tg.initDataUnsafe.user;
-        nameEl.innerText = user.first_name || 'User';
-        if (user.photo_url) {
-            avatarEl.src = user.photo_url;
-        } else {
-            avatarEl.src = `https://ui-avatars.com/api/?name=${user.first_name}&background=random&color=fff&bold=true`;
-        }
-        // Auto-theme
-        if (localStorage.getItem('axel_theme') === 'theme-system') {
-             if (tg.colorScheme === 'dark') document.body.classList.add('theme-dark');
-        }
+function copyLastError() {
+    if (!lastErrorText) return;
+    navigator.clipboard.writeText(lastErrorText).then(() => {
+        const btn = document.querySelector('.copy-err-btn');
+        const originalText = btn.innerHTML;
+        btn.innerHTML = '<span class="material-icons-round">check</span> Скопировано!';
+        setTimeout(() => btn.innerHTML = originalText, 2000);
+    });
+}
+
+// === НАВИГАЦИЯ (Плавная) ===
+function toggleMenu() { 
+    const menu = document.getElementById('menu-dropdown');
+    if (menu.classList.contains('hidden')) {
+        menu.classList.remove('hidden');
     } else {
-        nameEl.innerText = "Tester";
-        avatarEl.src = "https://via.placeholder.com/150"; 
+        menu.classList.add('hidden');
     }
 }
 
-// === NAVIGATION ===
-function toggleMenu() { document.getElementById('menu-dropdown').classList.toggle('hidden'); }
-function toggleSettings() { document.getElementById('settings-modal').classList.toggle('hidden'); }
+function toggleSettings() { 
+    const modal = document.getElementById('settings-modal');
+    if (modal.classList.contains('hidden')) {
+        modal.classList.remove('hidden');
+    } else {
+        modal.classList.add('hidden');
+    }
+}
 
 function navigate(pageId) {
     document.getElementById('menu-dropdown').classList.add('hidden');
-    document.querySelectorAll('.page').forEach(p => p.classList.add('hidden-page'));
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active-page'));
+    
+    const pages = document.querySelectorAll('.page');
+    pages.forEach(p => {
+        p.classList.remove('fade-in'); // Убираем анимацию
+        setTimeout(() => {
+            p.classList.remove('active-page');
+            p.classList.add('hidden-page');
+        }, 400); // Ждем пока исчезнет (400ms transition)
+    });
     
     let targetId = 'page-placeholder';
     if (pageId === 'home') targetId = 'page-home';
     if (pageId === 'jahvir-ai') targetId = 'page-jahvir-ai';
     
     const target = document.getElementById(targetId);
-    target.classList.remove('hidden-page');
-    setTimeout(() => target.classList.add('active-page'), 10);
+    
+    // Задержка чтобы прошла анимация исчезновения
+    setTimeout(() => {
+        target.classList.remove('hidden-page');
+        target.classList.add('active-page');
+        // Запуск анимации появления
+        setTimeout(() => target.classList.add('fade-in'), 50);
+    }, 400);
 }
 
 // === THEME MANAGER ===
@@ -179,12 +147,16 @@ function applyTheme(val) {
         document.body.classList.add(val);
     }
 }
+
 function changeScheme(val) {
     localStorage.setItem('axel_scheme', val);
     applyScheme(val);
 }
 function applyScheme(val) {
-    document.body.className = document.body.className.replace(/scheme-\w+/g, '');
+    // Удаляем старые схемы
+    document.body.classList.forEach(className => {
+        if (className.startsWith('scheme-')) document.body.classList.remove(className);
+    });
     document.body.classList.add(val);
 }
 
@@ -199,7 +171,11 @@ async function sendMessage() {
     const input = document.getElementById('chat-input');
     const text = input.value.trim();
     if (!text) return;
-    if (!KEYS.GEMINI_KEY) { alert("Ключ API не найден в config.js"); return; }
+    
+    if (!KEYS.GEMINI_KEY) {
+        showError("API Key Missing (Config Error)");
+        return;
+    }
 
     appendMessage(text, 'user');
     input.value = '';
@@ -222,7 +198,8 @@ async function sendMessage() {
 
         if (data.error) {
             console.error(data.error);
-            appendMessage("Ошибка ИИ: " + data.error.message, 'bot');
+            // ВЫЗЫВАЕМ НОВУЮ ОШИБКУ, А НЕ ПИШЕМ В ЧАТ
+            showError("AI Error: " + data.error.message);
         } else {
             const reply = data.candidates[0].content.parts[0].text;
             chatHistory.push({ role: "user", parts: [{ text: text }] });
@@ -231,7 +208,7 @@ async function sendMessage() {
         }
     } catch (e) {
         console.error(e);
-        appendMessage("Ошибка сети.", 'bot');
+        showError("Network Error: " + e.message);
     } finally {
         input.disabled = false;
         input.focus();
@@ -242,37 +219,29 @@ function appendMessage(txt, type) {
     const box = document.getElementById('chat-output');
     const div = document.createElement('div');
     div.className = `message ${type}`;
-    let formatted = txt.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>').replace(/\n/g, '<br>');
-    div.innerHTML = formatted;
+    div.innerHTML = txt.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>').replace(/\n/g, '<br>');
     
-    // Копирование (только для бота)
+    const wrapper = document.createElement('div');
+    wrapper.style.display = 'flex';
+    wrapper.style.flexDirection = 'column';
+    wrapper.style.width = '100%';
+    
     if (type === 'bot') {
-        const wrapper = document.createElement('div');
-        wrapper.style.display = 'flex';
-        wrapper.style.flexDirection = 'column';
-        wrapper.style.width = '100%';
         wrapper.style.alignItems = 'flex-start';
-        
         wrapper.appendChild(div);
-        
+        // Копирование сообщения
         const copyBtn = document.createElement('button');
-        copyBtn.className = 'copy-btn';
+        copyBtn.className = 'copy-btn'; // Добавить стиль если пропал
         copyBtn.innerText = 'Копировать';
-        copyBtn.onclick = () => {
-             navigator.clipboard.writeText(txt);
-             copyBtn.innerText = 'Скопировано';
-             setTimeout(()=>copyBtn.innerText='Копировать', 1500);
-        };
+        copyBtn.style.cssText = "margin-left:5px;background:none;border:none;color:var(--text-muted);font-size:10px;cursor:pointer;";
+        copyBtn.onclick = () => { navigator.clipboard.writeText(txt); };
         wrapper.appendChild(copyBtn);
-        box.appendChild(wrapper);
     } else {
-        // Юзер
-        const wrapper = document.createElement('div');
-        wrapper.style.display = 'flex'; 
-        wrapper.style.justifyContent = 'flex-end';
+        wrapper.style.alignItems = 'flex-end';
         wrapper.appendChild(div);
-        box.appendChild(wrapper);
     }
+    
+    box.appendChild(wrapper);
     box.scrollTop = box.scrollHeight;
 }
 
@@ -283,21 +252,18 @@ async function loadYouTubeStats() {
     const videoContainer = document.getElementById('video-player-container');
 
     try {
-        // 1. Подписчики
+        // 1. Subs
         const chanRes = await fetch(`https://www.googleapis.com/youtube/v3/channels?part=statistics&id=${KEYS.YOUTUBE_ID}&key=${KEYS.YOUTUBE_KEY}`);
-        if (!chanRes.ok) throw new Error(`Err ${chanRes.status}`);
+        if (!chanRes.ok) throw new Error(`Channel API: ${chanRes.status}`);
         const chanData = await chanRes.json();
         
-        if (chanData.items && chanData.items.length > 0) {
-            const count = Number(chanData.items[0].statistics.subscriberCount);
-            subsEl.innerText = count.toLocaleString(); 
-        } else {
-            subsEl.innerText = "Недоступно";
+        if (chanData.items) {
+            subsEl.innerText = Number(chanData.items[0].statistics.subscriberCount).toLocaleString(); 
         }
 
-        // 2. Видео
+        // 2. Video
         const vidRes = await fetch(`https://www.googleapis.com/youtube/v3/search?key=${KEYS.YOUTUBE_KEY}&channelId=${KEYS.YOUTUBE_ID}&part=snippet&order=date&maxResults=1&type=video`);
-        if (!vidRes.ok) throw new Error(`Err ${vidRes.status}`);
+        if (!vidRes.ok) throw new Error(`Video API: ${vidRes.status}`);
         const vidData = await vidRes.json();
         
         if (vidData.items && vidData.items.length > 0) {
@@ -312,11 +278,32 @@ async function loadYouTubeStats() {
     } catch (e) {
         console.error("YT Error:", e);
         subsEl.innerText = "Ошибка";
-        videoTitleEl.innerText = "Сбой загрузки";
+        videoTitleEl.innerText = "Сбой";
+        // Здесь можно тоже вызвать showError, если критично
+        showError("YouTube API Error: " + e.message);
+    }
+}
+
+// === TELEGRAM DATA ===
+function loadTelegramUserData() {
+    const nameEl = document.getElementById('user-name');
+    const avatarEl = document.getElementById('user-avatar');
+
+    if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+        const user = tg.initDataUnsafe.user;
+        nameEl.innerText = user.first_name || 'User';
+        if (user.photo_url) avatarEl.src = user.photo_url;
+        else avatarEl.src = `https://ui-avatars.com/api/?name=${user.first_name}&background=random`;
+        
+        if (localStorage.getItem('axel_theme') === 'theme-system') {
+             if (tg.colorScheme === 'dark') document.body.classList.add('theme-dark');
+        }
+    } else {
+        nameEl.innerText = "Tester";
+        avatarEl.src = "https://via.placeholder.com/150"; 
     }
 }
 
 document.getElementById('chat-input').addEventListener('keypress', (e) => {
     if (e.key === 'Enter') sendMessage();
 });
-              
