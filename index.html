@@ -6,6 +6,10 @@
     <title>JahvirChat Mini App</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    
     <link rel="stylesheet" href="css/style.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
 </head>
@@ -80,7 +84,7 @@
     <div id="toast-side" class="toast-side hidden">
         <div class="toast-content">
             <h4>Нашёл ошибку?</h4>
-            <p>Сообщи нам! Скопируй ошибку и пришли <b>@golka_tok</b>.</p>
+            <p>Сообщи нам! Скопируй ошибку и пришли <a href="https://t.me/golka_tok" target="_blank" class="toast-link">@golka_tok</a>.</p>
             <button class="copy-err-btn" onclick="copyLastError()">
                 <span class="material-icons-round">content_copy</span> Скопировать ошибку
             </button>
@@ -113,7 +117,6 @@
                             <span class="v-label">Последнее видео:</span>
                             <span class="v-title" id="yt-video">Загрузка...</span>
                         </div>
-                        
                         <div id="video-player-container">
                             <div class="video-placeholder"><span class="material-icons-round">play_circle</span></div>
                         </div>
@@ -165,5 +168,5 @@
     <script src="js/config.js"></script>
     <script src="js/script.js"></script>
 </body>
-                        </html>
-    
+            </html>
+                        
