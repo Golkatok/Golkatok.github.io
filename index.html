@@ -72,8 +72,7 @@
             width: 50px;
             height: 50px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            display: flex;
+            display: none;
             align-items: center;
             justify-content: center;
             font-size: 24px;
@@ -81,6 +80,10 @@
             color: white;
             flex-shrink: 0;
             line-height: 1;
+        }
+
+        .avatar.visible {
+            display: flex;
         }
 
         .avatar img {
@@ -374,8 +377,7 @@
             width: 80px;
             height: 80px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            display: flex;
+            display: none;
             align-items: center;
             justify-content: center;
             font-size: 40px;
@@ -384,6 +386,10 @@
             margin-bottom: 20px;
             animation: pulse 2s ease-in-out infinite;
             font-family: 'Space Grotesk', sans-serif;
+        }
+
+        .loading-logo.visible {
+            display: flex;
         }
 
         @keyframes pulse {
@@ -445,7 +451,7 @@
 <body>
     <!-- Экран загрузки -->
     <div class="loading-screen" id="loadingScreen">
-        <div class="loading-logo">J</div>
+        <div class="loading-logo" id="loadingLogo"></div>
         <div class="loading-text">Загрузка</div>
         <div class="loading-dots">
             <div class="loading-dot"></div>
@@ -458,7 +464,7 @@
         <!-- Главная страница -->
         <div class="page active" id="home">
             <div class="header">
-                <div class="avatar" id="userAvatar">J</div>
+                <div class="avatar" id="userAvatar"></div>
                 <div class="theme-toggle" onclick="toggleTheme()">
                     <img src="png/moon.png" alt="Theme" class="theme-icon" id="themeIcon">
                 </div>
@@ -483,7 +489,7 @@
         <!-- Соцсети -->
         <div class="page" id="social">
             <div class="header">
-                <div class="avatar" id="userAvatar2">J</div>
+                <div class="avatar" id="userAvatar2"></div>
                 <div class="theme-toggle" onclick="toggleTheme()">
                     <img src="png/moon.png" alt="Theme" class="theme-icon">
                 </div>
@@ -512,7 +518,7 @@
         <!-- Посты -->
         <div class="page" id="posts">
             <div class="header">
-                <div class="avatar" id="userAvatar3">J</div>
+                <div class="avatar" id="userAvatar3"></div>
                 <div class="theme-toggle" onclick="toggleTheme()">
                     <img src="png/moon.png" alt="Theme" class="theme-icon">
                 </div>
@@ -529,7 +535,7 @@
         <!-- JahvirAI -->
         <div class="page" id="ai">
             <div class="header">
-                <div class="avatar" id="userAvatar4">J</div>
+                <div class="avatar" id="userAvatar4"></div>
                 <div class="theme-toggle" onclick="toggleTheme()">
                     <img src="png/moon.png" alt="Theme" class="theme-icon">
                 </div>
@@ -586,36 +592,32 @@
                 
                 if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
                     const user = tg.initDataUnsafe.user;
-                    const firstName = user.first_name || 'J';
                     
                     console.log('User data:', user);
                     console.log('Photo URL:', user.photo_url);
                     
-                    // Обновляем логотип загрузки
-                    const loadingLogo = document.querySelector('.loading-logo');
-                    if (loadingLogo) {
-                        if (user.photo_url) {
+                    // Обновляем только если есть фото
+                    if (user.photo_url) {
+                        // Обновляем логотип загрузки
+                        const loadingLogo = document.getElementById('loadingLogo');
+                        if (loadingLogo) {
                             loadingLogo.innerHTML = `<img src="${user.photo_url}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;" alt="Avatar">`;
-                        } else {
-                            loadingLogo.textContent = firstName[0].toUpperCase();
+                            loadingLogo.classList.add('visible');
                         }
-                    }
-                    
-                    // Обновляем аватары на всех страницах
-                    const avatarIds = ['userAvatar', 'userAvatar2', 'userAvatar3', 'userAvatar4'];
-                    avatarIds.forEach(id => {
-                        const avatar = document.getElementById(id);
-                        if (avatar) {
-                            if (user.photo_url) {
+                        
+                        // Обновляем аватары на всех страницах
+                        const avatarIds = ['userAvatar', 'userAvatar2', 'userAvatar3', 'userAvatar4'];
+                        avatarIds.forEach(id => {
+                            const avatar = document.getElementById(id);
+                            if (avatar) {
                                 avatar.innerHTML = `<img src="${user.photo_url}" alt="Avatar">`;
-                            } else {
-                                avatar.textContent = firstName[0].toUpperCase();
+                                avatar.classList.add('visible');
                             }
-                        }
-                    });
-                    
-                    userDataLoaded = true;
-                    return true;
+                        });
+                        
+                        userDataLoaded = true;
+                        return true;
+                    }
                 }
             }
             return false;
