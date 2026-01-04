@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Jahvir App</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -380,7 +381,6 @@
         .loading-logo img {
             width: 100%;
             height: 100%;
-            border-radius: 50%;
             object-fit: cover;
         }
 
@@ -573,7 +573,85 @@
     </div>
 
     <script>
-        // Скрыть экран загрузки после загрузки данных
+        console.log('=== Script initialization ===');
+        
+        // Инициализация Telegram WebApp
+        let tg = null;
+        let userDataLoaded = false;
+
+        function initTelegram() {
+            console.log('Initializing Telegram WebApp...');
+            
+            if (window.Telegram && window.Telegram.WebApp) {
+                tg = window.Telegram.WebApp;
+                tg.ready();
+                tg.expand();
+                
+                console.log('Telegram WebApp ready');
+                console.log('Platform:', tg.platform);
+                console.log('Version:', tg.version);
+                console.log('initData:', tg.initData);
+                console.log('initDataUnsafe:', tg.initDataUnsafe);
+                
+                // Применяем тему из Telegram
+                if (tg.colorScheme === 'dark') {
+                    document.body.classList.add('dark');
+                    updateThemeIcons(true);
+                }
+                
+                return true;
+            } else {
+                console.log('Telegram WebApp not available');
+                return false;
+            }
+        }
+
+        function updateUserData() {
+            if (!tg) return false;
+            
+            if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+                const user = tg.initDataUnsafe.user;
+                
+                console.log('=== User Data ===');
+                console.log('User ID:', user.id);
+                console.log('First name:', user.first_name);
+                console.log('Last name:', user.last_name);
+                console.log('Username:', user.username);
+                console.log('Language:', user.language_code);
+                console.log('Photo URL:', user.photo_url);
+                
+                if (user.photo_url) {
+                    console.log('✅ Photo URL found, updating avatars...');
+                    
+                    const avatarImgs = [
+                        document.querySelector('#loadingLogo img'),
+                        document.querySelector('#userAvatar img'),
+                        document.querySelector('#userAvatar2 img'),
+                        document.querySelector('#userAvatar3 img'),
+                        document.querySelector('#userAvatar4 img')
+                    ];
+                    
+                    avatarImgs.forEach((img, index) => {
+                        if (img) {
+                            img.src = user.photo_url;
+                            console.log(`Updated avatar ${index + 1}`);
+                        }
+                    });
+                    
+                    userDataLoaded = true;
+                    return true;
+                } else {
+                    console.log('⚠️ Photo URL not available');
+                    console.log('Note: photo_url requires Mini App to be launched from attachment menu');
+                }
+            } else {
+                console.log('❌ No user data available');
+            }
+            
+            return false;
+        }
+
+        // Скрыть экран загрузки
         function hideLoadingScreen() {
             const loadingScreen = document.getElementById('loadingScreen');
             setTimeout(() => {
@@ -584,102 +662,30 @@
             }, 800);
         }
 
-        // Попытка получить данные пользователя из Telegram WebApp
-        let userDataLoaded = false;
-        
-        function updateUserData() {
-            console.log('=== Checking Telegram WebApp ===');
-            console.log('window.Telegram exists:', !!window.Telegram);
-            console.log('WebApp exists:', !!(window.Telegram && window.Telegram.WebApp));
-            
-            if (window.Telegram && window.Telegram.WebApp) {
-                const tg = window.Telegram.WebApp;
-                tg.ready();
-                
-                console.log('initDataUnsafe:', tg.initDataUnsafe);
-                console.log('initData:', tg.initData);
-                
-                if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
-                    const user = tg.initDataUnsafe.user;
-                    
-                    console.log('=== User Data ===');
-                    console.log('Full user object:', user);
-                    console.log('User ID:', user.id);
-                    console.log('First name:', user.first_name);
-                    console.log('Photo URL:', user.photo_url);
-                    console.log('Photo URL type:', typeof user.photo_url);
-                    console.log('Has photo_url:', 'photo_url' in user);
-                    
-                    // Обновляем URL картинки, если есть
-                    if (user.photo_url) {
-                        console.log('✅ Photo URL found, updating avatars...');
-                        
-                        // Обновляем логотип загрузки
-                        const loadingLogoImg = document.querySelector('#loadingLogo img');
-                        if (loadingLogoImg) {
-                            loadingLogoImg.src = user.photo_url;
-                            console.log('Updated loading logo');
-                        }
-                        
-                        // Обновляем аватары на всех страницах
-                        const avatarIds = ['userAvatar', 'userAvatar2', 'userAvatar3', 'userAvatar4'];
-                        avatarIds.forEach(id => {
-                            const avatarImg = document.querySelector(`#${id} img`);
-                            if (avatarImg) {
-                                avatarImg.src = user.photo_url;
-                                console.log(`Updated avatar: ${id}`);
-                            }
-                        });
-                        
-                        userDataLoaded = true;
-                        return true;
-                    } else {
-                        console.log('⚠️ Photo URL not available');
-                        console.log('Note: photo_url is only available when Mini App is launched from attachment menu');
-                        console.log('Or user privacy settings may prevent photo sharing');
-                    }
-                } else {
-                    console.log('❌ No user data in initDataUnsafe');
-                }
-            } else {
-                console.log('❌ Telegram WebApp not available');
-            }
-            return false;
-        }
-        
-        // Попытка загрузить данные сразу
-        updateUserData();
-        
-        // Повторная попытка через небольшую задержку (на случай если Telegram WebApp еще не инициализирован)
-        setTimeout(updateUserData, 100);
-        setTimeout(updateUserData, 300);
-
         // Переключение темы
         function toggleTheme() {
             document.body.classList.toggle('dark');
             const isDark = document.body.classList.contains('dark');
             localStorage.setItem('theme', isDark ? 'dark' : 'light');
-            
             updateThemeIcons(isDark);
         }
 
-        // Обновление всех иконок в зависимости от темы
+        // Обновление иконок темы
         function updateThemeIcons(isDark) {
             const iconFolder = isDark ? 'pngdark' : 'png';
             
-            // Обновление иконки переключателя темы
-            const themeIcons = document.querySelectorAll('.theme-icon');
-            themeIcons.forEach(icon => {
+            document.querySelectorAll('.theme-icon').forEach(icon => {
                 icon.src = isDark ? 'png/sun.png' : 'png/moon.png';
             });
             
-            // Обновление иконок в таб-баре
-            document.querySelector('.tab-item:nth-child(1) .tab-icon').src = `${iconFolder}/home.png`;
-            document.querySelector('.tab-item:nth-child(2) .tab-icon').src = `${iconFolder}/social.png`;
-            document.querySelector('.tab-item:nth-child(3) .tab-icon').src = `${iconFolder}/posts.png`;
-            document.querySelector('.tab-item:nth-child(4) .tab-icon').src = `${iconFolder}/jahvirai.png`;
+            const tabIcons = document.querySelectorAll('.tab-icon');
+            const iconNames = ['home', 'social', 'posts', 'jahvirai'];
+            tabIcons.forEach((icon, index) => {
+                if (iconNames[index]) {
+                    icon.src = `${iconFolder}/${iconNames[index]}.png`;
+                }
+            });
             
-            // Обновление иконок социальных сетей
             document.querySelectorAll('.social-icon').forEach((icon, index) => {
                 const names = ['discord', 'youtube', 'twitch', 'telegram'];
                 if (names[index]) {
@@ -687,7 +693,6 @@
                 }
             });
             
-            // Обновление иконок "в разработке"
             document.querySelectorAll('.construction-icon').forEach(icon => {
                 if (icon.src.includes('jahvirai')) {
                     icon.src = `${iconFolder}/jahvirai.png`;
@@ -723,7 +728,6 @@
 
         async function loadYouTubeData() {
             try {
-                // Загрузка подписчиков
                 const channelResponse = await fetch(
                     `https://www.googleapis.com/youtube/v3/channels?part=statistics&id=${CHANNEL_ID}&key=${API_KEY}`
                 );
@@ -734,18 +738,15 @@
                     document.getElementById('subscribers').textContent = subs.toLocaleString('ru-RU');
                 }
 
-                // Загрузка последнего горизонтального видео
                 const videosResponse = await fetch(
                     `https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${CHANNEL_ID}&order=date&maxResults=20&type=video&key=${API_KEY}`
                 );
                 const videosData = await videosResponse.json();
                 
                 if (videosData.items) {
-                    // Найти первое горизонтальное видео
                     for (let video of videosData.items) {
                         const videoId = video.id.videoId;
                         
-                        // Получаем детальную информацию о видео для проверки соотношения сторон
                         const videoDetailsResponse = await fetch(
                             `https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${videoId}&key=${API_KEY}`
                         );
@@ -755,7 +756,6 @@
                             const thumbnails = videoDetails.items[0].snippet.thumbnails;
                             const highThumb = thumbnails.high || thumbnails.medium || thumbnails.default;
                             
-                            // Проверяем, что это горизонтальное видео (ширина > высоты)
                             if (highThumb && highThumb.width > highThumb.height) {
                                 const videoHtml = `
                                     <div class="video-card" onclick="window.open('https://youtube.com/watch?v=${videoId}', '_blank')">
@@ -772,23 +772,34 @@
                         }
                     }
                     
-                    // Если не нашли горизонтальное видео
                     if (document.getElementById('latestVideo').innerHTML.includes('spinner')) {
                         document.getElementById('latestVideo').innerHTML = '<div class="video-info"><div class="video-title">Горизонтальные видео не найдены</div></div>';
                     }
                 }
             } catch (error) {
-                console.error('Ошибка загрузки данных YouTube:', error);
+                console.error('YouTube API error:', error);
                 document.getElementById('subscribers').textContent = '---';
                 document.getElementById('latestVideo').innerHTML = '<div class="video-info"><div class="video-title">Не удалось загрузить видео</div><div class="video-date">Проверьте настройки API</div></div>';
             } finally {
-                // Скрыть экран загрузки после завершения загрузки данных
                 hideLoadingScreen();
             }
         }
 
-        // Загрузка данных при запуске
-        loadYouTubeData();
+        // Инициализация при загрузке
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('DOM loaded');
+            
+            // Инициализируем Telegram
+            initTelegram();
+            
+            // Загружаем данные пользователя
+            setTimeout(updateUserData, 100);
+            setTimeout(updateUserData, 300);
+            setTimeout(updateUserData, 500);
+            
+            // Загружаем YouTube данные
+            loadYouTubeData();
+        });
     </script>
 </body>
 </html>
