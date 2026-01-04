@@ -72,18 +72,11 @@
             width: 50px;
             height: 50px;
             border-radius: 50%;
-            display: none;
+            display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 24px;
-            font-weight: 600;
-            color: white;
             flex-shrink: 0;
             line-height: 1;
-        }
-
-        .avatar.visible {
-            display: flex;
         }
 
         .avatar img {
@@ -377,19 +370,19 @@
             width: 80px;
             height: 80px;
             border-radius: 50%;
-            display: none;
+            display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 40px;
-            font-weight: 700;
-            color: white;
             margin-bottom: 20px;
             animation: pulse 2s ease-in-out infinite;
             font-family: 'Space Grotesk', sans-serif;
         }
 
-        .loading-logo.visible {
-            display: flex;
+        .loading-logo img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
         }
 
         @keyframes pulse {
@@ -601,8 +594,7 @@
                         // Обновляем логотип загрузки
                         const loadingLogo = document.getElementById('loadingLogo');
                         if (loadingLogo) {
-                            loadingLogo.innerHTML = `<img src="${user.photo_url}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;" alt="Avatar">`;
-                            loadingLogo.classList.add('visible');
+                            loadingLogo.innerHTML = `<img src="${user.photo_url}" alt="Avatar">`;
                         }
                         
                         // Обновляем аватары на всех страницах
@@ -611,7 +603,6 @@
                             const avatar = document.getElementById(id);
                             if (avatar) {
                                 avatar.innerHTML = `<img src="${user.photo_url}" alt="Avatar">`;
-                                avatar.classList.add('visible');
                             }
                         });
                         
