@@ -55,12 +55,15 @@
             align-items: center;
             padding: 20px 0;
             margin-bottom: 30px;
+            min-height: 70px;
         }
 
         .user-info {
             display: flex;
             align-items: center;
             gap: 12px;
+            height: 50px;
+            margin-top: 20px;
         }
 
         .avatar {
@@ -76,35 +79,39 @@
             color: white;
         }
 
+        .avatar img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
         .user-name {
             font-size: 20px;
             font-weight: 600;
+            line-height: 50px;
         }
 
         .theme-toggle {
             width: 50px;
-            height: 28px;
+            height: 50px;
             background: var(--bg-secondary);
-            border-radius: 14px;
+            border-radius: 25px;
             position: relative;
             cursor: pointer;
             transition: background 0.3s ease;
             border: 1px solid var(--border);
             display: flex;
             align-items: center;
-            padding: 0 3px;
+            justify-content: center;
+            flex-shrink: 0;
+            margin-top: 20px;
         }
 
         .theme-icon {
-            width: 20px;
-            height: 20px;
+            width: 24px;
+            height: 24px;
             transition: all 0.3s ease;
-            position: absolute;
-            left: 3px;
-        }
-
-        body.dark .theme-icon {
-            left: calc(100% - 23px);
         }
 
         .card {
@@ -581,11 +588,30 @@
     </div>
 
     <script>
-        // Проверка запуска в Telegram
+        // Проверка запуска в Telegram или наличия данных пользователя
         const isTelegramWebApp = window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initData;
+        let hasUserData = false;
         
-        // Скрыть экран авторизации если в Telegram
-        if (isTelegramWebApp) {
+        // Попытка получить данные пользователя из Telegram WebApp
+        if (window.Telegram && window.Telegram.WebApp) {
+            const tg = window.Telegram.WebApp;
+            tg.ready();
+            
+            if (tg.initDataUnsafe.user) {
+                const user = tg.initDataUnsafe.user;
+                hasUserData = true;
+                document.getElementById('userName').textContent = user.first_name || 'Jahvir';
+                document.getElementById('userAvatar').textContent = (user.first_name || 'J')[0].toUpperCase();
+                
+                // Если есть фото профиля
+                if (user.photo_url) {
+                    document.getElementById('userAvatar').innerHTML = `<img src="${user.photo_url}" alt="Avatar">`;
+                }
+            }
+        }
+        
+        // Скрыть экран авторизации если в Telegram или есть данные пользователя
+        if (isTelegramWebApp || hasUserData) {
             document.getElementById('authScreen').classList.add('hidden');
         }
 
@@ -698,16 +724,7 @@
         }
 
         // Попытка получить данные пользователя из Telegram WebApp
-        if (window.Telegram && window.Telegram.WebApp) {
-            const tg = window.Telegram.WebApp;
-            tg.ready();
-            
-            if (tg.initDataUnsafe.user) {
-                const user = tg.initDataUnsafe.user;
-                document.getElementById('userName').textContent = user.first_name || 'Jahvir';
-                document.getElementById('userAvatar').textContent = (user.first_name || 'J')[0].toUpperCase();
-            }
-        }
+        // (эта часть уже выполнена выше в начале скрипта)
 
         // Загрузка данных при запуске
         loadYouTubeData();
