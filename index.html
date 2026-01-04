@@ -588,22 +588,37 @@
         let userDataLoaded = false;
         
         function updateUserData() {
+            console.log('=== Checking Telegram WebApp ===');
+            console.log('window.Telegram exists:', !!window.Telegram);
+            console.log('WebApp exists:', !!(window.Telegram && window.Telegram.WebApp));
+            
             if (window.Telegram && window.Telegram.WebApp) {
                 const tg = window.Telegram.WebApp;
                 tg.ready();
                 
+                console.log('initDataUnsafe:', tg.initDataUnsafe);
+                console.log('initData:', tg.initData);
+                
                 if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
                     const user = tg.initDataUnsafe.user;
                     
-                    console.log('User data:', user);
+                    console.log('=== User Data ===');
+                    console.log('Full user object:', user);
+                    console.log('User ID:', user.id);
+                    console.log('First name:', user.first_name);
                     console.log('Photo URL:', user.photo_url);
+                    console.log('Photo URL type:', typeof user.photo_url);
+                    console.log('Has photo_url:', 'photo_url' in user);
                     
                     // Обновляем URL картинки, если есть
                     if (user.photo_url) {
+                        console.log('✅ Photo URL found, updating avatars...');
+                        
                         // Обновляем логотип загрузки
                         const loadingLogoImg = document.querySelector('#loadingLogo img');
                         if (loadingLogoImg) {
                             loadingLogoImg.src = user.photo_url;
+                            console.log('Updated loading logo');
                         }
                         
                         // Обновляем аватары на всех страницах
@@ -612,13 +627,22 @@
                             const avatarImg = document.querySelector(`#${id} img`);
                             if (avatarImg) {
                                 avatarImg.src = user.photo_url;
+                                console.log(`Updated avatar: ${id}`);
                             }
                         });
                         
                         userDataLoaded = true;
                         return true;
+                    } else {
+                        console.log('⚠️ Photo URL not available');
+                        console.log('Note: photo_url is only available when Mini App is launched from attachment menu');
+                        console.log('Or user privacy settings may prevent photo sharing');
                     }
+                } else {
+                    console.log('❌ No user data in initDataUnsafe');
                 }
+            } else {
+                console.log('❌ Telegram WebApp not available');
             }
             return false;
         }
