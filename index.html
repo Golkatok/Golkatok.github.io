@@ -77,13 +77,11 @@
             justify-content: center;
             flex-shrink: 0;
             line-height: 1;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
 
         .avatar img {
             width: 100%;
             height: 100%;
-            border-radius: 50%;
             object-fit: cover;
             display: block;
         }
@@ -377,7 +375,6 @@
             margin-bottom: 20px;
             animation: pulse 2s ease-in-out infinite;
             font-family: 'Space Grotesk', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
 
         .loading-logo img {
@@ -446,7 +443,9 @@
 <body>
     <!-- Экран загрузки -->
     <div class="loading-screen" id="loadingScreen">
-        <div class="loading-logo" id="loadingLogo"></div>
+        <div class="loading-logo" id="loadingLogo">
+            <img src="" alt="Avatar">
+        </div>
         <div class="loading-text">Загрузка</div>
         <div class="loading-dots">
             <div class="loading-dot"></div>
@@ -459,7 +458,9 @@
         <!-- Главная страница -->
         <div class="page active" id="home">
             <div class="header">
-                <div class="avatar" id="userAvatar"></div>
+                <div class="avatar" id="userAvatar">
+                    <img src="" alt="Avatar">
+                </div>
                 <div class="theme-toggle" onclick="toggleTheme()">
                     <img src="png/moon.png" alt="Theme" class="theme-icon" id="themeIcon">
                 </div>
@@ -484,7 +485,9 @@
         <!-- Соцсети -->
         <div class="page" id="social">
             <div class="header">
-                <div class="avatar" id="userAvatar2"></div>
+                <div class="avatar" id="userAvatar2">
+                    <img src="" alt="Avatar">
+                </div>
                 <div class="theme-toggle" onclick="toggleTheme()">
                     <img src="png/moon.png" alt="Theme" class="theme-icon">
                 </div>
@@ -513,7 +516,9 @@
         <!-- Посты -->
         <div class="page" id="posts">
             <div class="header">
-                <div class="avatar" id="userAvatar3"></div>
+                <div class="avatar" id="userAvatar3">
+                    <img src="" alt="Avatar">
+                </div>
                 <div class="theme-toggle" onclick="toggleTheme()">
                     <img src="png/moon.png" alt="Theme" class="theme-icon">
                 </div>
@@ -530,7 +535,9 @@
         <!-- JahvirAI -->
         <div class="page" id="ai">
             <div class="header">
-                <div class="avatar" id="userAvatar4"></div>
+                <div class="avatar" id="userAvatar4">
+                    <img src="" alt="Avatar">
+                </div>
                 <div class="theme-toggle" onclick="toggleTheme()">
                     <img src="png/moon.png" alt="Theme" class="theme-icon">
                 </div>
@@ -591,20 +598,20 @@
                     console.log('User data:', user);
                     console.log('Photo URL:', user.photo_url);
                     
-                    // Обновляем только если есть фото
+                    // Обновляем URL картинки, если есть
                     if (user.photo_url) {
                         // Обновляем логотип загрузки
-                        const loadingLogo = document.getElementById('loadingLogo');
-                        if (loadingLogo) {
-                            loadingLogo.innerHTML = `<img src="${user.photo_url}" alt="Avatar">`;
+                        const loadingLogoImg = document.querySelector('#loadingLogo img');
+                        if (loadingLogoImg) {
+                            loadingLogoImg.src = user.photo_url;
                         }
                         
                         // Обновляем аватары на всех страницах
                         const avatarIds = ['userAvatar', 'userAvatar2', 'userAvatar3', 'userAvatar4'];
                         avatarIds.forEach(id => {
-                            const avatar = document.getElementById(id);
-                            if (avatar) {
-                                avatar.innerHTML = `<img src="${user.photo_url}" alt="Avatar">`;
+                            const avatarImg = document.querySelector(`#${id} img`);
+                            if (avatarImg) {
+                                avatarImg.src = user.photo_url;
                             }
                         });
                         
