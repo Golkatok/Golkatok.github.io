@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Jahvir App</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -24,7 +27,7 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            font-family: 'Inter', 'Manrope', sans-serif;
             background: var(--bg-primary);
             color: var(--text-primary);
             transition: background 0.3s ease, color 0.3s ease;
@@ -63,7 +66,7 @@
             align-items: center;
             gap: 12px;
             height: 50px;
-            margin-top: 40px;
+            margin-top: 55px;
         }
 
         .avatar {
@@ -88,8 +91,9 @@
 
         .user-name {
             font-size: 20px;
-            font-weight: 600;
+            font-weight: 700;
             line-height: 50px;
+            font-family: 'Space Grotesk', sans-serif;
         }
 
         .theme-toggle {
@@ -105,7 +109,7 @@
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
-            margin-top: 40px;
+            margin-top: 55px;
         }
 
         .theme-icon {
@@ -131,18 +135,20 @@
 
         .card-title {
             font-size: 16px;
-            font-weight: 600;
+            font-weight: 700;
             margin-bottom: 15px;
             color: var(--text-secondary);
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 1.5px;
+            font-family: 'Space Grotesk', sans-serif;
         }
 
         .subscribers {
             font-size: 36px;
-            font-weight: 700;
+            font-weight: 800;
             color: var(--accent);
             margin-bottom: 5px;
+            font-family: 'Manrope', sans-serif;
         }
 
         .subscribers-label {
@@ -181,6 +187,7 @@
             -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
             overflow: hidden;
+            font-family: 'Manrope', sans-serif;
         }
 
         .video-date {
@@ -223,7 +230,8 @@
 
         .social-name {
             font-size: 16px;
-            font-weight: 600;
+            font-weight: 700;
+            font-family: 'Space Grotesk', sans-serif;
         }
 
         .construction {
@@ -239,8 +247,9 @@
 
         .construction-text {
             font-size: 24px;
-            font-weight: 600;
+            font-weight: 700;
             margin-bottom: 10px;
+            font-family: 'Space Grotesk', sans-serif;
         }
 
         .construction-subtext {
@@ -522,8 +531,7 @@
             event.currentTarget.classList.add('active');
         }
 
-        // YouTube API - замените YOUR_API_KEY на ваш ключ API
-        // и YOUR_CHANNEL_ID на ID вашего канала
+        // YouTube API
         const API_KEY = 'AIzaSyDrkWy7DEmVOZcjY34GFcJxRW-8LEM-aJc';
         const CHANNEL_ID = 'UCrZA2Mj6yKZkEcBIqdfF6Ag';
 
@@ -540,25 +548,48 @@
                     document.getElementById('subscribers').textContent = subs.toLocaleString('ru-RU');
                 }
 
-                // Загрузка последнего видео
+                // Загрузка последнего горизонтального видео
                 const videosResponse = await fetch(
-                    `https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${CHANNEL_ID}&order=date&maxResults=1&type=video&key=${API_KEY}`
+                    `https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${CHANNEL_ID}&order=date&maxResults=20&type=video&key=${API_KEY}`
                 );
                 const videosData = await videosResponse.json();
                 
-                if (videosData.items && videosData.items[0]) {
-                    const video = videosData.items[0];
-                    const videoId = video.id.videoId;
-                    const videoHtml = `
-                        <div class="video-card" onclick="window.open('https://youtube.com/watch?v=${videoId}', '_blank')">
-                            <img class="video-thumbnail" src="${video.snippet.thumbnails.high.url}" alt="Video thumbnail">
-                            <div class="video-info">
-                                <div class="video-title">${video.snippet.title}</div>
-                                <div class="video-date">${new Date(video.snippet.publishedAt).toLocaleDateString('ru-RU')}</div>
-                            </div>
-                        </div>
-                    `;
-                    document.getElementById('latestVideo').innerHTML = videoHtml;
+                if (videosData.items) {
+                    // Найти первое горизонтальное видео
+                    for (let video of videosData.items) {
+                        const videoId = video.id.videoId;
+                        
+                        // Получаем детальную информацию о видео для проверки соотношения сторон
+                        const videoDetailsResponse = await fetch(
+                            `https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${videoId}&key=${API_KEY}`
+                        );
+                        const videoDetails = await videoDetailsResponse.json();
+                        
+                        if (videoDetails.items && videoDetails.items[0]) {
+                            const thumbnails = videoDetails.items[0].snippet.thumbnails;
+                            const highThumb = thumbnails.high || thumbnails.medium || thumbnails.default;
+                            
+                            // Проверяем, что это горизонтальное видео (ширина > высоты)
+                            if (highThumb && highThumb.width > highThumb.height) {
+                                const videoHtml = `
+                                    <div class="video-card" onclick="window.open('https://youtube.com/watch?v=${videoId}', '_blank')">
+                                        <img class="video-thumbnail" src="${highThumb.url}" alt="Video thumbnail">
+                                        <div class="video-info">
+                                            <div class="video-title">${video.snippet.title}</div>
+                                            <div class="video-date">${new Date(video.snippet.publishedAt).toLocaleDateString('ru-RU')}</div>
+                                        </div>
+                                    </div>
+                                `;
+                                document.getElementById('latestVideo').innerHTML = videoHtml;
+                                break; // Найдено первое горизонтальное видео, выходим из цикла
+                            }
+                        }
+                    }
+                    
+                    // Если не нашли горизонтальное видео
+                    if (document.getElementById('latestVideo').innerHTML.includes('spinner')) {
+                        document.getElementById('latestVideo').innerHTML = '<div class="video-info"><div class="video-title">Горизонтальные видео не найдены</div></div>';
+                    }
                 }
             } catch (error) {
                 console.error('Ошибка загрузки данных YouTube:', error);
