@@ -85,6 +85,7 @@
             height: 100%;
             object-fit: cover;
             display: block;
+            border-radius: 50%;
         }
 
         .theme-toggle {
@@ -376,12 +377,41 @@
             margin-bottom: 20px;
             animation: pulse 2s ease-in-out infinite;
             font-family: 'Space Grotesk', sans-serif;
+            position: relative;
+            box-shadow: 0 0 30px rgba(102, 126, 234, 0.6),
+                        0 0 60px rgba(118, 75, 162, 0.4),
+                        0 0 90px rgba(102, 126, 234, 0.3);
+        }
+
+        .loading-logo::before {
+            content: '';
+            position: absolute;
+            inset: -3px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #667eea, #764ba2, #667eea);
+            background-size: 200% 200%;
+            animation: glow 3s ease-in-out infinite;
+            z-index: -1;
+        }
+
+        @keyframes glow {
+            0%, 100% {
+                background-position: 0% 50%;
+                filter: blur(10px);
+            }
+            50% {
+                background-position: 100% 50%;
+                filter: blur(15px);
+            }
         }
 
         .loading-logo img {
             width: 100%;
             height: 100%;
             object-fit: cover;
+            border-radius: 50%;
+            position: relative;
+            z-index: 1;
         }
 
         @keyframes pulse {
