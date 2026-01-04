@@ -349,9 +349,111 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--bg-primary);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease;
+        }
+
+        .loading-screen.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .loading-logo {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 20px;
+            animation: pulse 2s ease-in-out infinite;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.1);
+                opacity: 0.8;
+            }
+        }
+
+        .loading-text {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+            font-family: 'Space Grotesk', sans-serif;
+            margin-bottom: 10px;
+        }
+
+        .loading-dots {
+            display: flex;
+            gap: 8px;
+        }
+
+        .loading-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--accent);
+            animation: bounce 1.4s ease-in-out infinite;
+        }
+
+        .loading-dot:nth-child(1) {
+            animation-delay: 0s;
+        }
+
+        .loading-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .loading-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes bounce {
+            0%, 80%, 100% {
+                transform: scale(0);
+                opacity: 0.5;
+            }
+            40% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
     </style>
 </head>
 <body>
+    <!-- Экран загрузки -->
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loading-logo">J</div>
+        <div class="loading-text">Загрузка</div>
+        <div class="loading-dots">
+            <div class="loading-dot"></div>
+            <div class="loading-dot"></div>
+            <div class="loading-dot"></div>
+        </div>
+    </div>
+
     <div class="container">
         <!-- Главная страница -->
         <div class="page active" id="home">
@@ -463,34 +565,68 @@
     </div>
 
     <script>
+        // Скрыть экран загрузки после загрузки данных
+        function hideLoadingScreen() {
+            const loadingScreen = document.getElementById('loadingScreen');
+            setTimeout(() => {
+                loadingScreen.classList.add('hidden');
+                setTimeout(() => {
+                    loadingScreen.style.display = 'none';
+                }, 500);
+            }, 800);
+        }
+
         // Попытка получить данные пользователя из Telegram WebApp
-        if (window.Telegram && window.Telegram.WebApp) {
-            const tg = window.Telegram.WebApp;
-            tg.ready();
-            
-            if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
-                const user = tg.initDataUnsafe.user;
-                const firstName = user.first_name || 'J';
+        let userDataLoaded = false;
+        
+        function updateUserData() {
+            if (window.Telegram && window.Telegram.WebApp) {
+                const tg = window.Telegram.WebApp;
+                tg.ready();
                 
-                // Обновляем аватары на всех страницах
-                const avatars = [
-                    document.getElementById('userAvatar'),
-                    document.getElementById('userAvatar2'),
-                    document.getElementById('userAvatar3'),
-                    document.getElementById('userAvatar4')
-                ];
-                
-                avatars.forEach(avatar => {
-                    if (avatar) {
+                if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+                    const user = tg.initDataUnsafe.user;
+                    const firstName = user.first_name || 'J';
+                    
+                    console.log('User data:', user);
+                    console.log('Photo URL:', user.photo_url);
+                    
+                    // Обновляем логотип загрузки
+                    const loadingLogo = document.querySelector('.loading-logo');
+                    if (loadingLogo) {
                         if (user.photo_url) {
-                            avatar.innerHTML = `<img src="${user.photo_url}" alt="Avatar">`;
+                            loadingLogo.innerHTML = `<img src="${user.photo_url}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;" alt="Avatar">`;
                         } else {
-                            avatar.textContent = firstName[0].toUpperCase();
+                            loadingLogo.textContent = firstName[0].toUpperCase();
                         }
                     }
-                });
+                    
+                    // Обновляем аватары на всех страницах
+                    const avatarIds = ['userAvatar', 'userAvatar2', 'userAvatar3', 'userAvatar4'];
+                    avatarIds.forEach(id => {
+                        const avatar = document.getElementById(id);
+                        if (avatar) {
+                            if (user.photo_url) {
+                                avatar.innerHTML = `<img src="${user.photo_url}" alt="Avatar">`;
+                            } else {
+                                avatar.textContent = firstName[0].toUpperCase();
+                            }
+                        }
+                    });
+                    
+                    userDataLoaded = true;
+                    return true;
+                }
             }
+            return false;
         }
+        
+        // Попытка загрузить данные сразу
+        updateUserData();
+        
+        // Повторная попытка через небольшую задержку (на случай если Telegram WebApp еще не инициализирован)
+        setTimeout(updateUserData, 100);
+        setTimeout(updateUserData, 300);
 
         // Переключение темы
         function toggleTheme() {
@@ -619,6 +755,9 @@
                 console.error('Ошибка загрузки данных YouTube:', error);
                 document.getElementById('subscribers').textContent = '---';
                 document.getElementById('latestVideo').innerHTML = '<div class="video-info"><div class="video-title">Не удалось загрузить видео</div><div class="video-date">Проверьте настройки API</div></div>';
+            } finally {
+                // Скрыть экран загрузки после завершения загрузки данных
+                hideLoadingScreen();
             }
         }
 
