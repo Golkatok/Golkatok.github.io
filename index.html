@@ -66,7 +66,7 @@
             align-items: center;
             gap: 12px;
             height: 50px;
-            margin-top: 55px;
+            margin-top: 60px;
         }
 
         .avatar {
@@ -109,7 +109,7 @@
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
-            margin-top: 55px;
+            margin-top: 60px;
         }
 
         .theme-icon {
@@ -399,19 +399,19 @@
             </div>
 
             <div class="social-buttons">
-                <a href="https://discord.com" target="_blank" class="social-btn">
+                <a href="https://discord.gg/hmhjNhfrMh" target="_blank" class="social-btn">
                     <img src="png/discord.png" alt="Discord" class="social-icon">
                     <div class="social-name">Discord</div>
                 </a>
-                <a href="https://youtube.com" target="_blank" class="social-btn">
+                <a href="https://www.youtube.com/@Jahvir" target="_blank" class="social-btn">
                     <img src="png/youtube.png" alt="YouTube" class="social-icon">
                     <div class="social-name">YouTube</div>
                 </a>
-                <a href="https://twitch.tv" target="_blank" class="social-btn">
+                <a href="https://www.twitch.tv/davasik" target="_blank" class="social-btn">
                     <img src="png/twitch.png" alt="Twitch" class="social-icon">
                     <div class="social-name">Twitch</div>
                 </a>
-                <a href="https://telegram.org" target="_blank" class="social-btn">
+                <a href="https://t.me/davajahvir" target="_blank" class="social-btn">
                     <img src="png/telegram.png" alt="Telegram" class="social-icon">
                     <div class="social-name">Telegram</div>
                 </a>
@@ -503,19 +503,48 @@
             const isDark = document.body.classList.contains('dark');
             localStorage.setItem('theme', isDark ? 'dark' : 'light');
             
-            // Обновление иконок темы
+            updateThemeIcons(isDark);
+        }
+
+        // Обновление всех иконок в зависимости от темы
+        function updateThemeIcons(isDark) {
+            const iconFolder = isDark ? 'pngdark' : 'png';
+            
+            // Обновление иконки переключателя темы
             const themeIcons = document.querySelectorAll('.theme-icon');
             themeIcons.forEach(icon => {
                 icon.src = isDark ? 'png/sun.png' : 'png/moon.png';
             });
+            
+            // Обновление иконок в таб-баре
+            document.querySelector('.tab-item:nth-child(1) .tab-icon').src = `${iconFolder}/home.png`;
+            document.querySelector('.tab-item:nth-child(2) .tab-icon').src = `${iconFolder}/social.png`;
+            document.querySelector('.tab-item:nth-child(3) .tab-icon').src = `${iconFolder}/posts.png`;
+            document.querySelector('.tab-item:nth-child(4) .tab-icon').src = `${iconFolder}/jahvirai.png`;
+            
+            // Обновление иконок социальных сетей
+            document.querySelectorAll('.social-icon').forEach((icon, index) => {
+                const names = ['discord', 'youtube', 'twitch', 'telegram'];
+                if (names[index]) {
+                    icon.src = `${iconFolder}/${names[index]}.png`;
+                }
+            });
+            
+            // Обновление иконок "в разработке"
+            document.querySelectorAll('.construction-icon').forEach(icon => {
+                if (icon.src.includes('jahvirai')) {
+                    icon.src = `${iconFolder}/jahvirai.png`;
+                } else {
+                    icon.src = `${iconFolder}/indevelop.png`;
+                }
+            });
         }
 
         // Загрузка сохраненной темы
-        if (localStorage.getItem('theme') === 'dark') {
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'dark') {
             document.body.classList.add('dark');
-            document.querySelectorAll('.theme-icon').forEach(icon => {
-                icon.src = 'png/sun.png';
-            });
+            updateThemeIcons(true);
         }
 
         // Переключение страниц
