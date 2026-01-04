@@ -50,23 +50,22 @@
             max-width: 100%;
             padding: 0 20px 100px 20px;
             min-height: 100vh;
+            padding-top: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding-top: calc(var(--notch-padding) + 60px);
+            }
         }
 
         .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 20px 0;
+            padding: 0 0 20px 0;
             margin-bottom: 30px;
-            min-height: 70px;
-        }
-
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            height: 50px;
-            margin-top: 60px;
+            min-height: 50px;
         }
 
         .avatar {
@@ -80,6 +79,8 @@
             font-size: 24px;
             font-weight: 600;
             color: white;
+            flex-shrink: 0;
+            line-height: 1;
         }
 
         .avatar img {
@@ -87,13 +88,7 @@
             height: 100%;
             border-radius: 50%;
             object-fit: cover;
-        }
-
-        .user-name {
-            font-size: 20px;
-            font-weight: 700;
-            line-height: 50px;
-            font-family: 'Space Grotesk', sans-serif;
+            display: block;
         }
 
         .theme-toggle {
@@ -101,7 +96,6 @@
             height: 50px;
             background: var(--bg-secondary);
             border-radius: 25px;
-            position: relative;
             cursor: pointer;
             transition: background 0.3s ease;
             border: 1px solid var(--border);
@@ -109,13 +103,14 @@
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
-            margin-top: 60px;
+            line-height: 1;
         }
 
         .theme-icon {
             width: 24px;
             height: 24px;
             transition: all 0.3s ease;
+            display: block;
         }
 
         .card {
@@ -361,10 +356,7 @@
         <!-- Главная страница -->
         <div class="page active" id="home">
             <div class="header">
-                <div class="user-info">
-                    <div class="avatar" id="userAvatar">J</div>
-                    <div class="user-name" id="userName">Jahvir</div>
-                </div>
+                <div class="avatar" id="userAvatar">J</div>
                 <div class="theme-toggle" onclick="toggleTheme()">
                     <img src="png/moon.png" alt="Theme" class="theme-icon" id="themeIcon">
                 </div>
@@ -389,10 +381,7 @@
         <!-- Соцсети -->
         <div class="page" id="social">
             <div class="header">
-                <div class="user-info">
-                    <div class="avatar">J</div>
-                    <div class="user-name">Социальные сети</div>
-                </div>
+                <div class="avatar" id="userAvatar2">J</div>
                 <div class="theme-toggle" onclick="toggleTheme()">
                     <img src="png/moon.png" alt="Theme" class="theme-icon">
                 </div>
@@ -421,10 +410,7 @@
         <!-- Посты -->
         <div class="page" id="posts">
             <div class="header">
-                <div class="user-info">
-                    <div class="avatar">J</div>
-                    <div class="user-name">Посты</div>
-                </div>
+                <div class="avatar" id="userAvatar3">J</div>
                 <div class="theme-toggle" onclick="toggleTheme()">
                     <img src="png/moon.png" alt="Theme" class="theme-icon">
                 </div>
@@ -441,10 +427,7 @@
         <!-- JahvirAI -->
         <div class="page" id="ai">
             <div class="header">
-                <div class="user-info">
-                    <div class="avatar">🤖</div>
-                    <div class="user-name">JahvirAI</div>
-                </div>
+                <div class="avatar" id="userAvatar4">J</div>
                 <div class="theme-toggle" onclick="toggleTheme()">
                     <img src="png/moon.png" alt="Theme" class="theme-icon">
                 </div>
@@ -487,13 +470,25 @@
             
             if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
                 const user = tg.initDataUnsafe.user;
-                document.getElementById('userName').textContent = user.first_name || 'Jahvir';
-                document.getElementById('userAvatar').textContent = (user.first_name || 'J')[0].toUpperCase();
+                const firstName = user.first_name || 'J';
                 
-                // Если есть фото профиля
-                if (user.photo_url) {
-                    document.getElementById('userAvatar').innerHTML = `<img src="${user.photo_url}" alt="Avatar">`;
-                }
+                // Обновляем аватары на всех страницах
+                const avatars = [
+                    document.getElementById('userAvatar'),
+                    document.getElementById('userAvatar2'),
+                    document.getElementById('userAvatar3'),
+                    document.getElementById('userAvatar4')
+                ];
+                
+                avatars.forEach(avatar => {
+                    if (avatar) {
+                        if (user.photo_url) {
+                            avatar.innerHTML = `<img src="${user.photo_url}" alt="Avatar">`;
+                        } else {
+                            avatar.textContent = firstName[0].toUpperCase();
+                        }
+                    }
+                });
             }
         }
 
@@ -610,7 +605,7 @@
                                     </div>
                                 `;
                                 document.getElementById('latestVideo').innerHTML = videoHtml;
-                                break; // Найдено первое горизонтальное видео, выходим из цикла
+                                break;
                             }
                         }
                     }
@@ -626,9 +621,6 @@
                 document.getElementById('latestVideo').innerHTML = '<div class="video-info"><div class="video-title">Не удалось загрузить видео</div><div class="video-date">Проверьте настройки API</div></div>';
             }
         }
-
-        // Попытка получить данные пользователя из Telegram WebApp
-        // (эта часть уже выполнена выше в начале скрипта)
 
         // Загрузка данных при запуске
         loadYouTubeData();
