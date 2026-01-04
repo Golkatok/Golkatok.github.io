@@ -63,7 +63,7 @@
             align-items: center;
             gap: 12px;
             height: 50px;
-            margin-top: 20px;
+            margin-top: 40px;
         }
 
         .avatar {
@@ -105,7 +105,7 @@
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
-            margin-top: 20px;
+            margin-top: 40px;
         }
 
         .theme-icon {
@@ -589,7 +589,6 @@
 
     <script>
         // Проверка запуска в Telegram или наличия данных пользователя
-        const isTelegramWebApp = window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initData;
         let hasUserData = false;
         
         // Попытка получить данные пользователя из Telegram WebApp
@@ -597,7 +596,7 @@
             const tg = window.Telegram.WebApp;
             tg.ready();
             
-            if (tg.initDataUnsafe.user) {
+            if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
                 const user = tg.initDataUnsafe.user;
                 hasUserData = true;
                 document.getElementById('userName').textContent = user.first_name || 'Jahvir';
@@ -607,12 +606,17 @@
                 if (user.photo_url) {
                     document.getElementById('userAvatar').innerHTML = `<img src="${user.photo_url}" alt="Avatar">`;
                 }
+                
+                console.log('User data loaded:', user);
             }
         }
+        
+        const isTelegramWebApp = window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initData;
         
         // Скрыть экран авторизации если в Telegram или есть данные пользователя
         if (isTelegramWebApp || hasUserData) {
             document.getElementById('authScreen').classList.add('hidden');
+            console.log('Auth screen hidden');
         }
 
         // Проверка кода доступа
