@@ -51,13 +51,7 @@
             max-width: 100%;
             padding: 0 20px 100px 20px;
             min-height: 100vh;
-            padding-top: 20px;
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                padding-top: calc(var(--notch-padding) + 60px);
-            }
+            padding-top: calc(var(--notch-padding) + 50px);
         }
 
         .header {
@@ -66,7 +60,6 @@
             align-items: center;
             padding: 0 0 20px 0;
             margin-bottom: 30px;
-            position: relative;
         }
 
         .user-name {
@@ -83,6 +76,24 @@
             justify-content: space-between;
             align-items: center;
             width: 100%;
+        }
+
+        @media (min-width: 769px) {
+            .header {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .user-name {
+                flex: 1;
+                margin-bottom: 0;
+            }
+
+            .header-bottom {
+                width: auto;
+                gap: 20px;
+            }
         }
 
         .avatar {
