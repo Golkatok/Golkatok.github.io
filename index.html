@@ -62,11 +62,27 @@
 
         .header {
             display: flex;
-            justify-content: space-between;
+            flex-direction: column;
             align-items: center;
             padding: 0 0 20px 0;
             margin-bottom: 30px;
-            min-height: 50px;
+            position: relative;
+        }
+
+        .user-name {
+            font-size: 24px;
+            font-weight: 700;
+            font-family: 'Space Grotesk', sans-serif;
+            color: var(--text-primary);
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .header-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
         }
 
         .avatar {
@@ -486,11 +502,14 @@
         <!-- Главная страница -->
         <div class="page active" id="home">
             <div class="header">
-                <div class="avatar" id="userAvatar">
-                    <img src="" alt="Avatar">
-                </div>
-                <div class="theme-toggle" onclick="toggleTheme()">
-                    <img src="png/moon.png" alt="Theme" class="theme-icon" id="themeIcon">
+                <div class="user-name" id="userName">Пользователь</div>
+                <div class="header-bottom">
+                    <div class="avatar" id="userAvatar">
+                        <img src="" alt="Avatar">
+                    </div>
+                    <div class="theme-toggle" onclick="toggleTheme()">
+                        <img src="png/moon.png" alt="Theme" class="theme-icon" id="themeIcon">
+                    </div>
                 </div>
             </div>
 
@@ -513,11 +532,14 @@
         <!-- Соцсети -->
         <div class="page" id="social">
             <div class="header">
-                <div class="avatar" id="userAvatar2">
-                    <img src="" alt="Avatar">
-                </div>
-                <div class="theme-toggle" onclick="toggleTheme()">
-                    <img src="png/moon.png" alt="Theme" class="theme-icon">
+                <div class="user-name" id="userName2">Пользователь</div>
+                <div class="header-bottom">
+                    <div class="avatar" id="userAvatar2">
+                        <img src="" alt="Avatar">
+                    </div>
+                    <div class="theme-toggle" onclick="toggleTheme()">
+                        <img src="png/moon.png" alt="Theme" class="theme-icon">
+                    </div>
                 </div>
             </div>
 
@@ -544,11 +566,14 @@
         <!-- Посты -->
         <div class="page" id="posts">
             <div class="header">
-                <div class="avatar" id="userAvatar3">
-                    <img src="" alt="Avatar">
-                </div>
-                <div class="theme-toggle" onclick="toggleTheme()">
-                    <img src="png/moon.png" alt="Theme" class="theme-icon">
+                <div class="user-name" id="userName3">Пользователь</div>
+                <div class="header-bottom">
+                    <div class="avatar" id="userAvatar3">
+                        <img src="" alt="Avatar">
+                    </div>
+                    <div class="theme-toggle" onclick="toggleTheme()">
+                        <img src="png/moon.png" alt="Theme" class="theme-icon">
+                    </div>
                 </div>
             </div>
 
@@ -563,11 +588,14 @@
         <!-- JahvirAI -->
         <div class="page" id="ai">
             <div class="header">
-                <div class="avatar" id="userAvatar4">
-                    <img src="" alt="Avatar">
-                </div>
-                <div class="theme-toggle" onclick="toggleTheme()">
-                    <img src="png/moon.png" alt="Theme" class="theme-icon">
+                <div class="user-name" id="userName4">Пользователь</div>
+                <div class="header-bottom">
+                    <div class="avatar" id="userAvatar4">
+                        <img src="" alt="Avatar">
+                    </div>
+                    <div class="theme-toggle" onclick="toggleTheme()">
+                        <img src="png/moon.png" alt="Theme" class="theme-icon">
+                    </div>
                 </div>
             </div>
 
@@ -647,6 +675,24 @@
                 console.log('Username:', user.username);
                 console.log('Language:', user.language_code);
                 console.log('Photo URL:', user.photo_url);
+                
+                // Обновляем имя пользователя
+                const firstName = user.first_name || '';
+                const lastName = user.last_name || '';
+                const fullName = `${firstName} ${lastName}`.trim() || 'Пользователь';
+                
+                const userNames = [
+                    document.getElementById('userName'),
+                    document.getElementById('userName2'),
+                    document.getElementById('userName3'),
+                    document.getElementById('userName4')
+                ];
+                
+                userNames.forEach(nameEl => {
+                    if (nameEl) {
+                        nameEl.textContent = fullName;
+                    }
+                });
                 
                 if (user.photo_url) {
                     console.log('✅ Photo URL found, updating avatars...');
