@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Jahvir App</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -14,6 +15,30 @@
             padding: 0;
             box-sizing: border-box;
             -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        a, button, img {
+            -webkit-touch-callout: none;
+            -webkit-user-drag: none;
+            pointer-events: auto;
+        }
+
+        img {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            pointer-events: none;
+        }
+
+        .social-btn, .video-card, .theme-toggle, .tab-item {
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
         }
 
         :root {
@@ -83,16 +108,30 @@
                 flex-direction: row;
                 justify-content: space-between;
                 align-items: center;
+                gap: 15px;
             }
 
             .user-name {
-                flex: 1;
+                flex: 0;
                 margin-bottom: 0;
+                text-align: left;
+                order: 2;
             }
 
             .header-bottom {
-                width: auto;
-                gap: 20px;
+                width: 100%;
+                gap: 0;
+                order: unset;
+                display: contents;
+            }
+
+            .avatar {
+                order: 1;
+            }
+
+            .theme-toggle {
+                order: 3;
+                margin-left: auto;
             }
         }
 
@@ -274,6 +313,201 @@
         .construction-subtext {
             font-size: 16px;
             color: var(--text-secondary);
+        }
+
+        .admin-panel {
+            display: none;
+        }
+
+        .admin-panel.active {
+            display: block;
+        }
+
+        .color-verify {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .color-verify-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        .color-buttons {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            max-width: 300px;
+            margin: 0 auto;
+        }
+
+        .color-btn {
+            padding: 40px;
+            border: 2px solid var(--border);
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .color-btn:active {
+            transform: scale(0.95);
+        }
+
+        .color-btn.green {
+            background: #34C759;
+            color: white;
+        }
+
+        .color-btn.pink {
+            background: #FF2D55;
+            color: white;
+        }
+
+        .color-btn.yellow {
+            background: #FFCC00;
+            color: #000;
+        }
+
+        .color-btn.red {
+            background: #FF3B30;
+            color: white;
+        }
+
+        .posts-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .post-item {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 15px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .post-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        .post-item-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        .post-item-content {
+            font-size: 14px;
+            color: var(--text-secondary);
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .post-item-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .add-post-btn {
+            position: fixed;
+            bottom: 90px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--accent);
+            color: white;
+            border: none;
+            font-size: 30px;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+            z-index: 999;
+        }
+
+        .add-post-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .post-form {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 14px;
+        }
+
+        .form-group textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-primary,
+        .btn-secondary {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+        }
+
+        .btn-primary:hover,
+        .btn-secondary:hover {
+            opacity: 0.8;
         }
 
         .back-btn {
@@ -588,11 +822,53 @@
                 </div>
             </div>
 
-            <div class="construction">
-                <img src="png/indevelop.png" alt="In Development" class="construction-icon">
-                <div class="construction-text">В разработке</div>
-                <div class="construction-subtext">Скоро здесь появится что-то интересное!</div>
-                <button class="back-btn" onclick="switchPage('home')">Назад</button>
+            <!-- Проверка доступа -->
+            <div id="postsPublic" class="posts-list">
+                <!-- Здесь будут отображаться посты для всех -->
+            </div>
+
+            <!-- Верификация для админов -->
+            <div id="colorVerify" class="color-verify" style="display: none;">
+                <div class="color-verify-title">Введите цветовой код</div>
+                <div class="color-buttons">
+                    <div class="color-btn green" onclick="verifyColor('green')">Зелёный</div>
+                    <div class="color-btn pink" onclick="verifyColor('pink')">Розовый</div>
+                    <div class="color-btn yellow" onclick="verifyColor('yellow')">Жёлтый</div>
+                    <div class="color-btn red" onclick="verifyColor('red')">Красный</div>
+                </div>
+                <div style="margin-top: 20px; color: var(--text-secondary); font-size: 14px;">
+                    Последовательность: <span id="colorSequence"></span>
+                </div>
+            </div>
+
+            <!-- Админ панель -->
+            <div id="adminPanel" class="admin-panel">
+                <button class="add-post-btn" onclick="togglePostForm()">+</button>
+                
+                <div id="postFormContainer" style="display: none;">
+                    <div class="post-form">
+                        <div class="form-group">
+                            <label>Заголовок</label>
+                            <input type="text" id="postTitle" placeholder="Название поста">
+                        </div>
+                        <div class="form-group">
+                            <label>Содержание</label>
+                            <textarea id="postContent" placeholder="Текст поста"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>URL изображения (необязательно)</label>
+                            <input type="text" id="postImage" placeholder="https://...">
+                        </div>
+                        <div class="form-actions">
+                            <button class="btn-secondary" onclick="togglePostForm()">Отмена</button>
+                            <button class="btn-primary" onclick="savePost()">Опубликовать</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="adminPostsList" class="posts-list">
+                    <!-- Здесь будут посты с возможностью редактирования -->
+                </div>
             </div>
         </div>
 
@@ -641,6 +917,13 @@
 
     <script>
         console.log('=== Script initialization ===');
+        
+        // Инициализация Supabase
+        const SUPABASE_URL = 'https://wyhtxlfasssxunrdsviq.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind5aHR4bGZhc3NzeHVucmRzdmlxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc2NTEyNzcsImV4cCI6MjA4MzIyNzI3N30.LVoxX-hLG4s6dT4l5FtnF0LCQ8Pc5o1JHKZbRMNZXKU';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        
+        console.log('Supabase initialized:', supabase);
         
         // Инициализация Telegram WebApp
         let tg = null;
@@ -884,7 +1167,220 @@
             
             // Загружаем YouTube данные
             loadYouTubeData();
+            
+            // Проверяем доступ к постам
+            checkPostsAccess();
         });
+
+        // Система постов
+        const ADMIN_USERNAMES = ['golka_tok', 'David3153'];
+        const COLOR_CODE = ['green', 'pink', 'yellow', 'red'];
+        let currentColorSequence = [];
+        let isAdminVerified = false;
+        let currentUsername = '';
+
+        function checkPostsAccess() {
+            if (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) {
+                currentUsername = tg.initDataUnsafe.user.username || '';
+                console.log('Checking access for:', currentUsername);
+                
+                if (ADMIN_USERNAMES.includes(currentUsername)) {
+                    console.log('Admin detected, showing color verification');
+                    document.getElementById('colorVerify').style.display = 'block';
+                    document.getElementById('postsPublic').style.display = 'none';
+                } else {
+                    console.log('Regular user, showing public posts');
+                    loadPublicPosts();
+                }
+            } else {
+                console.log('No user data, showing public posts');
+                loadPublicPosts();
+            }
+        }
+
+        function verifyColor(color) {
+            currentColorSequence.push(color);
+            document.getElementById('colorSequence').textContent = currentColorSequence.join(' → ');
+            
+            if (currentColorSequence.length === COLOR_CODE.length) {
+                if (JSON.stringify(currentColorSequence) === JSON.stringify(COLOR_CODE)) {
+                    console.log('Color code correct!');
+                    isAdminVerified = true;
+                    document.getElementById('colorVerify').style.display = 'none';
+                    document.getElementById('adminPanel').classList.add('active');
+                    loadAdminPosts();
+                } else {
+                    console.log('Color code incorrect');
+                    alert('Неверный код! Попробуйте снова.');
+                    currentColorSequence = [];
+                    document.getElementById('colorSequence').textContent = '';
+                }
+            }
+        }
+
+        function togglePostForm() {
+            const form = document.getElementById('postFormContainer');
+            form.style.display = form.style.display === 'none' ? 'block' : 'none';
+            
+            if (form.style.display === 'none') {
+                document.getElementById('postTitle').value = '';
+                document.getElementById('postContent').value = '';
+                document.getElementById('postImage').value = '';
+            }
+        }
+
+        async function savePost() {
+            const title = document.getElementById('postTitle').value;
+            const content = document.getElementById('postContent').value;
+            const imageUrl = document.getElementById('postImage').value;
+            
+            if (!title || !content) {
+                alert('Заполните заголовок и содержание!');
+                return;
+            }
+            
+            try {
+                const { data, error } = await supabase
+                    .from('posts')
+                    .insert([
+                        {
+                            title: title,
+                            content: content,
+                            image_url: imageUrl || null,
+                            author: currentUsername,
+                            published: true
+                        }
+                    ]);
+                
+                if (error) throw error;
+                
+                console.log('Post saved:', data);
+                alert('Пост успешно опубликован! ✅');
+                togglePostForm();
+                loadAdminPosts();
+                
+            } catch (error) {
+                console.error('Error saving post:', error);
+                alert('Ошибка при сохранении поста: ' + error.message);
+            }
+        }
+
+        async function loadPublicPosts() {
+            try {
+                const { data: posts, error } = await supabase
+                    .from('posts')
+                    .select('*')
+                    .eq('published', true)
+                    .order('created_at', { ascending: false });
+                
+                if (error) throw error;
+                
+                const container = document.getElementById('postsPublic');
+                
+                if (!posts || posts.length === 0) {
+                    container.innerHTML = `
+                        <div class="construction">
+                            <img src="png/indevelop.png" alt="Posts" class="construction-icon">
+                            <div class="construction-text">Постов пока нет</div>
+                            <div class="construction-subtext">Скоро здесь появятся интересные материалы!</div>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                container.innerHTML = posts.map(post => `
+                    <div class="post-item" onclick="openPost('${post.id}')">
+                        ${post.image_url ? `<img src="${post.image_url}" style="width:100%;border-radius:10px;margin-bottom:10px;">` : ''}
+                        <div class="post-item-title">${post.title}</div>
+                        <div class="post-item-content">${post.content}</div>
+                        <div class="post-item-meta">
+                            <span>@${post.author}</span>
+                            <span>${new Date(post.created_at).toLocaleDateString('ru-RU')}</span>
+                        </div>
+                    </div>
+                `).join('');
+                
+            } catch (error) {
+                console.error('Error loading posts:', error);
+                document.getElementById('postsPublic').innerHTML = `
+                    <div class="construction">
+                        <img src="png/indevelop.png" alt="Error" class="construction-icon">
+                        <div class="construction-text">Ошибка загрузки</div>
+                        <div class="construction-subtext">${error.message}</div>
+                    </div>
+                `;
+            }
+        }
+
+        async function loadAdminPosts() {
+            try {
+                const { data: posts, error } = await supabase
+                    .from('posts')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+                
+                if (error) throw error;
+                
+                const container = document.getElementById('adminPostsList');
+                
+                if (!posts || posts.length === 0) {
+                    container.innerHTML = `
+                        <div style="text-align: center; padding: 20px; color: var(--text-secondary);">
+                            Нет постов. Создайте первый! 📝
+                        </div>
+                    `;
+                    return;
+                }
+                
+                container.innerHTML = posts.map(post => `
+                    <div class="post-item">
+                        ${post.image_url ? `<img src="${post.image_url}" style="width:100%;border-radius:10px;margin-bottom:10px;">` : ''}
+                        <div class="post-item-title">${post.title}</div>
+                        <div class="post-item-content">${post.content}</div>
+                        <div class="post-item-meta">
+                            <span>@${post.author}</span>
+                            <span>${new Date(post.created_at).toLocaleDateString('ru-RU')}</span>
+                        </div>
+                        <div style="margin-top:10px;display:flex;gap:10px;">
+                            <button class="btn-secondary" onclick="deletePost('${post.id}')" style="padding:8px 16px;">Удалить</button>
+                        </div>
+                    </div>
+                `).join('');
+                
+            } catch (error) {
+                console.error('Error loading admin posts:', error);
+                document.getElementById('adminPostsList').innerHTML = `
+                    <div style="text-align: center; padding: 20px; color: var(--text-secondary);">
+                        Ошибка загрузки: ${error.message}
+                    </div>
+                `;
+            }
+        }
+
+        async function deletePost(postId) {
+            if (!confirm('Удалить этот пост?')) return;
+            
+            try {
+                const { error } = await supabase
+                    .from('posts')
+                    .delete()
+                    .eq('id', postId);
+                
+                if (error) throw error;
+                
+                alert('Пост удалён! ✅');
+                loadAdminPosts();
+                
+            } catch (error) {
+                console.error('Error deleting post:', error);
+                alert('Ошибка при удалении: ' + error.message);
+            }
+        }
+
+        function openPost(postId) {
+            // TODO: Открыть полный пост в модальном окне
+            console.log('Open post:', postId);
+        }
     </script>
 </body>
 </html>
