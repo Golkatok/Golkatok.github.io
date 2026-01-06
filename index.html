@@ -35,7 +35,7 @@
             pointer-events: none;
         }
 
-        .social-btn, .video-card, .theme-toggle, .tab-item, .settings-toggle {
+        .social-btn, .video-card, .tab-item, .settings-toggle {
             -webkit-touch-callout: none;
             -webkit-user-select: none;
         }
@@ -844,7 +844,7 @@
             }
         }
 
-        /* Стили для модального окна настроек */
+        /* Стили для модального окна настроек (прикреплено к низу) */
         .modal {
             display: none;
             position: fixed;
@@ -859,14 +859,33 @@
 
         .modal-content {
             background: var(--card-bg);
-            margin: 5% auto;
+            margin: auto auto 0 auto;
             padding: 0;
-            width: 90%;
+            width: 100%;
             max-width: 500px;
-            border-radius: 20px;
+            max-height: 85vh;
+            border-radius: 20px 20px 0 0;
             border: 1px solid var(--border);
-            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
-            animation: slideUp 0.3s ease;
+            border-bottom: none;
+            box-shadow: 0 -10px 40px rgba(0,0,0,0.3);
+            animation: slideUpFromBottom 0.3s ease;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        @keyframes slideUpFromBottom {
+            from {
+                transform: translateY(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
         }
 
         .modal-header {
@@ -937,23 +956,85 @@
             color: var(--text-primary);
         }
 
-        /* Стили для селекта и инпута цвета */
-        select, input[type="color"] {
-            padding: 8px 12px;
-            border-radius: 8px;
-            border: 1px solid var(--border);
+        /* Стилизованный select */
+        .styled-select {
+            position: relative;
+            display: inline-block;
+            width: 160px;
+        }
+
+        .styled-select select {
+            width: 100%;
+            padding: 10px 40px 10px 15px;
+            border-radius: 12px;
+            border: 2px solid var(--border);
             background: var(--bg-secondary);
             color: var(--text-primary);
             font-family: 'Inter', sans-serif;
             font-size: 14px;
             cursor: pointer;
+            appearance: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
         }
 
-        input[type="color"] {
-            width: 60px;
-            height: 40px;
-            padding: 0;
-            border: none;
+        .styled-select:hover select {
+            border-color: var(--accent);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .styled-select::after {
+            content: '▼';
+            position: absolute;
+            top: 50%;
+            right: 15px;
+            transform: translateY(-50%);
+            color: var(--accent);
+            font-size: 12px;
+            pointer-events: none;
+        }
+
+        /* Стилизованные чекбоксы */
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+
+        .checkbox-custom {
+            width: 22px;
+            height: 22px;
+            border: 2px solid var(--border);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            background: var(--bg-secondary);
+        }
+
+        .checkbox-container input:checked + .checkbox-custom {
+            background: var(--accent);
+            border-color: var(--accent);
+        }
+
+        .checkbox-container input:checked + .checkbox-custom::after {
+            content: '✓';
+            color: white;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .checkbox-container:hover .checkbox-custom {
+            border-color: var(--accent);
+            transform: scale(1.1);
+        }
+
+        /* Скрываем оригинальные чекбоксы */
+        .checkbox-container input[type="checkbox"] {
+            display: none;
         }
 
         /* Стили для переключателя (toggle switch) */
@@ -1000,18 +1081,6 @@
 
         input:checked + .slider:before {
             transform: translateX(24px);
-        }
-
-        /* Анимации */
-        @keyframes slideUp {
-            from {
-                transform: translateY(30px);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
         }
 
         /* Стили для системы фильтрации постов */
@@ -1083,30 +1152,36 @@
                     <h3><img src="png/brush.png" class="category-icon"> Кастомизация</h3>
                     <div class="setting-item">
                         <span>Тема интерфейса</span>
-                        <select id="themeSelect" onchange="changeTheme(this.value)">
-                            <option value="auto">Авто (как в системе)</option>
-                            <option value="light">Светлая</option>
-                            <option value="dark">Тёмная</option>
-                        </select>
-                    </div>
-                    <div class="setting-item">
-                        <span>Цвет акцента</span>
-                        <input type="color" id="accentColorPicker" value="#007AFF" onchange="changeAccentColor(this.value)">
+                        <div class="styled-select">
+                            <select id="themeSelect" onchange="changeTheme(this.value)">
+                                <option value="auto">Авто (как в системе)</option>
+                                <option value="light">Светлая</option>
+                                <option value="dark">Тёмная</option>
+                            </select>
+                        </div>
                     </div>
                     <div class="setting-item">
                         <span>Видимые разделы</span>
                         <div class="tab-visibility-controls">
-                            <label style="display: block; margin-bottom: 5px;">
-                                <input type="checkbox" id="tabHome" checked onchange="toggleTabVisibility('home', this.checked)"> Главная
+                            <label class="checkbox-container">
+                                <input type="checkbox" id="tabHome" checked onchange="toggleTabVisibility('home', this.checked)">
+                                <span class="checkbox-custom"></span>
+                                <span>Главная</span>
                             </label>
-                            <label style="display: block; margin-bottom: 5px;">
-                                <input type="checkbox" id="tabSocial" checked onchange="toggleTabVisibility('social', this.checked)"> Соцсети
+                            <label class="checkbox-container">
+                                <input type="checkbox" id="tabSocial" checked onchange="toggleTabVisibility('social', this.checked)">
+                                <span class="checkbox-custom"></span>
+                                <span>Соцсети</span>
                             </label>
-                            <label style="display: block; margin-bottom: 5px;">
-                                <input type="checkbox" id="tabPosts" checked onchange="toggleTabVisibility('posts', this.checked)"> Посты
+                            <label class="checkbox-container">
+                                <input type="checkbox" id="tabPosts" checked onchange="toggleTabVisibility('posts', this.checked)">
+                                <span class="checkbox-custom"></span>
+                                <span>Посты</span>
                             </label>
-                            <label style="display: block;">
-                                <input type="checkbox" id="tabAI" checked onchange="toggleTabVisibility('ai', this.checked)"> JahvirAI
+                            <label class="checkbox-container">
+                                <input type="checkbox" id="tabAI" checked onchange="toggleTabVisibility('ai', this.checked)">
+                                <span class="checkbox-custom"></span>
+                                <span>JahvirAI</span>
                             </label>
                         </div>
                     </div>
@@ -1123,8 +1198,12 @@
                         </label>
                     </div>
                     <div class="setting-item">
-                        <span>Вход в админ-панель</span>
+                        <span>Админ-панель постов</span>
                         <button class="btn-primary" onclick="showColorVerify()" style="padding: 8px 16px;">Активировать</button>
+                    </div>
+                    <div class="setting-item" style="border-bottom: none;">
+                        <span>Текущий пользователь:</span>
+                        <span style="font-weight: 700; color: var(--accent);">@<span id="currentUserDisplay"></span></span>
                     </div>
                 </div>
 
@@ -1477,10 +1556,17 @@
         // === ФУНКЦИИ ДЛЯ НАСТРОЕК ===
         function openSettings() {
             document.getElementById('settingsModal').style.display = 'block';
-            // Проверяем, разработчик ли пользователь, и показываем соответствующую категорию
+            
+            // Проверяем, разработчик ли пользователь
             if (ADMIN_USERNAMES.includes(currentUsername)) {
                 document.getElementById('devCategory').style.display = 'block';
+            } else {
+                document.getElementById('devCategory').style.display = 'none';
             }
+            
+            // Отображаем текущего пользователя
+            document.getElementById('currentUserDisplay').textContent = currentUsername || 'неизвестен';
+            
             // Загружаем сохраненные настройки
             loadUserSettings();
         }
@@ -1506,11 +1592,6 @@
             updateThemeIcons(document.body.classList.contains('dark'));
         }
 
-        function changeAccentColor(color) {
-            document.documentElement.style.setProperty('--accent', color);
-            localStorage.setItem('accentColor', color);
-        }
-
         function toggleDebugButton(isVisible) {
             const debugBtn = document.querySelector('.debug-toggle');
             debugBtn.style.display = isVisible ? 'block' : 'none';
@@ -1532,11 +1613,6 @@
             const savedTheme = localStorage.getItem('theme') || 'auto';
             document.getElementById('themeSelect').value = savedTheme;
             changeTheme(savedTheme);
-            
-            // Загрузка акцентного цвета
-            const savedColor = localStorage.getItem('accentColor') || '#007AFF';
-            document.getElementById('accentColorPicker').value = savedColor;
-            changeAccentColor(savedColor);
             
             // Загрузка видимости дебаг-кнопки
             const debugVisible = localStorage.getItem('debugVisible') === 'true';
@@ -1564,24 +1640,34 @@
         function updateThemeIcons(isDark) {
             const iconFolder = isDark ? 'pngdark' : 'png';
             
-            // Обновляем иконку настроек
-            document.querySelector('.settings-icon').src = `${iconFolder}/settings.png`;
+            // Обновляем основные иконки
+            const icons = {
+                settings: '.settings-icon',
+                home: '.tab-icon[alt="Home"]',
+                social: '.tab-icon[alt="Social"]',
+                posts: '.tab-icon[alt="Posts"]',
+                jahvirai: '.tab-icon[alt="AI"]',
+                brush: '.category-icon[src*="brush"]',
+                code: '.category-icon[src*="code"]'
+            };
             
-            const tabIcons = document.querySelectorAll('.tab-icon');
-            const iconNames = ['home', 'social', 'posts', 'jahvirai'];
-            tabIcons.forEach((icon, index) => {
-                if (iconNames[index]) {
-                    icon.src = `${iconFolder}/${iconNames[index]}.png`;
+            Object.entries(icons).forEach(([name, selector]) => {
+                const element = document.querySelector(selector);
+                if (element) {
+                    element.src = `${iconFolder}/${name}.png`;
                 }
             });
             
-            document.querySelectorAll('.social-icon').forEach((icon, index) => {
-                const names = ['discord', 'youtube', 'twitch', 'telegram'];
-                if (names[index]) {
-                    icon.src = `${iconFolder}/${names[index]}.png`;
+            // Обновляем социальные иконки
+            const socialIcons = document.querySelectorAll('.social-icon');
+            const socialNames = ['discord', 'youtube', 'twitch', 'telegram'];
+            socialIcons.forEach((icon, index) => {
+                if (socialNames[index]) {
+                    icon.src = `${iconFolder}/${socialNames[index]}.png`;
                 }
             });
             
+            // Обновляем construction иконки
             document.querySelectorAll('.construction-icon').forEach(icon => {
                 if (icon.src.includes('jahvirai')) {
                     icon.src = `${iconFolder}/jahvirai.png`;
@@ -1692,18 +1778,19 @@
         function checkPostsAccess() {
             if (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) {
                 currentUsername = tg.initDataUnsafe.user.username || '';
-                console.log('Checking access for:', currentUsername);
+                console.log('User:', currentUsername);
                 
-                if (ADMIN_USERNAMES.includes(currentUsername)) {
-                    console.log('Admin detected, showing color verification option in settings');
-                    // Показываем фильтры для админов
-                    document.getElementById('postsFilter').style.display = 'flex';
-                } else {
-                    console.log('Regular user, showing public posts');
-                    loadPublicPosts();
-                }
+                // Всегда загружаем публичные посты
+                loadPublicPosts();
+                
+                // Показываем фильтры только если есть посты
+                setTimeout(() => {
+                    const hasPosts = document.querySelectorAll('#postsPublic .post-item').length > 0;
+                    if (hasPosts) {
+                        document.getElementById('postsFilter').style.display = 'flex';
+                    }
+                }, 500);
             } else {
-                console.log('No user data, showing public posts');
                 loadPublicPosts();
             }
         }
@@ -2007,11 +2094,6 @@
                 log('❌ Error:', error.message);
                 alert('Ошибка: ' + error.message);
             }
-        }
-
-        function openPost(postId) {
-            // TODO: Открыть полный пост в модальном окне
-            console.log('Open post:', postId);
         }
 
         // Инициализация при загрузке
