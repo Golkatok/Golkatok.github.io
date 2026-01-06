@@ -330,31 +330,60 @@
         .color-verify-title {
             font-size: 20px;
             font-weight: 600;
-            margin-bottom: 20px;
+            margin-bottom: 30px;
             font-family: 'Space Grotesk', sans-serif;
         }
 
         .color-buttons {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-            max-width: 400px;
-            margin: 0 auto;
+            gap: 12px;
+            max-width: 350px;
+            margin: 0 auto 20px;
         }
 
         .color-btn {
-            padding: 30px;
+            aspect-ratio: 1;
             border: none;
-            border-radius: 15px;
+            border-radius: 12px;
             cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 14px;
-            font-weight: 600;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: all 0.2s ease;
+            font-size: 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
         }
 
         .color-btn:active {
-            transform: scale(0.95);
+            transform: scale(0.9);
+        }
+
+        .color-sequence-display {
+            margin-top: 20px;
+            padding: 15px;
+            background: var(--bg-secondary);
+            border-radius: 10px;
+            min-height: 50px;
+        }
+
+        .color-sequence-title {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .color-sequence-dots {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+        }
+
+        .color-dot {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            border: 2px solid var(--border);
         }
 
         .color-btn.green {
@@ -539,6 +568,42 @@
         .btn-primary:hover,
         .btn-secondary:hover {
             opacity: 0.8;
+        }
+
+        .debug-log {
+            position: fixed;
+            bottom: 100px;
+            left: 10px;
+            right: 10px;
+            max-height: 200px;
+            overflow-y: auto;
+            background: rgba(0,0,0,0.9);
+            color: #0f0;
+            padding: 10px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 11px;
+            z-index: 9998;
+            display: none;
+        }
+
+        .debug-log.show {
+            display: block;
+        }
+
+        .debug-toggle {
+            position: fixed;
+            bottom: 100px;
+            left: 10px;
+            width: 40px;
+            height: 40px;
+            background: rgba(0,0,0,0.7);
+            color: #0f0;
+            border: 1px solid #0f0;
+            border-radius: 50%;
+            font-size: 12px;
+            cursor: pointer;
+            z-index: 9999;
         }
 
         .back-btn {
@@ -862,18 +927,19 @@
             <div id="colorVerify" class="color-verify" style="display: none;">
                 <div class="color-verify-title">Введите цветовой код</div>
                 <div class="color-buttons">
-                    <div class="color-btn green" onclick="verifyColor('green')">Зелёный</div>
-                    <div class="color-btn pink" onclick="verifyColor('pink')">Розовый</div>
-                    <div class="color-btn yellow" onclick="verifyColor('yellow')">Жёлтый</div>
-                    <div class="color-btn red" onclick="verifyColor('red')">Красный</div>
-                    <div class="color-btn blue" onclick="verifyColor('blue')">Синий</div>
-                    <div class="color-btn purple" onclick="verifyColor('purple')">Фиолетовый</div>
-                    <div class="color-btn orange" onclick="verifyColor('orange')">Оранжевый</div>
-                    <div class="color-btn cyan" onclick="verifyColor('cyan')">Голубой</div>
-                    <div class="color-btn brown" onclick="verifyColor('brown')">Коричневый</div>
+                    <div class="color-btn green" onclick="verifyColor('green')"></div>
+                    <div class="color-btn pink" onclick="verifyColor('pink')"></div>
+                    <div class="color-btn yellow" onclick="verifyColor('yellow')"></div>
+                    <div class="color-btn red" onclick="verifyColor('red')"></div>
+                    <div class="color-btn blue" onclick="verifyColor('blue')"></div>
+                    <div class="color-btn purple" onclick="verifyColor('purple')"></div>
+                    <div class="color-btn orange" onclick="verifyColor('orange')"></div>
+                    <div class="color-btn cyan" onclick="verifyColor('cyan')"></div>
+                    <div class="color-btn brown" onclick="verifyColor('brown')"></div>
                 </div>
-                <div style="margin-top: 20px; color: var(--text-secondary); font-size: 14px;">
-                    Последовательность: <span id="colorSequence"></span>
+                <div class="color-sequence-display">
+                    <div class="color-sequence-title">Ваша последовательность</div>
+                    <div class="color-sequence-dots" id="colorSequenceDots"></div>
                 </div>
             </div>
 
@@ -951,8 +1017,25 @@
         </div>
     </div>
 
+    <!-- Debug консоль -->
+    <button class="debug-toggle" onclick="toggleDebug()">🐛</button>
+    <div class="debug-log" id="debugLog"></div>
+
     <script>
+        // Debug функции
+        function log(...args) {
+            console.log(...args);
+            const logEl = document.getElementById('debugLog');
+            const msg = args.map(a => typeof a === 'object' ? JSON.stringify(a, null, 2) : String(a)).join(' ');
+            logEl.innerHTML += `<div>${new Date().toLocaleTimeString()}: ${msg}</div>`;
+            logEl.scrollTop = logEl.scrollHeight;
+        }
+
+        function toggleDebug() {
+            document.getElementById('debugLog').classList.toggle('show');
+        }
         console.log('=== Script initialization ===');
+        log('=== App starting ===');
         
         // Инициализация Supabase (загружаем библиотеку динамически)
         const SUPABASE_URL = 'https://wyhtxlfasssxunrdsviq.supabase.co';
@@ -966,9 +1049,11 @@
         script.onload = () => {
             supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
             supabaseLoaded = true;
+            log('✅ Supabase loaded!');
             console.log('✅ Supabase loaded and initialized');
         };
         script.onerror = () => {
+            log('❌ Supabase load failed');
             console.error('❌ Failed to load Supabase');
         };
         document.head.appendChild(script);
@@ -1248,20 +1333,39 @@
 
         function verifyColor(color) {
             currentColorSequence.push(color);
-            document.getElementById('colorSequence').textContent = currentColorSequence.join(' → ');
+            
+            const colorMap = {
+                'green': '#34C759',
+                'pink': '#FF2D55',
+                'yellow': '#FFCC00',
+                'red': '#FF3B30',
+                'blue': '#007AFF',
+                'purple': '#AF52DE',
+                'orange': '#FF9500',
+                'cyan': '#5AC8FA',
+                'brown': '#A2845E'
+            };
+            
+            const dotsContainer = document.getElementById('colorSequenceDots');
+            dotsContainer.innerHTML = currentColorSequence.map(c => 
+                `<div class="color-dot" style="background: ${colorMap[c]}; border-color: ${colorMap[c]};"></div>`
+            ).join('');
+            
+            console.log('Current sequence:', currentColorSequence);
+            console.log('Expected:', COLOR_CODE);
             
             if (currentColorSequence.length === COLOR_CODE.length) {
                 if (JSON.stringify(currentColorSequence) === JSON.stringify(COLOR_CODE)) {
-                    console.log('Color code correct!');
+                    console.log('✅ Color code correct!');
                     isAdminVerified = true;
                     document.getElementById('colorVerify').style.display = 'none';
                     document.getElementById('adminPanel').classList.add('active');
                     loadAdminPosts();
                 } else {
-                    console.log('Color code incorrect');
+                    console.log('❌ Color code incorrect');
                     alert('Неверный код! Попробуйте снова.');
                     currentColorSequence = [];
-                    document.getElementById('colorSequence').textContent = '';
+                    dotsContainer.innerHTML = '';
                 }
             }
         }
@@ -1278,50 +1382,58 @@
         }
 
         async function savePost() {
+            log('=== Saving post ===');
+            log('Supabase loaded:', supabaseLoaded);
+            
             if (!supabaseLoaded || !supabase) {
-                alert('Supabase ещё загружается, попробуйте через секунду...');
-                console.log('Supabase status:', { supabaseLoaded, supabase });
+                alert('Supabase ещё загружается, подождите 2-3 секунды...');
+                log('❌ Supabase not ready');
                 return;
             }
             
-            const title = document.getElementById('postTitle').value;
-            const content = document.getElementById('postContent').value;
-            const imageUrl = document.getElementById('postImage').value;
+            const title = document.getElementById('postTitle').value.trim();
+            const content = document.getElementById('postContent').value.trim();
+            const imageUrl = document.getElementById('postImage').value.trim();
             
             if (!title || !content) {
                 alert('Заполните заголовок и содержание!');
                 return;
             }
             
-            console.log('Saving post...', { title, content, imageUrl, author: currentUsername });
+            const postData = {
+                title: title,
+                content: content,
+                image_url: imageUrl || null,
+                author: currentUsername,
+                published: true
+            };
+            
+            log('Post data:', postData);
             
             try {
                 const { data, error } = await supabase
                     .from('posts')
-                    .insert([
-                        {
-                            title: title,
-                            content: content,
-                            image_url: imageUrl || null,
-                            author: currentUsername,
-                            published: true
-                        }
-                    ])
+                    .insert([postData])
                     .select();
                 
                 if (error) {
-                    console.error('Supabase error:', error);
+                    log('❌ Error:', error.message);
                     throw error;
                 }
                 
-                console.log('✅ Post saved:', data);
-                alert('Пост успешно опубликован! ✅');
+                log('✅ Post saved!', data);
+                alert('Пост опубликован! ✅');
+                
+                document.getElementById('postTitle').value = '';
+                document.getElementById('postContent').value = '';
+                document.getElementById('postImage').value = '';
+                
                 togglePostForm();
                 loadAdminPosts();
                 
             } catch (error) {
-                console.error('Error saving post:', error);
-                alert('Ошибка при сохранении поста: ' + error.message);
+                log('❌ Error:', error.message);
+                alert('Ошибка: ' + error.message);
             }
         }
 
