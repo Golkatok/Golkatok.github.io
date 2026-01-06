@@ -35,7 +35,7 @@
             pointer-events: none;
         }
 
-        .social-btn, .video-card, .theme-toggle, .tab-item {
+        .social-btn, .video-card, .theme-toggle, .tab-item, .settings-toggle {
             -webkit-touch-callout: none;
             -webkit-user-select: none;
         }
@@ -69,6 +69,16 @@
             --accent: #0a84ff;
             --card-bg: #1c1c1e;
             --border: #38383a;
+        }
+
+        body.light {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f5f5f7;
+            --text-primary: #000000;
+            --text-secondary: #6e6e73;
+            --accent: #007aff;
+            --card-bg: #ffffff;
+            --border: #d2d2d7;
         }
 
         .container {
@@ -128,7 +138,7 @@
                 order: 1;
             }
 
-            .theme-toggle {
+            .settings-toggle {
                 order: 3;
                 margin-left: auto;
             }
@@ -153,13 +163,13 @@
             border-radius: 50%;
         }
 
-        .theme-toggle {
+        .settings-toggle {
             width: 50px;
             height: 50px;
             background: var(--bg-secondary);
             border-radius: 25px;
             cursor: pointer;
-            transition: background 0.3s ease;
+            transition: all 0.3s ease;
             border: 1px solid var(--border);
             display: flex;
             align-items: center;
@@ -168,7 +178,16 @@
             line-height: 1;
         }
 
-        .theme-icon {
+        .settings-toggle:hover {
+            background: var(--accent);
+            transform: rotate(30deg);
+        }
+
+        .settings-toggle:hover .settings-icon {
+            filter: brightness(0) invert(1);
+        }
+
+        .settings-icon {
             width: 24px;
             height: 24px;
             transition: all 0.3s ease;
@@ -392,7 +411,7 @@
         }
 
         .color-btn.pink {
-            background: #FF2D92;
+            background: #FF0090;
             color: white;
         }
 
@@ -604,6 +623,7 @@
             font-size: 12px;
             cursor: pointer;
             z-index: 9999;
+            display: none;
         }
 
         .back-btn {
@@ -823,6 +843,216 @@
                 opacity: 1;
             }
         }
+
+        /* Стили для модального окна настроек */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1002;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            animation: fadeIn 0.2s ease;
+        }
+
+        .modal-content {
+            background: var(--card-bg);
+            margin: 5% auto;
+            padding: 0;
+            width: 90%;
+            max-width: 500px;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            animation: slideUp 0.3s ease;
+        }
+
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            color: var(--text-primary);
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        .close-modal {
+            font-size: 28px;
+            cursor: pointer;
+            color: var(--text-secondary);
+            transition: color 0.3s ease;
+        }
+
+        .close-modal:hover {
+            color: var(--accent);
+        }
+
+        .modal-body {
+            padding: 20px;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        /* Категории настроек */
+        .settings-category {
+            margin-bottom: 30px;
+        }
+
+        .settings-category h3 {
+            font-family: 'Space Grotesk', sans-serif;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            color: var(--text-primary);
+            font-size: 18px;
+        }
+
+        .category-icon {
+            width: 20px;
+            height: 20px;
+        }
+
+        .setting-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .setting-item:last-child {
+            border-bottom: none;
+        }
+
+        .setting-item span {
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        /* Стили для селекта и инпута цвета */
+        select, input[type="color"] {
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        input[type="color"] {
+            width: 60px;
+            height: 40px;
+            padding: 0;
+            border: none;
+        }
+
+        /* Стили для переключателя (toggle switch) */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 26px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--border);
+            transition: .3s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .3s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(24px);
+        }
+
+        /* Анимации */
+        @keyframes slideUp {
+            from {
+                transform: translateY(30px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* Стили для системы фильтрации постов */
+        .posts-filter {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 8px 16px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            color: var(--text-secondary);
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .filter-btn.active {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+
+        .filter-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .post-category {
+            display: inline-block;
+            padding: 4px 10px;
+            background: var(--accent);
+            color: white;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
     </style>
 </head>
 <body>
@@ -839,6 +1069,69 @@
         </div>
     </div>
 
+    <!-- Модальное окно настроек -->
+    <div id="settingsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Настройки</h2>
+                <span class="close-modal" onclick="closeSettings()">&times;</span>
+            </div>
+            <div class="modal-body">
+                
+                <!-- Категория 1: Кастомизация -->
+                <div class="settings-category">
+                    <h3><img src="png/brush.png" class="category-icon"> Кастомизация</h3>
+                    <div class="setting-item">
+                        <span>Тема интерфейса</span>
+                        <select id="themeSelect" onchange="changeTheme(this.value)">
+                            <option value="auto">Авто (как в системе)</option>
+                            <option value="light">Светлая</option>
+                            <option value="dark">Тёмная</option>
+                        </select>
+                    </div>
+                    <div class="setting-item">
+                        <span>Цвет акцента</span>
+                        <input type="color" id="accentColorPicker" value="#007AFF" onchange="changeAccentColor(this.value)">
+                    </div>
+                    <div class="setting-item">
+                        <span>Видимые разделы</span>
+                        <div class="tab-visibility-controls">
+                            <label style="display: block; margin-bottom: 5px;">
+                                <input type="checkbox" id="tabHome" checked onchange="toggleTabVisibility('home', this.checked)"> Главная
+                            </label>
+                            <label style="display: block; margin-bottom: 5px;">
+                                <input type="checkbox" id="tabSocial" checked onchange="toggleTabVisibility('social', this.checked)"> Соцсети
+                            </label>
+                            <label style="display: block; margin-bottom: 5px;">
+                                <input type="checkbox" id="tabPosts" checked onchange="toggleTabVisibility('posts', this.checked)"> Посты
+                            </label>
+                            <label style="display: block;">
+                                <input type="checkbox" id="tabAI" checked onchange="toggleTabVisibility('ai', this.checked)"> JahvirAI
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Категория 2: Для разработчиков -->
+                <div id="devCategory" class="settings-category" style="display: none;">
+                    <h3><img src="png/code.png" class="category-icon"> Для разработчиков</h3>
+                    <div class="setting-item">
+                        <span>Показать кнопку отладки (Debug)</span>
+                        <label class="switch">
+                            <input type="checkbox" id="debugToggle" onchange="toggleDebugButton(this.checked)">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="setting-item">
+                        <span>Вход в админ-панель</span>
+                        <button class="btn-primary" onclick="showColorVerify()" style="padding: 8px 16px;">Активировать</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
     <div class="container">
         <!-- Главная страница -->
         <div class="page active" id="home">
@@ -848,8 +1141,8 @@
                     <div class="avatar" id="userAvatar">
                         <img src="" alt="Avatar">
                     </div>
-                    <div class="theme-toggle" onclick="toggleTheme()">
-                        <img src="png/moon.png" alt="Theme" class="theme-icon" id="themeIcon">
+                    <div class="settings-toggle" onclick="openSettings()">
+                        <img src="png/settings.png" alt="Settings" class="settings-icon">
                     </div>
                 </div>
             </div>
@@ -878,8 +1171,8 @@
                     <div class="avatar" id="userAvatar2">
                         <img src="" alt="Avatar">
                     </div>
-                    <div class="theme-toggle" onclick="toggleTheme()">
-                        <img src="png/moon.png" alt="Theme" class="theme-icon">
+                    <div class="settings-toggle" onclick="openSettings()">
+                        <img src="png/settings.png" alt="Settings" class="settings-icon">
                     </div>
                 </div>
             </div>
@@ -912,13 +1205,21 @@
                     <div class="avatar" id="userAvatar3">
                         <img src="" alt="Avatar">
                     </div>
-                    <div class="theme-toggle" onclick="toggleTheme()">
-                        <img src="png/moon.png" alt="Theme" class="theme-icon">
+                    <div class="settings-toggle" onclick="openSettings()">
+                        <img src="png/settings.png" alt="Settings" class="settings-icon">
                     </div>
                 </div>
             </div>
 
-            <!-- Проверка доступа -->
+            <!-- Фильтры постов -->
+            <div class="posts-filter" id="postsFilter" style="display: none;">
+                <button class="filter-btn active" onclick="filterPosts('all')">Все</button>
+                <button class="filter-btn" onclick="filterPosts('news')">Новости</button>
+                <button class="filter-btn" onclick="filterPosts('announcements')">Анонсы</button>
+                <button class="filter-btn" onclick="filterPosts('updates')">Обновления</button>
+            </div>
+
+            <!-- Публичные посты -->
             <div id="postsPublic" class="posts-list">
                 <!-- Здесь будут отображаться посты для всех -->
             </div>
@@ -954,6 +1255,15 @@
                             <input type="text" id="postTitle" placeholder="Название поста">
                         </div>
                         <div class="form-group">
+                            <label>Категория</label>
+                            <select id="postCategory">
+                                <option value="news">Новости</option>
+                                <option value="announcements">Анонсы</option>
+                                <option value="updates">Обновления</option>
+                                <option value="other">Другое</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
                             <label>Содержание</label>
                             <textarea id="postContent" placeholder="Текст поста"></textarea>
                         </div>
@@ -982,8 +1292,8 @@
                     <div class="avatar" id="userAvatar4">
                         <img src="" alt="Avatar">
                     </div>
-                    <div class="theme-toggle" onclick="toggleTheme()">
-                        <img src="png/moon.png" alt="Theme" class="theme-icon">
+                    <div class="settings-toggle" onclick="openSettings()">
+                        <img src="png/settings.png" alt="Settings" class="settings-icon">
                     </div>
                 </div>
             </div>
@@ -1034,10 +1344,11 @@
         function toggleDebug() {
             document.getElementById('debugLog').classList.toggle('show');
         }
+
         console.log('=== Script initialization ===');
         log('=== App starting ===');
         
-        // Инициализация Supabase (загружаем библиотеку динамически)
+        // Инициализация Supabase
         const SUPABASE_URL = 'https://wyhtxlfasssxunrdsviq.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind5aHR4bGZhc3NzeHVucmRzdmlxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc2NTEyNzcsImV4cCI6MjA4MzIyNzI3N30.LVoxX-hLG4s6dT4l5FtnF0LCQ8Pc5o1JHKZbRMNZXKU';
         let supabase = null;
@@ -1163,21 +1474,98 @@
             }, 800);
         }
 
-        // Переключение темы
-        function toggleTheme() {
-            document.body.classList.toggle('dark');
-            const isDark = document.body.classList.contains('dark');
-            localStorage.setItem('theme', isDark ? 'dark' : 'light');
-            updateThemeIcons(isDark);
+        // === ФУНКЦИИ ДЛЯ НАСТРОЕК ===
+        function openSettings() {
+            document.getElementById('settingsModal').style.display = 'block';
+            // Проверяем, разработчик ли пользователь, и показываем соответствующую категорию
+            if (ADMIN_USERNAMES.includes(currentUsername)) {
+                document.getElementById('devCategory').style.display = 'block';
+            }
+            // Загружаем сохраненные настройки
+            loadUserSettings();
+        }
+
+        function closeSettings() {
+            document.getElementById('settingsModal').style.display = 'none';
+        }
+
+        function changeTheme(theme) {
+            // Удаляем старые классы тем
+            document.body.classList.remove('light', 'dark');
+            
+            if (theme === 'auto') {
+                // Определяем тему системы
+                const isSystemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                document.body.classList.add(isSystemDark ? 'dark' : 'light');
+                localStorage.setItem('theme', 'auto');
+            } else {
+                document.body.classList.add(theme);
+                localStorage.setItem('theme', theme);
+            }
+            // Обновляем глобальную переменную и иконки
+            updateThemeIcons(document.body.classList.contains('dark'));
+        }
+
+        function changeAccentColor(color) {
+            document.documentElement.style.setProperty('--accent', color);
+            localStorage.setItem('accentColor', color);
+        }
+
+        function toggleDebugButton(isVisible) {
+            const debugBtn = document.querySelector('.debug-toggle');
+            debugBtn.style.display = isVisible ? 'block' : 'none';
+            localStorage.setItem('debugVisible', isVisible);
+        }
+
+        function toggleTabVisibility(tabId, isVisible) {
+            const tabItems = document.querySelectorAll('.tab-item');
+            tabItems.forEach(tab => {
+                if (tab.onclick && tab.onclick.toString().includes(tabId)) {
+                    tab.style.display = isVisible ? 'flex' : 'none';
+                }
+            });
+            localStorage.setItem(`tab_${tabId}`, isVisible);
+        }
+
+        function loadUserSettings() {
+            // Загрузка темы
+            const savedTheme = localStorage.getItem('theme') || 'auto';
+            document.getElementById('themeSelect').value = savedTheme;
+            changeTheme(savedTheme);
+            
+            // Загрузка акцентного цвета
+            const savedColor = localStorage.getItem('accentColor') || '#007AFF';
+            document.getElementById('accentColorPicker').value = savedColor;
+            changeAccentColor(savedColor);
+            
+            // Загрузка видимости дебаг-кнопки
+            const debugVisible = localStorage.getItem('debugVisible') === 'true';
+            document.getElementById('debugToggle').checked = debugVisible;
+            toggleDebugButton(debugVisible);
+            
+            // Загрузка видимости вкладок
+            const tabs = ['home', 'social', 'posts', 'ai'];
+            tabs.forEach(tabId => {
+                const isVisible = localStorage.getItem(`tab_${tabId}`) !== 'false';
+                document.getElementById(`tab${tabId.charAt(0).toUpperCase() + tabId.slice(1)}`).checked = isVisible;
+                toggleTabVisibility(tabId, isVisible);
+            });
+        }
+
+        // Закрытие модального окна при клике вне его
+        window.onclick = function(event) {
+            const modal = document.getElementById('settingsModal');
+            if (event.target == modal) {
+                closeSettings();
+            }
         }
 
         // Обновление иконок темы
         function updateThemeIcons(isDark) {
             const iconFolder = isDark ? 'pngdark' : 'png';
             
-            document.querySelectorAll('.theme-icon').forEach(icon => {
-                icon.src = isDark ? 'png/sun.png' : 'png/moon.png';
-            });
+            // Обновляем иконку настроек
+            document.querySelector('.settings-icon').src = `${iconFolder}/settings.png`;
             
             const tabIcons = document.querySelectorAll('.tab-icon');
             const iconNames = ['home', 'social', 'posts', 'jahvirai'];
@@ -1208,6 +1596,13 @@
         if (savedTheme === 'dark') {
             document.body.classList.add('dark');
             updateThemeIcons(true);
+        } else if (savedTheme === 'light') {
+            document.body.classList.add('light');
+            updateThemeIcons(false);
+        } else if (savedTheme === 'auto') {
+            const isSystemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            document.body.classList.add(isSystemDark ? 'dark' : 'light');
+            updateThemeIcons(isSystemDark);
         }
 
         // Переключение страниц
@@ -1286,31 +1681,13 @@
             }
         }
 
-        // Инициализация при загрузке
-        document.addEventListener('DOMContentLoaded', () => {
-            console.log('DOM loaded');
-            
-            // Инициализируем Telegram
-            initTelegram();
-            
-            // Загружаем данные пользователя
-            setTimeout(updateUserData, 100);
-            setTimeout(updateUserData, 300);
-            setTimeout(updateUserData, 500);
-            
-            // Загружаем YouTube данные
-            loadYouTubeData();
-            
-            // Проверяем доступ к постам
-            checkPostsAccess();
-        });
-
         // Система постов
         const ADMIN_USERNAMES = ['golka_tok', 'David3153'];
         const COLOR_CODE = ['green', 'pink', 'yellow', 'red'];
         let currentColorSequence = [];
         let isAdminVerified = false;
         let currentUsername = '';
+        let currentFilter = 'all';
 
         function checkPostsAccess() {
             if (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) {
@@ -1318,9 +1695,9 @@
                 console.log('Checking access for:', currentUsername);
                 
                 if (ADMIN_USERNAMES.includes(currentUsername)) {
-                    console.log('Admin detected, showing color verification');
-                    document.getElementById('colorVerify').style.display = 'block';
-                    document.getElementById('postsPublic').style.display = 'none';
+                    console.log('Admin detected, showing color verification option in settings');
+                    // Показываем фильтры для админов
+                    document.getElementById('postsFilter').style.display = 'flex';
                 } else {
                     console.log('Regular user, showing public posts');
                     loadPublicPosts();
@@ -1331,12 +1708,20 @@
             }
         }
 
+        function showColorVerify() {
+            document.getElementById('colorVerify').style.display = 'block';
+            document.getElementById('postsPublic').style.display = 'none';
+            document.getElementById('postsFilter').style.display = 'none';
+            document.getElementById('adminPanel').classList.remove('active');
+            closeSettings();
+        }
+
         function verifyColor(color) {
             currentColorSequence.push(color);
             
             const colorMap = {
                 'green': '#34C759',
-                'pink': '#FF2D55',
+                'pink': '#FF0090',
                 'yellow': '#FFCC00',
                 'red': '#FF3B30',
                 'blue': '#007AFF',
@@ -1360,6 +1745,7 @@
                     isAdminVerified = true;
                     document.getElementById('colorVerify').style.display = 'none';
                     document.getElementById('adminPanel').classList.add('active');
+                    document.getElementById('postsFilter').style.display = 'flex';
                     loadAdminPosts();
                 } else {
                     console.log('❌ Color code incorrect');
@@ -1378,7 +1764,29 @@
                 document.getElementById('postTitle').value = '';
                 document.getElementById('postContent').value = '';
                 document.getElementById('postImage').value = '';
+                document.getElementById('postCategory').value = 'news';
             }
+        }
+
+        function filterPosts(category) {
+            currentFilter = category;
+            
+            // Обновляем активную кнопку фильтра
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+            
+            // Фильтруем посты
+            const posts = document.querySelectorAll('#postsPublic .post-item, #adminPostsList .post-item');
+            posts.forEach(post => {
+                const postCategory = post.getAttribute('data-category') || 'other';
+                if (category === 'all' || postCategory === category) {
+                    post.style.display = 'block';
+                } else {
+                    post.style.display = 'none';
+                }
+            });
         }
 
         async function savePost() {
@@ -1387,6 +1795,7 @@
             const title = document.getElementById('postTitle').value.trim();
             const content = document.getElementById('postContent').value.trim();
             const imageUrl = document.getElementById('postImage').value.trim();
+            const category = document.getElementById('postCategory').value;
             
             if (!title || !content) {
                 alert('Заполните заголовок и содержание!');
@@ -1397,6 +1806,7 @@
                 title: title,
                 content: content,
                 image_url: imageUrl || null,
+                category: category,
                 author: currentUsername,
                 published: true
             };
@@ -1428,9 +1838,11 @@
                 document.getElementById('postTitle').value = '';
                 document.getElementById('postContent').value = '';
                 document.getElementById('postImage').value = '';
+                document.getElementById('postCategory').value = 'news';
                 
                 togglePostForm();
                 loadAdminPosts();
+                loadPublicPosts();
                 
             } catch (error) {
                 log('❌ Error:', error.message);
@@ -1462,9 +1874,13 @@
                     return;
                 }
                 
+                // Показываем фильтры если есть посты
+                document.getElementById('postsFilter').style.display = 'flex';
+                
                 container.innerHTML = posts.map(post => `
-                    <div class="post-item">
-                        ${post.image_url ? `<img src="${post.image_url}" style="width:100%;border-radius:10px;margin-bottom:10px;">` : ''}
+                    <div class="post-item" data-category="${post.category || 'other'}">
+                        ${post.image_url ? `<img src="${post.image_url}" style="width:100%;border-radius:10px;margin-bottom:10px;" alt="Post image">` : ''}
+                        <div class="post-category">${getCategoryName(post.category)}</div>
                         <div class="post-item-title">${post.title}</div>
                         <div class="post-item-content">${post.content}</div>
                         <div class="post-item-meta">
@@ -1484,6 +1900,16 @@
                     </div>
                 `;
             }
+        }
+
+        function getCategoryName(category) {
+            const categories = {
+                'news': 'Новости',
+                'announcements': 'Анонсы',
+                'updates': 'Обновления',
+                'other': 'Другое'
+            };
+            return categories[category] || 'Другое';
         }
 
         async function loadAdminPosts() {
@@ -1509,16 +1935,21 @@
                 }
                 
                 container.innerHTML = posts.map(post => `
-                    <div class="post-item">
-                        ${post.image_url ? `<img src="${post.image_url}" style="width:100%;border-radius:10px;margin-bottom:10px;">` : ''}
+                    <div class="post-item" data-category="${post.category || 'other'}">
+                        ${post.image_url ? `<img src="${post.image_url}" style="width:100%;border-radius:10px;margin-bottom:10px;" alt="Post image">` : ''}
+                        <div class="post-category">${getCategoryName(post.category)}</div>
                         <div class="post-item-title">${post.title}</div>
                         <div class="post-item-content">${post.content}</div>
                         <div class="post-item-meta">
                             <span>@${post.author}</span>
                             <span>${new Date(post.created_at).toLocaleDateString('ru-RU')}</span>
+                            <span>${post.published ? '✅ Опубликован' : '📝 Черновик'}</span>
                         </div>
                         <div style="margin-top:10px;display:flex;gap:10px;">
                             <button class="btn-secondary" onclick="deletePost('${post.id}')" style="padding:8px 16px;">Удалить</button>
+                            <button class="btn-primary" onclick="togglePublishPost('${post.id}', ${!post.published})" style="padding:8px 16px;">
+                                ${post.published ? 'В черновик' : 'Опубликовать'}
+                            </button>
                         </div>
                     </div>
                 `).join('');
@@ -1545,6 +1976,7 @@
                 log('✅ Post deleted');
                 alert('Пост удалён! ✅');
                 loadAdminPosts();
+                loadPublicPosts();
                 
             } catch (error) {
                 log('❌ Error:', error.message);
@@ -1552,10 +1984,57 @@
             }
         }
 
+        async function togglePublishPost(postId, publish) {
+            try {
+                const response = await fetch(`${SUPABASE_URL}/rest/v1/posts?id=eq.${postId}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'apikey': SUPABASE_ANON_KEY,
+                        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+                    },
+                    body: JSON.stringify({ published: publish })
+                });
+                
+                if (!response.ok) throw new Error('Failed to update');
+                
+                log(`✅ Post ${publish ? 'published' : 'unpublished'}`);
+                alert(`Пост ${publish ? 'опубликован' : 'перемещен в черновик'}! ✅`);
+                loadAdminPosts();
+                loadPublicPosts();
+                
+            } catch (error) {
+                log('❌ Error:', error.message);
+                alert('Ошибка: ' + error.message);
+            }
+        }
+
         function openPost(postId) {
             // TODO: Открыть полный пост в модальном окне
             console.log('Open post:', postId);
         }
+
+        // Инициализация при загрузке
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('DOM loaded');
+            
+            // Инициализируем Telegram
+            initTelegram();
+            
+            // Загружаем данные пользователя
+            setTimeout(updateUserData, 100);
+            setTimeout(updateUserData, 300);
+            setTimeout(updateUserData, 500);
+            
+            // Загружаем YouTube данные
+            loadYouTubeData();
+            
+            // Проверяем доступ к постам
+            checkPostsAccess();
+            
+            // Загружаем настройки пользователя
+            loadUserSettings();
+        });
     </script>
 </body>
 </html>
