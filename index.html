@@ -336,20 +336,21 @@
 
         .color-buttons {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: repeat(3, 1fr);
             gap: 15px;
-            max-width: 300px;
+            max-width: 400px;
             margin: 0 auto;
         }
 
         .color-btn {
-            padding: 40px;
-            border: 2px solid var(--border);
+            padding: 30px;
+            border: none;
             border-radius: 15px;
             cursor: pointer;
             transition: all 0.3s ease;
-            font-size: 18px;
+            font-size: 14px;
             font-weight: 600;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
 
         .color-btn:active {
@@ -373,6 +374,31 @@
 
         .color-btn.red {
             background: #FF3B30;
+            color: white;
+        }
+
+        .color-btn.blue {
+            background: #007AFF;
+            color: white;
+        }
+
+        .color-btn.purple {
+            background: #AF52DE;
+            color: white;
+        }
+
+        .color-btn.orange {
+            background: #FF9500;
+            color: white;
+        }
+
+        .color-btn.cyan {
+            background: #5AC8FA;
+            color: white;
+        }
+
+        .color-btn.brown {
+            background: #A2845E;
             color: white;
         }
 
@@ -432,10 +458,16 @@
             color: white;
             border: none;
             font-size: 30px;
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 300;
+            line-height: 1;
             cursor: pointer;
             box-shadow: 0 4px 20px rgba(0,0,0,0.2);
             transition: all 0.3s ease;
             z-index: 999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .add-post-btn:hover {
@@ -834,6 +866,11 @@
                     <div class="color-btn pink" onclick="verifyColor('pink')">Розовый</div>
                     <div class="color-btn yellow" onclick="verifyColor('yellow')">Жёлтый</div>
                     <div class="color-btn red" onclick="verifyColor('red')">Красный</div>
+                    <div class="color-btn blue" onclick="verifyColor('blue')">Синий</div>
+                    <div class="color-btn purple" onclick="verifyColor('purple')">Фиолетовый</div>
+                    <div class="color-btn orange" onclick="verifyColor('orange')">Оранжевый</div>
+                    <div class="color-btn cyan" onclick="verifyColor('cyan')">Голубой</div>
+                    <div class="color-btn brown" onclick="verifyColor('brown')">Коричневый</div>
                 </div>
                 <div style="margin-top: 20px; color: var(--text-secondary); font-size: 14px;">
                     Последовательность: <span id="colorSequence"></span>
@@ -923,14 +960,16 @@
         let supabase = null;
         
         // Загружаем Supabase динамически
+        let supabaseLoaded = false;
         const script = document.createElement('script');
         script.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
         script.onload = () => {
             supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-            console.log('Supabase loaded and initialized');
+            supabaseLoaded = true;
+            console.log('✅ Supabase loaded and initialized');
         };
         script.onerror = () => {
-            console.error('Failed to load Supabase');
+            console.error('❌ Failed to load Supabase');
         };
         document.head.appendChild(script);
         
@@ -1239,8 +1278,9 @@
         }
 
         async function savePost() {
-            if (!supabase) {
+            if (!supabaseLoaded || !supabase) {
                 alert('Supabase ещё загружается, попробуйте через секунду...');
+                console.log('Supabase status:', { supabaseLoaded, supabase });
                 return;
             }
             
@@ -1253,6 +1293,8 @@
                 return;
             }
             
+            console.log('Saving post...', { title, content, imageUrl, author: currentUsername });
+            
             try {
                 const { data, error } = await supabase
                     .from('posts')
@@ -1264,11 +1306,15 @@
                             author: currentUsername,
                             published: true
                         }
-                    ]);
+                    ])
+                    .select();
                 
-                if (error) throw error;
+                if (error) {
+                    console.error('Supabase error:', error);
+                    throw error;
+                }
                 
-                console.log('Post saved:', data);
+                console.log('✅ Post saved:', data);
                 alert('Пост успешно опубликован! ✅');
                 togglePostForm();
                 loadAdminPosts();
@@ -1280,14 +1326,14 @@
         }
 
         async function loadPublicPosts() {
-            if (!supabase) {
+            if (!supabaseLoaded || !supabase) {
                 document.getElementById('postsPublic').innerHTML = `
                     <div class="construction">
                         <img src="png/indevelop.png" alt="Posts" class="construction-icon">
                         <div class="construction-text">Загрузка...</div>
                     </div>
                 `;
-                setTimeout(loadPublicPosts, 1000);
+                setTimeout(loadPublicPosts, 500);
                 return;
             }
             
@@ -1338,8 +1384,8 @@
         }
 
         async function loadAdminPosts() {
-            if (!supabase) {
-                setTimeout(loadAdminPosts, 1000);
+            if (!supabaseLoaded || !supabase) {
+                setTimeout(loadAdminPosts, 500);
                 return;
             }
             
@@ -1390,7 +1436,7 @@
         async function deletePost(postId) {
             if (!confirm('Удалить этот пост?')) return;
             
-            if (!supabase) {
+            if (!supabaseLoaded || !supabase) {
                 alert('Supabase ещё загружается...');
                 return;
             }
