@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Jahvir App</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -918,12 +917,22 @@
     <script>
         console.log('=== Script initialization ===');
         
-        // Инициализация Supabase
+        // Инициализация Supabase (загружаем библиотеку динамически)
         const SUPABASE_URL = 'https://wyhtxlfasssxunrdsviq.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind5aHR4bGZhc3NzeHVucmRzdmlxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc2NTEyNzcsImV4cCI6MjA4MzIyNzI3N30.LVoxX-hLG4s6dT4l5FtnF0LCQ8Pc5o1JHKZbRMNZXKU';
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        let supabase = null;
         
-        console.log('Supabase initialized:', supabase);
+        // Загружаем Supabase динамически
+        const script = document.createElement('script');
+        script.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
+        script.onload = () => {
+            supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            console.log('Supabase loaded and initialized');
+        };
+        script.onerror = () => {
+            console.error('Failed to load Supabase');
+        };
+        document.head.appendChild(script);
         
         // Инициализация Telegram WebApp
         let tg = null;
@@ -1230,6 +1239,11 @@
         }
 
         async function savePost() {
+            if (!supabase) {
+                alert('Supabase ещё загружается, попробуйте через секунду...');
+                return;
+            }
+            
             const title = document.getElementById('postTitle').value;
             const content = document.getElementById('postContent').value;
             const imageUrl = document.getElementById('postImage').value;
@@ -1266,6 +1280,17 @@
         }
 
         async function loadPublicPosts() {
+            if (!supabase) {
+                document.getElementById('postsPublic').innerHTML = `
+                    <div class="construction">
+                        <img src="png/indevelop.png" alt="Posts" class="construction-icon">
+                        <div class="construction-text">Загрузка...</div>
+                    </div>
+                `;
+                setTimeout(loadPublicPosts, 1000);
+                return;
+            }
+            
             try {
                 const { data: posts, error } = await supabase
                     .from('posts')
@@ -1313,6 +1338,11 @@
         }
 
         async function loadAdminPosts() {
+            if (!supabase) {
+                setTimeout(loadAdminPosts, 1000);
+                return;
+            }
+            
             try {
                 const { data: posts, error } = await supabase
                     .from('posts')
@@ -1359,6 +1389,11 @@
 
         async function deletePost(postId) {
             if (!confirm('Удалить этот пост?')) return;
+            
+            if (!supabase) {
+                alert('Supabase ещё загружается...');
+                return;
+            }
             
             try {
                 const { error } = await supabase
