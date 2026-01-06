@@ -1383,13 +1383,6 @@
 
         async function savePost() {
             log('=== Saving post ===');
-            log('Supabase loaded:', supabaseLoaded);
-            
-            if (!supabaseLoaded || !supabase) {
-                alert('Supabase ещё загружается, подождите 2-3 секунды...');
-                log('❌ Supabase not ready');
-                return;
-            }
             
             const title = document.getElementById('postTitle').value.trim();
             const content = document.getElementById('postContent').value.trim();
@@ -1411,14 +1404,22 @@
             log('Post data:', postData);
             
             try {
-                const { data, error } = await supabase
-                    .from('posts')
-                    .insert([postData])
-                    .select();
+                const response = await fetch(`${SUPABASE_URL}/rest/v1/posts`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'apikey': SUPABASE_ANON_KEY,
+                        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+                        'Prefer': 'return=representation'
+                    },
+                    body: JSON.stringify(postData)
+                });
                 
-                if (error) {
-                    log('❌ Error:', error.message);
-                    throw error;
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    log('❌ Error:', data);
+                    throw new Error(data.message || 'Failed to save post');
                 }
                 
                 log('✅ Post saved!', data);
@@ -1438,25 +1439,15 @@
         }
 
         async function loadPublicPosts() {
-            if (!supabaseLoaded || !supabase) {
-                document.getElementById('postsPublic').innerHTML = `
-                    <div class="construction">
-                        <img src="png/indevelop.png" alt="Posts" class="construction-icon">
-                        <div class="construction-text">Загрузка...</div>
-                    </div>
-                `;
-                setTimeout(loadPublicPosts, 500);
-                return;
-            }
-            
             try {
-                const { data: posts, error } = await supabase
-                    .from('posts')
-                    .select('*')
-                    .eq('published', true)
-                    .order('created_at', { ascending: false });
+                const response = await fetch(`${SUPABASE_URL}/rest/v1/posts?published=eq.true&order=created_at.desc`, {
+                    headers: {
+                        'apikey': SUPABASE_ANON_KEY,
+                        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+                    }
+                });
                 
-                if (error) throw error;
+                const posts = await response.json();
                 
                 const container = document.getElementById('postsPublic');
                 
@@ -1472,7 +1463,7 @@
                 }
                 
                 container.innerHTML = posts.map(post => `
-                    <div class="post-item" onclick="openPost('${post.id}')">
+                    <div class="post-item">
                         ${post.image_url ? `<img src="${post.image_url}" style="width:100%;border-radius:10px;margin-bottom:10px;">` : ''}
                         <div class="post-item-title">${post.title}</div>
                         <div class="post-item-content">${post.content}</div>
@@ -1484,7 +1475,7 @@
                 `).join('');
                 
             } catch (error) {
-                console.error('Error loading posts:', error);
+                log('Error loading posts:', error.message);
                 document.getElementById('postsPublic').innerHTML = `
                     <div class="construction">
                         <img src="png/indevelop.png" alt="Error" class="construction-icon">
@@ -1496,18 +1487,15 @@
         }
 
         async function loadAdminPosts() {
-            if (!supabaseLoaded || !supabase) {
-                setTimeout(loadAdminPosts, 500);
-                return;
-            }
-            
             try {
-                const { data: posts, error } = await supabase
-                    .from('posts')
-                    .select('*')
-                    .order('created_at', { ascending: false });
+                const response = await fetch(`${SUPABASE_URL}/rest/v1/posts?order=created_at.desc`, {
+                    headers: {
+                        'apikey': SUPABASE_ANON_KEY,
+                        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+                    }
+                });
                 
-                if (error) throw error;
+                const posts = await response.json();
                 
                 const container = document.getElementById('adminPostsList');
                 
@@ -1536,36 +1524,30 @@
                 `).join('');
                 
             } catch (error) {
-                console.error('Error loading admin posts:', error);
-                document.getElementById('adminPostsList').innerHTML = `
-                    <div style="text-align: center; padding: 20px; color: var(--text-secondary);">
-                        Ошибка загрузки: ${error.message}
-                    </div>
-                `;
+                log('Error loading admin posts:', error.message);
             }
         }
 
         async function deletePost(postId) {
             if (!confirm('Удалить этот пост?')) return;
             
-            if (!supabaseLoaded || !supabase) {
-                alert('Supabase ещё загружается...');
-                return;
-            }
-            
             try {
-                const { error } = await supabase
-                    .from('posts')
-                    .delete()
-                    .eq('id', postId);
+                const response = await fetch(`${SUPABASE_URL}/rest/v1/posts?id=eq.${postId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'apikey': SUPABASE_ANON_KEY,
+                        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+                    }
+                });
                 
-                if (error) throw error;
+                if (!response.ok) throw new Error('Failed to delete');
                 
+                log('✅ Post deleted');
                 alert('Пост удалён! ✅');
                 loadAdminPosts();
                 
             } catch (error) {
-                console.error('Error deleting post:', error);
+                log('❌ Error:', error.message);
                 alert('Ошибка при удалении: ' + error.message);
             }
         }
