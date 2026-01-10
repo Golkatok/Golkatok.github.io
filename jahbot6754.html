@@ -1,0 +1,1093 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Jahvir App - Для подписчиков</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="config.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-primary, #ffffff);
+            color: var(--text-primary, #000000);
+            padding-top: env(safe-area-inset-top, 20px);
+            padding-bottom: env(safe-area-inset-bottom, 0px);
+            min-height: 100vh;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+        body.dark {
+            --bg-primary: #000000;
+            --bg-secondary: #1c1c1e;
+            --text-primary: #ffffff;
+            --text-secondary: #98989d;
+            --accent: #0a84ff;
+            --card-bg: #1c1c1e;
+            --border: #38383a;
+        }
+        .container {
+            max-width: 100%;
+            padding: 0 20px 100px 20px;
+            padding-top: calc(env(safe-area-inset-top, 20px) + 50px);
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 0 20px 0;
+            margin-bottom: 30px;
+        }
+        .user-name {
+            font-size: 24px;
+            font-weight: 700;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+        .settings-toggle {
+            width: 50px;
+            height: 50px;
+            background: var(--bg-secondary, #f5f5f7);
+            border-radius: 25px;
+            border: 1px solid var(--border, #d2d2d7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+        .settings-icon {
+            width: 24px;
+            height: 24px;
+        }
+        .card {
+            background: var(--card-bg, #ffffff);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border, #d2d2d7);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        .card-title {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+        .subscribers {
+            font-size: 36px;
+            font-weight: 800;
+            color: var(--accent, #007aff);
+            margin-bottom: 5px;
+            font-family: 'Manrope', sans-serif;
+        }
+        .subscribers-label {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+        .video-card {
+            background: var(--bg-secondary);
+            border-radius: 15px;
+            overflow: hidden;
+            cursor: pointer;
+        }
+        .video-thumbnail {
+            width: 100%;
+            aspect-ratio: 16/9;
+            object-fit: cover;
+            background: var(--bg-secondary);
+        }
+        .video-info {
+            padding: 15px;
+        }
+        .video-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            font-family: 'Manrope', sans-serif;
+        }
+        .video-date {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+        .social-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .social-btn {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 15px;
+            padding: 20px;
+            text-decoration: none;
+            color: var(--text-primary);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+        }
+        .social-btn:hover {
+            transform: translateY(-2px);
+            border-color: var(--accent);
+        }
+        .social-icon {
+            width: 48px;
+            height: 48px;
+        }
+        .social-name {
+            font-size: 16px;
+            font-weight: 700;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+        .posts-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .post-item {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 15px;
+            padding: 20px;
+        }
+        .post-item-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+        .post-item-content {
+            font-size: 14px;
+            color: var(--text-secondary);
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .post-item-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+        .posts-filter {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .filter-btn {
+            padding: 8px 16px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            color: var(--text-secondary);
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .filter-btn.active {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+        .post-category {
+            display: inline-block;
+            padding: 4px 10px;
+            background: var(--accent);
+            color: white;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        .reactions-container {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid var(--border);
+        }
+        .reactions-stats {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 12px;
+        }
+        .reaction-stat {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 6px 12px;
+            background: var(--bg-secondary);
+            border-radius: 20px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .reaction-stat:hover {
+            transform: scale(1.05);
+            background: var(--accent);
+            color: white;
+        }
+        .reaction-stat.active {
+            background: var(--accent);
+            color: white;
+            box-shadow: 0 0 0 2px var(--accent);
+        }
+        .reaction-emojis {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+        .reaction-emoji {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 2px solid var(--border);
+            background: var(--bg-secondary);
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .reaction-emoji:hover {
+            transform: scale(1.2);
+            border-color: var(--accent);
+        }
+        .reaction-emoji.active {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+            transform: scale(1.1);
+        }
+        .reaction-users {
+            font-size: 12px;
+            color: var(--text-secondary);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-top: 8px;
+        }
+        .reaction-user {
+            background: var(--bg-secondary);
+            padding: 3px 8px;
+            border-radius: 10px;
+        }
+        .tab-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--card-bg);
+            border-top: 1px solid var(--border);
+            display: flex;
+            padding: 8px 0 calc(env(safe-area-inset-bottom, 0px) + 8px);
+            backdrop-filter: blur(20px);
+            z-index: 1000;
+        }
+        .tab-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            padding: 8px;
+            cursor: pointer;
+            color: var(--text-secondary);
+        }
+        .tab-item.active {
+            color: var(--accent);
+        }
+        .tab-icon {
+            width: 28px;
+            height: 28px;
+        }
+        .tab-label {
+            font-size: 11px;
+            font-weight: 500;
+        }
+        .page {
+            display: none;
+        }
+        .page.active {
+            display: block;
+        }
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: var(--text-secondary);
+        }
+        .spinner {
+            border: 3px solid var(--border);
+            border-top: 3px solid var(--accent);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1002;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+        }
+        .modal-content {
+            background: var(--card-bg);
+            margin: 5% auto;
+            padding: 0;
+            width: 90%;
+            max-width: 500px;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .modal-header h2 {
+            margin: 0;
+            color: var(--text-primary);
+            font-family: 'Space Grotesk', sans-serif;
+        }
+        .close-modal {
+            font-size: 28px;
+            cursor: pointer;
+            color: var(--text-secondary);
+        }
+        .modal-body {
+            padding: 20px;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+        .settings-category {
+            margin-bottom: 30px;
+        }
+        .settings-category h3 {
+            font-family: 'Space Grotesk', sans-serif;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            color: var(--text-primary);
+            font-size: 18px;
+        }
+        .category-icon {
+            width: 20px;
+            height: 20px;
+        }
+        .setting-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        .setting-item:last-child {
+            border-bottom: none;
+        }
+        .setting-item span {
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+        .styled-select {
+            position: relative;
+            display: inline-block;
+            width: 160px;
+        }
+        .styled-select select {
+            width: 100%;
+            padding: 10px 40px 10px 15px;
+            border-radius: 12px;
+            border: 2px solid var(--border);
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            cursor: pointer;
+            appearance: none;
+        }
+        .styled-select::after {
+            content: '▼';
+            position: absolute;
+            top: 50%;
+            right: 15px;
+            transform: translateY(-50%);
+            color: var(--accent);
+            font-size: 12px;
+            pointer-events: none;
+        }
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+        .checkbox-custom {
+            width: 22px;
+            height: 22px;
+            border: 2px solid var(--border);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            background: var(--bg-secondary);
+        }
+        .checkbox-container input:checked + .checkbox-custom {
+            background: var(--accent);
+            border-color: var(--accent);
+        }
+        .checkbox-container input:checked + .checkbox-custom::after {
+            content: '✓';
+            color: white;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        .checkbox-container input[type="checkbox"] {
+            display: none;
+        }
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 26px;
+        }
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--border);
+            transition: .3s;
+            border-radius: 34px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .3s;
+            border-radius: 50%;
+        }
+        input:checked + .slider {
+            background-color: var(--accent);
+        }
+        input:checked + .slider:before {
+            transform: translateX(24px);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="page active" id="home">
+            <div class="header">
+                <div class="user-name" id="userName">Пользователь</div>
+                <div class="settings-toggle" onclick="openSettings()">
+                    <img src="png/settings.png" alt="Settings" class="settings-icon">
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">Подписчики YouTube</div>
+                <div class="subscribers" id="subscribers">
+                    <div class="spinner"></div>
+                </div>
+                <div class="subscribers-label">подписчиков</div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">Последнее видео</div>
+                <div id="latestVideo" class="loading">
+                    <div class="spinner"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="page" id="social">
+            <div class="header">
+                <div class="user-name" id="userName2">Пользователь</div>
+                <div class="settings-toggle" onclick="openSettings()">
+                    <img src="png/settings.png" alt="Settings" class="settings-icon">
+                </div>
+            </div>
+
+            <div class="social-buttons">
+                <a href="https://discord.gg/hmhjNhfrMh" target="_blank" class="social-btn">
+                    <img src="png/discord.png" alt="Discord" class="social-icon">
+                    <div class="social-name">Discord</div>
+                </a>
+                <a href="https://www.youtube.com/@Jahvir" target="_blank" class="social-btn">
+                    <img src="png/youtube.png" alt="YouTube" class="social-icon">
+                    <div class="social-name">YouTube</div>
+                </a>
+                <a href="https://www.twitch.tv/davasik" target="_blank" class="social-btn">
+                    <img src="png/twitch.png" alt="Twitch" class="social-icon">
+                    <div class="social-name">Twitch</div>
+                </a>
+                <a href="https://t.me/davajahvir" target="_blank" class="social-btn">
+                    <img src="png/telegram.png" alt="Telegram" class="social-icon">
+                    <div class="social-name">Telegram</div>
+                </a>
+            </div>
+        </div>
+
+        <div class="page" id="posts">
+            <div class="header">
+                <div class="user-name" id="userName3">Пользователь</div>
+                <div class="settings-toggle" onclick="openSettings()">
+                    <img src="png/settings.png" alt="Settings" class="settings-icon">
+                </div>
+            </div>
+
+            <div class="posts-filter" id="postsFilter">
+                <button class="filter-btn active" onclick="filterPosts('all')">Все</button>
+                <button class="filter-btn" onclick="filterPosts('news')">Новости</button>
+                <button class="filter-btn" onclick="filterPosts('announcements')">Анонсы</button>
+                <button class="filter-btn" onclick="filterPosts('updates')">Обновления</button>
+            </div>
+
+            <div id="postsPublic" class="posts-list">
+                <div class="loading">
+                    <div class="spinner"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="page" id="ai">
+            <div class="header">
+                <div class="user-name" id="userName4">Пользователь</div>
+                <div class="settings-toggle" onclick="openSettings()">
+                    <img src="png/settings.png" alt="Settings" class="settings-icon">
+                </div>
+            </div>
+
+            <div class="card" style="text-align: center; padding: 60px 20px;">
+                <img src="png/jahvirai.png" alt="JahvirAI" style="width: 100px; height: 100px; margin: 0 auto 20px;">
+                <div style="font-size: 24px; font-weight: 700; margin-bottom: 10px; font-family: 'Space Grotesk', sans-serif;">
+                    В разработке
+                </div>
+                <div style="font-size: 16px; color: var(--text-secondary);">
+                    Искусственный интеллект скоро будет доступен!
+                </div>
+                <button onclick="switchPage('home')" style="
+                    background: var(--accent);
+                    color: white;
+                    border: none;
+                    border-radius: 12px;
+                    padding: 15px 30px;
+                    font-size: 16px;
+                    font-weight: 600;
+                    cursor: pointer;
+                    margin-top: 30px;">
+                    Назад
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="tab-bar">
+        <div class="tab-item active" onclick="switchPage('home')">
+            <img src="png/home.png" alt="Home" class="tab-icon">
+            <div class="tab-label">Главная</div>
+        </div>
+        <div class="tab-item" onclick="switchPage('social')">
+            <img src="png/social.png" alt="Social" class="tab-icon">
+            <div class="tab-label">Соцсети</div>
+        </div>
+        <div class="tab-item" onclick="switchPage('posts')">
+            <img src="png/posts.png" alt="Posts" class="tab-icon">
+            <div class="tab-label">Посты</div>
+        </div>
+        <div class="tab-item" onclick="switchPage('ai')">
+            <img src="png/jahvirai.png" alt="AI" class="tab-icon">
+            <div class="tab-label">JahvirAI</div>
+        </div>
+    </div>
+
+    <div id="settingsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Настройки</h2>
+                <span class="close-modal" onclick="closeSettings()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="settings-category">
+                    <h3><img src="png/brush.png" class="category-icon"> Кастомизация</h3>
+                    <div class="setting-item">
+                        <span>Тема интерфейса</span>
+                        <div class="styled-select">
+                            <select id="themeSelect" onchange="changeTheme(this.value)">
+                                <option value="auto">Авто (как в системе)</option>
+                                <option value="light">Светлая</option>
+                                <option value="dark">Тёмная</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="setting-item">
+                        <span>Видимые разделы</span>
+                        <div>
+                            <label class="checkbox-container">
+                                <input type="checkbox" id="tabHome" checked onchange="toggleTabVisibility('home', this.checked)">
+                                <span class="checkbox-custom"></span>
+                                <span>Главная</span>
+                            </label>
+                            <label class="checkbox-container">
+                                <input type="checkbox" id="tabSocial" checked onchange="toggleTabVisibility('social', this.checked)">
+                                <span class="checkbox-custom"></span>
+                                <span>Соцсети</span>
+                            </label>
+                            <label class="checkbox-container">
+                                <input type="checkbox" id="tabPosts" checked onchange="toggleTabVisibility('posts', this.checked)">
+                                <span class="checkbox-custom"></span>
+                                <span>Посты</span>
+                            </label>
+                            <label class="checkbox-container">
+                                <input type="checkbox" id="tabAI" checked onchange="toggleTabVisibility('ai', this.checked)">
+                                <span class="checkbox-custom"></span>
+                                <span>JahvirAI</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div id="devCategory" class="settings-category" style="display: none;">
+                    <h3><img src="png/code.png" class="category-icon"> Для разработчиков</h3>
+                    <div class="setting-item">
+                        <span>Показать кнопку отладки</span>
+                        <label class="switch">
+                            <input type="checkbox" id="debugToggle" onchange="toggleDebugButton(this.checked)">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="setting-item">
+                        <span>Админ-панель постов</span>
+                        <button onclick="showAdminPin()" style="
+                            background: var(--accent);
+                            color: white;
+                            border: none;
+                            border-radius: 10px;
+                            padding: 8px 16px;
+                            font-weight: 600;
+                            cursor: pointer;">
+                            Активировать
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Глобальные переменные
+        let tg = window.Telegram?.WebApp || null;
+        let currentUser = null;
+        let supabaseReactions = null;
+        let currentFilter = 'all';
+        let adminPin = '';
+
+        // Инициализация при загрузке
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeApp();
+        });
+
+        async function initializeApp() {
+            // Инициализация Telegram
+            if (tg) {
+                tg.ready();
+                tg.expand();
+                
+                if (tg.initDataUnsafe?.user) {
+                    currentUser = {
+                        id: tg.initDataUnsafe.user.id,
+                        username: tg.initDataUnsafe.user.username || 'anonymous'
+                    };
+                    
+                    // Проверка админа
+                    checkAdminRedirect();
+                    
+                    // Обновление имени
+                    updateUserName();
+                    
+                    // Показ/скрытие раздела разработчиков
+                    if (window.APP_CONFIG.SECURITY.ADMIN_USERNAMES.includes(currentUser.username)) {
+                        document.getElementById('devCategory').style.display = 'block';
+                    }
+                }
+                
+                // Применение темы Telegram
+                if (tg.colorScheme === 'dark') {
+                    document.body.classList.add('dark');
+                    updateThemeIcons(true);
+                }
+            }
+
+            // Инициализация Supabase для реакций
+            supabaseReactions = window.supabase.createClient(
+                window.APP_CONFIG.SUPABASE_PROJECTS.REACTIONS.URL,
+                window.APP_CONFIG.SUPABASE_PROJECTS.REACTIONS.KEY
+            );
+
+            // Загрузка данных
+            loadYouTubeData();
+            loadPublicPosts();
+            loadUserSettings();
+        }
+
+        function checkAdminRedirect() {
+            if (!currentUser) return;
+            
+            if (window.APP_CONFIG.SECURITY.ADMIN_USERNAMES.includes(currentUser.username)) {
+                const savedPin = localStorage.getItem('admin_pin_verified');
+                const accessCode = localStorage.getItem('admin_access_code');
+                
+                if (savedPin === 'true' && accessCode && window.ADMIN_CODES.getCode(accessCode)) {
+                    window.location.href = window.APP_CONFIG.SECURITY.ADMIN_VERSION_PAGE;
+                }
+            }
+        }
+
+        function updateUserName() {
+            const name = currentUser?.username || 'Пользователь';
+            document.querySelectorAll('.user-name').forEach(el => {
+                el.textContent = name;
+            });
+        }
+
+        function updateThemeIcons(isDark) {
+            const folder = isDark ? 'pngdark' : 'png';
+            document.querySelectorAll('img[src^="png/"]').forEach(img => {
+                const src = img.getAttribute('src');
+                if (src.includes('png/')) {
+                    img.src = src.replace('png/', folder + '/');
+                }
+            });
+        }
+
+        async function loadYouTubeData() {
+            try {
+                const response = await fetch(
+                    `https://www.googleapis.com/youtube/v3/channels?part=statistics&id=${window.APP_CONFIG.YOUTUBE.CHANNEL_ID}&key=${window.APP_CONFIG.YOUTUBE.API_KEY}`
+                );
+                const data = await response.json();
+                
+                if (data.items?.[0]) {
+                    const subs = parseInt(data.items[0].statistics.subscriberCount);
+                    document.getElementById('subscribers').textContent = subs.toLocaleString('ru-RU');
+                }
+            } catch (error) {
+                console.error('YouTube API error:', error);
+                document.getElementById('subscribers').textContent = '---';
+            }
+        }
+
+        async function loadPublicPosts() {
+            try {
+                const response = await fetch(
+                    `${window.APP_CONFIG.SUPABASE_PROJECTS.MAIN.URL}/rest/v1/posts?published=eq.true&order=created_at.desc&select=*`,
+                    {
+                        headers: {
+                            'apikey': window.APP_CONFIG.SUPABASE_PROJECTS.MAIN.ANON_KEY,
+                            'Authorization': `Bearer ${window.APP_CONFIG.SUPABASE_PROJECTS.MAIN.ANON_KEY}`
+                        }
+                    }
+                );
+                
+                const posts = await response.json();
+                const container = document.getElementById('postsPublic');
+                
+                if (!posts || posts.length === 0) {
+                    container.innerHTML = '<div class="card" style="text-align: center; padding: 40px 20px;">Постов пока нет</div>';
+                    return;
+                }
+                
+                container.innerHTML = posts.map(post => `
+                    <div class="post-item" data-category="${post.category || 'other'}" data-id="${post.id}">
+                        ${post.image_url ? `<img src="${post.image_url}" style="width:100%; border-radius:10px; margin-bottom:10px;">` : ''}
+                        <div class="post-category">${window.APP_CONFIG.CATEGORIES[post.category]?.name || 'Другое'}</div>
+                        <div class="post-item-title">${post.title}</div>
+                        <div class="post-item-content">${post.content}</div>
+                        
+                        <div class="reactions-container">
+                            <div class="reactions-stats" id="reactions-stats-${post.id}"></div>
+                            <div class="reaction-emojis">
+                                ${window.APP_CONFIG.REACTIONS.EMOJIS.map(emoji => `
+                                    <div class="reaction-emoji" onclick="toggleReaction('${post.id}', '${emoji}')">${emoji}</div>
+                                `).join('')}
+                            </div>
+                            <div class="reaction-users" id="reaction-users-${post.id}"></div>
+                        </div>
+                        
+                        <div class="post-item-meta">
+                            <span>@${post.author}</span>
+                            <span>${new Date(post.created_at).toLocaleDateString('ru-RU')}</span>
+                        </div>
+                    </div>
+                `).join('');
+                
+                // Загрузка реакций для каждого поста
+                posts.forEach(post => loadReactionsForPost(post.id));
+                
+            } catch (error) {
+                console.error('Ошибка загрузки постов:', error);
+            }
+        }
+
+        async function loadReactionsForPost(postId) {
+            if (!supabaseReactions) return;
+            
+            try {
+                const { data: reactions, error } = await supabaseReactions
+                    .from('reactions')
+                    .select('*')
+                    .eq('post_id', postId);
+                
+                if (error) throw error;
+                
+                // Группировка реакций
+                const grouped = {};
+                reactions.forEach(r => {
+                    if (!grouped[r.reaction]) grouped[r.reaction] = [];
+                    grouped[r.reaction].push(r.username);
+                });
+                
+                // Реакция текущего пользователя
+                const userReaction = currentUser 
+                    ? reactions.find(r => r.user_id === currentUser.id)?.reaction 
+                    : null;
+                
+                // Обновление статистики
+                const statsEl = document.getElementById(`reactions-stats-${postId}`);
+                if (statsEl) {
+                    statsEl.innerHTML = Object.entries(grouped)
+                        .map(([emoji, users]) => `
+                            <div class="reaction-stat ${userReaction === emoji ? 'active' : ''}"
+                                 onclick="showReactionUsers('${postId}', '${emoji}')">
+                                <span>${emoji}</span>
+                                <span>${users.length}</span>
+                            </div>
+                        `).join('');
+                }
+                
+                // Подсветка выбранной реакции
+                document.querySelectorAll(`[onclick*="toggleReaction('${postId}'"]`).forEach(btn => {
+                    const emoji = btn.getAttribute('onclick').match(/'([^']+)'/)[1];
+                    btn.classList.toggle('active', emoji === userReaction);
+                });
+                
+                // Показать пользователей
+                const usersEl = document.getElementById(`reaction-users-${postId}`);
+                if (usersEl && reactions.length > 0) {
+                    const lastUsers = reactions.slice(-3).map(r => `<span class="reaction-user">@${r.username}</span>`).join('');
+                    const moreText = reactions.length > 3 ? ` и ещё ${reactions.length - 3}` : '';
+                    usersEl.innerHTML = `${lastUsers}${moreText}`;
+                }
+                
+            } catch (error) {
+                console.error('Ошибка загрузки реакций:', error);
+            }
+        }
+
+        async function toggleReaction(postId, reaction) {
+            if (!currentUser || !supabaseReactions) {
+                alert('Войдите через Telegram, чтобы ставить реакции');
+                return;
+            }
+            
+            try {
+                // Проверка существующей реакции
+                const { data: existing } = await supabaseReactions
+                    .from('reactions')
+                    .select('*')
+                    .eq('post_id', postId)
+                    .eq('user_id', currentUser.id)
+                    .single();
+                
+                if (existing) {
+                    if (existing.reaction === reaction) {
+                        // Удаление
+                        await supabaseReactions
+                            .from('reactions')
+                            .delete()
+                            .match({ post_id: postId, user_id: currentUser.id });
+                    } else {
+                        // Обновление
+                        await supabaseReactions
+                            .from('reactions')
+                            .update({ reaction: reaction })
+                            .match({ post_id: postId, user_id: currentUser.id });
+                    }
+                } else {
+                    // Добавление
+                    await supabaseReactions
+                        .from('reactions')
+                        .insert({
+                            post_id: postId,
+                            user_id: currentUser.id,
+                            username: currentUser.username,
+                            reaction: reaction
+                        });
+                }
+                
+                loadReactionsForPost(postId);
+                
+            } catch (error) {
+                console.error('Ошибка при обновлении реакции:', error);
+            }
+        }
+
+        function showReactionUsers(postId, reaction) {
+            alert(`Реакцию ${reaction} поставили пользователи этого поста.`);
+        }
+
+        function filterPosts(category) {
+            currentFilter = category;
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+            
+            const posts = document.querySelectorAll('.post-item');
+            posts.forEach(post => {
+                const postCategory = post.getAttribute('data-category');
+                if (category === 'all' || postCategory === category) {
+                    post.style.display = 'block';
+                } else {
+                    post.style.display = 'none';
+                }
+            });
+        }
+
+        function switchPage(pageId) {
+            document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+            document.querySelectorAll('.tab-item').forEach(tab => tab.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+
+        function openSettings() {
+            document.getElementById('settingsModal').style.display = 'block';
+        }
+
+        function closeSettings() {
+            document.getElementById('settingsModal').style.display = 'none';
+        }
+
+        function changeTheme(theme) {
+            document.body.classList.remove('light', 'dark');
+            if (theme === 'auto') {
+                const isSystemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                document.body.classList.add(isSystemDark ? 'dark' : 'light');
+                updateThemeIcons(isSystemDark);
+            } else {
+                document.body.classList.add(theme);
+                updateThemeIcons(theme === 'dark');
+            }
+            localStorage.setItem('theme', theme);
+        }
+
+        function toggleDebugButton(isVisible) {
+            localStorage.setItem('debugVisible', isVisible);
+        }
+
+        function toggleTabVisibility(tabId, isVisible) {
+            const visibleTabs = JSON.parse(localStorage.getItem('visible_tabs') || '["home","social","posts","ai"]');
+            
+            if (!isVisible && visibleTabs.filter(t => t !== tabId).length < window.APP_CONFIG.SECURITY.MIN_VISIBLE_TABS) {
+                alert(`Нельзя скрыть больше ${window.APP_CONFIG.SECURITY.MIN_VISIBLE_TABS} разделов!`);
+                document.getElementById(`tab${tabId.charAt(0).toUpperCase() + tabId.slice(1)}`).checked = true;
+                return;
+            }
+            
+            const index = visibleTabs.indexOf(tabId);
+            if (isVisible && index === -1) {
+                visibleTabs.push(tabId);
+            } else if (!isVisible && index !== -1) {
+                visibleTabs.splice(index, 1);
+            }
+            
+            localStorage.setItem('visible_tabs', JSON.stringify(visibleTabs));
+            
+            document.querySelectorAll('.tab-item').forEach(tab => {
+                const matches = tab.onclick?.toString().match(/switchPage\('(\w+)'\)/);
+                if (matches && matches[1]) {
+                    tab.style.display = visibleTabs.includes(matches[1]) ? 'flex' : 'none';
+                }
+            });
+        }
+
+        function loadUserSettings() {
+            const savedTheme = localStorage.getItem('theme') || 'auto';
+            document.getElementById('themeSelect').value = savedTheme;
+            changeTheme(savedTheme);
+            
+            const visibleTabs = JSON.parse(localStorage.getItem('visible_tabs') || '["home","social","posts","ai"]');
+            ['home', 'social', 'posts', 'ai'].forEach(tabId => {
+                const checkbox = document.getElementById(`tab${tabId.charAt(0).toUpperCase() + tabId.slice(1)}`);
+                if (checkbox) {
+                    checkbox.checked = visibleTabs.includes(tabId);
+                    toggleTabVisibility(tabId, checkbox.checked);
+                }
+            });
+        }
+
+        function showAdminPin() {
+            const pin = prompt('Введите PIN-код для доступа к админ-панели:');
+            if (pin && window.ADMIN_CODES.getCode(pin)) {
+                localStorage.setItem('admin_pin_verified', 'true');
+                localStorage.setItem('admin_access_code', pin);
+                alert('✅ PIN-код принят! Перенаправление...');
+                setTimeout(() => {
+                    window.location.href = window.APP_CONFIG.SECURITY.ADMIN_VERSION_PAGE;
+                }, 1000);
+            } else {
+                alert('❌ Неверный PIN-код!');
+            }
+        }
+
+        // Закрытие модального окна при клике вне его
+        window.onclick = function(event) {
+            const modal = document.getElementById('settingsModal');
+            if (event.target === modal) {
+                closeSettings();
+            }
+        };
+    </script>
+</body>
+</html>
